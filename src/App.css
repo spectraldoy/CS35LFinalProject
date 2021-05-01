@@ -1,9 +1,13 @@
+.container div {
+  flex: 1;
+}
+
 .App {
   text-align: center;
 }
 
 .App-logo {
-  height: 40vmin;
+  height: 7vmin;
   pointer-events: none;
 }
 
@@ -14,14 +18,29 @@
 }
 
 .App-header {
-  background-color: #282c34;
-  min-height: 100vh;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  justify-content: space-between;
+  border-bottom: 1px solid black;
+  padding: 0.5vmin;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+}
+
+.App-brand {
+  /* background-color: #282c34; */
+  min-height: 5vh;
+  min-width: 5vh;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: left;
+  font-size: calc(10px + 1vmin);
+  color: black;
+}
+
+.App-search {
+  font-size: 15px;
+  padding-right: 5.5vmin;
 }
 
 .App-link {
