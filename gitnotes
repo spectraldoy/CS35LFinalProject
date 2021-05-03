@@ -4,3 +4,8 @@ git commit -m "tax fraud"
 git push origin main
 
 if something goes wrong, try the whole thing all over again
+
+# Branching
+git pull
+git checkout -b <new_branch>
+git checout <existing_branch>
