@@ -1,6 +1,0 @@
-git pull
-git add [files]
-git commit -m "tax fraud"
-git push origin main
-
-if something goes wrong, try the whole thing all over again
