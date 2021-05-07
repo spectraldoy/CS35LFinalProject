@@ -2,12 +2,16 @@ import logo from './logo.svg';
 import './App.css';
 import React from 'react';
 
+// TODO: check with team, and a framework component, of which dashboard
+//       is a subclass, that is used for the Browse Schemes, and search
+//       windows, and so on, with top and left panels floating there
+//       being optionally collapsible, except for logo. Maybe only left
+//       panel collapsible
 // TODO: a lagoon component with all the links to click to browse schemes, etc.
 // TODO: a recent schemes thing with label dashboard
 // TODO: an account thing at the bottom
 
 class Header extends React.Component {
-
   renderBrand() {
     const name = "SchemePotato";
     return (
@@ -70,9 +74,9 @@ class Dashboard extends React.Component {
       // &nbsp is a non breaking space for a cleaner look
       <form className="App-search" onSubmit={this.submitQuery}>
         <label>
-          <input 
+          <input
             type="text"
-            placeholder="Search schemes..." 
+            placeholder="Search schemes..."
             value={this.state.searchQuery}
             onChange={this.displayQuery}
           />
