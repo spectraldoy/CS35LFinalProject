@@ -1,80 +1,27 @@
-import logo from './logo.svg';
 import './App.css';
 import React from 'react';
-import {calculate} from './calculator.js'
+import { calculate } from './calculator.js'
 
-// TODO: check with team, and a framework component, of which dashboard
-//       is a subclass, that is used for the Browse Schemes, and search
-//       windows, and so on, with top and left panels floating there
-//       being optionally collapsible, except for logo. Maybe only left
-//       panel collapsible
-// TODO: a lagoon component with all the links to click to browse schemes, etc.
-// TODO: a recent schemes thing with label dashboard
-// TODO: an account thing at the bottom
-
-class Header extends React.Component {
-
-  renderBrand() {
-    const name = "SchemePotato";
-    return (
-      <div className="App-brand">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          {name}
-        </p>
-      </div>
-    );
-  }
-
-  render() {
-    return (
-      <header className="App-header">
-        {this.renderBrand()}
-        {this.props.renderSearchBar()}
-      </header>
-    );
-  }
-}
-
-class Lagoon extends React.Component {
-  render() {
-    return 3;
-  }
-}
 
 class calculatorInterface extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      searchQuery: "",
       gradeQuery: "",
       grades: Array(5).fill(null),
       weights: [10, 30, 20, 40]
     };
 
-    this.submitQuery = this.submitQuery.bind(this);
     this.submitGrades = this.submitGrades.bind(this);
-    this.displayQuery = this.displayQuery.bind(this);
     this.handleChange = this.handleChange.bind(this);
   }
 
-  handleChange = i => (event) =>{
+  handleChange = i => (event) => {
     event.preventDefault();
-    const grades = this.state.grades;
+    const grades = this.state.grades.slice();
     grades[i] = event.target.value;
     this.setState({
       grades: grades
-    });
-  }
-
-  submitQuery(event) {
-    // TODO: search database using this.state.searchQuery
-    event.preventDefault();
-    alert(this.state.searchQuery);
-
-    // clear out input
-    this.setState({
-      searchQuery: ""
     });
   }
   
@@ -136,85 +83,55 @@ class calculatorInterface extends React.Component {
       message += ("Projected Grade Needed: " + results.projectedNeededScore + "%");
     }
 
-
     alert(message);
-  }
-
-  displayQuery(event) {
-    // get input from search bar
-    this.setState({
-      searchQuery: event.target.value,
-    });
-  }
-
-  renderSearchBar() {
-    return (
-      // &nbsp is a non breaking space for a cleaner look
-      <form className="App-search" onSubmit={this.submitQuery}>
-        <label>
-          <input
-            type="text"
-            placeholder="Search schemes..."
-            value={this.state.searchQuery}
-            onChange={this.displayQuery}
-          />
-        </label>&nbsp;
-        <input type="submit" value="Submit" />
-      </form>
-    );
   }
 
   render() {
     return (
-      <div className="calculatorInterface">
-        <div className="Header">
-          <Header renderSearchBar={this.renderSearchBar.bind(this)} />
-        </div>
-        <div className="Assignment">
-          <h2>
-            <form>
-              <label>
-                Current Homework Grade (10%):&nbsp;&nbsp;
-            <input type="text" name="name" onChange={this.handleChange(0)}/>
-              </label>
-            </form>
-          </h2>
-          <h2>
-            < form>
-              <label>
-                Current Midterm Grade (30%):&nbsp;&nbsp;
-            <input type="text" name="name" onChange={this.handleChange(1)}/>
-              </label>
-            </form>
-          </h2>
-          <h2>
-            < form>
-              <label>
-                Current Quizzes Grade (20%):&nbsp;&nbsp;
-            <input type="text" name="name" onChange={this.handleChange(2)}/>
-              </label>
-            </form>
-          </h2>
-          <h2>
-            < form>
-              <label>
-                Current Final Grade (40%):&nbsp;&nbsp;
-            <input type="text" name="name" onChange={this.handleChange(3)}/>
-              </label>
-            </form>
-          </h2>
-          <h2>
-            < form>
-              <label>
-                Final Grade You Want (0-100%):&nbsp;&nbsp;
-            <input type="text" name="name" onChange={this.handleChange(4)}/>
-              </label>
-            </form>
-          </h2>
-          <form onSubmit = {this.submitGrades}>
-          <input type="submit" value="Calculate!" />
+      <div className="Assignment">
+        <h2>
+          <form>
+            <label>
+              Current Homework Grade (10%):&nbsp;&nbsp;
+          <input type="text" name="name" onChange={this.handleChange(0)}/>
+            </label>
           </form>
-        </div>
+        </h2>
+        <h2>
+          < form>
+            <label>
+              Current Midterm Grade (30%):&nbsp;&nbsp;
+          <input type="text" name="name" onChange={this.handleChange(1)}/>
+            </label>
+          </form>
+        </h2>
+        <h2>
+          < form>
+            <label>
+              Current Quizzes Grade (20%):&nbsp;&nbsp;
+          <input type="text" name="name" onChange={this.handleChange(2)}/>
+            </label>
+          </form>
+        </h2>
+        <h2>
+          < form>
+            <label>
+              Current Final Grade (40%):&nbsp;&nbsp;
+          <input type="text" name="name" onChange={this.handleChange(3)}/>
+            </label>
+          </form>
+        </h2>
+        <h2>
+          < form>
+            <label>
+              Final Grade You Want (0-100%):&nbsp;&nbsp;
+          <input type="text" name="name" onChange={this.handleChange(4)}/>
+            </label>
+          </form>
+        </h2>
+        <form onSubmit = {this.submitGrades}>
+        <input type="submit" value="Calculate!" />
+        </form>
       </div>
     );
   }
