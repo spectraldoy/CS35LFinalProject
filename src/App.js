@@ -8,7 +8,7 @@ import calculatorInterface from './calculatorInterface';
 function App() {
   return (
     <div className="App">
-        <BrowserRouter>
+      <BrowserRouter>
         <ul>
           <li>
             <Link to="/Dashboard">Dashboard</Link>

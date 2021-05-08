@@ -12,8 +12,9 @@ import React from 'react';
 // TODO: an account thing at the bottom
 
 class Header extends React.Component {
+
   renderBrand() {
-    const name = "SchemePotato";
+    const name = "Foxtrot";
     return (
       <div className="App-brand">
         <img src={logo} className="App-logo" alt="logo" />
