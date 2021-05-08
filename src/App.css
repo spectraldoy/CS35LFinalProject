@@ -43,6 +43,11 @@
   color: #61dafb;
 }
 
+.Assignment{
+  text-align: left;
+  padding-left: 20px;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
