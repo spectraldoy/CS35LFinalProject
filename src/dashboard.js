@@ -35,13 +35,39 @@ class Header extends React.Component {
   }
 }
 
-class Lagoon extends React.Component {
+class SideMenu extends React.Component {
+
+  onClick() {
+    alert("r");
+  }
+
   render() {
-    return 3;
+    return (
+      <div className="SideMenu">
+        <nav>
+          <h className="SideMenu-h">SCHEMING</h>
+          <a className="SideMenu-nava" onClick={this.onClick}>My Schemes</a>
+          <a className="SideMenu-nava" onClick={this.onClick}>Browse Schemes</a>
+          <a className="SideMenu-nava" onClick={this.onClick}>My University's Schemes</a>
+        </nav> 
+        <nav>
+          <h className="SideMenu-h">ACCOUNT</h>
+          <a className="SideMenu-nava" onClick={this.onClick}>Profile</a>
+          <a className="SideMenu-nava" onClick={this.onClick}>Settings</a>
+        </nav> 
+      </div>
+    );
   }
 }
 
 class Dashboard extends React.Component {
+  /**
+   * Header and side panel to display links to various pages / functionality
+   * Such as Scheme Creator, My Schemes, Home, Search Schemes, etc.
+   * If a link is clicked in the side panel, the page / url will not change,
+   * it will just load that specific window into the Dashboard viewer
+   */
+
   constructor(props) {
     super(props);
     this.state = {
@@ -51,6 +77,8 @@ class Dashboard extends React.Component {
     this.submitQuery = this.submitQuery.bind(this);
     this.displayQuery = this.displayQuery.bind(this);
   }
+
+  // SEARCHBAR
 
   submitQuery(event) {
     // TODO: search database using this.state.searchQuery
@@ -87,9 +115,14 @@ class Dashboard extends React.Component {
     );
   }
 
+  // SIDE PANEL
+
   render() {
       return (
-        <Header renderSearchBar={this.renderSearchBar.bind(this)} />
+        <div>
+          <Header renderSearchBar={this.renderSearchBar.bind(this)} />
+          <SideMenu/>
+        </div>
       );
   }
 }

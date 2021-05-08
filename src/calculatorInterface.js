@@ -31,26 +31,26 @@ class calculatorInterface extends React.Component {
       		categories: [
       			{
       				weight: 10,
-      				graded: ((this.state.grades[0] === null || this.state.grades[0] == "") ? [] : [{ptsReceived: parseInt(this.state.grades[0]), ptsOutOf: 100}]),
+      				graded: ((this.state.grades[0] === null || this.state.grades[0] === "") ? [] : [{ptsReceived: parseInt(this.state.grades[0]), ptsOutOf: 100}]),
       				projected: []
       			},
       			{
       				weight: 30,
-      				graded: ((this.state.grades[1] === null || this.state.grades[1] == "") ? [] : [{ptsReceived: parseInt(this.state.grades[1]), ptsOutOf: 100}]),
+      				graded: ((this.state.grades[1] === null || this.state.grades[1] === "") ? [] : [{ptsReceived: parseInt(this.state.grades[1]), ptsOutOf: 100}]),
       				projected: []
       			},
             {
       				weight: 20,
-      				graded: ((this.state.grades[2] === null || this.state.grades[2] == "") ? [] : [{ptsReceived: parseInt(this.state.grades[2]), ptsOutOf: 100}]),
+      				graded: ((this.state.grades[2] === null || this.state.grades[2] === "") ? [] : [{ptsReceived: parseInt(this.state.grades[2]), ptsOutOf: 100}]),
       				projected: []
       			},
             {
       				weight: 40,
-      				graded: ((this.state.grades[3] === null || this.state.grades[3] == "") ? [] : [{ptsReceived: parseInt(this.state.grades[3]), ptsOutOf: 100}]),
+      				graded: ((this.state.grades[3] === null || this.state.grades[3] === "") ? [] : [{ptsReceived: parseInt(this.state.grades[3]), ptsOutOf: 100}]),
       				projected: []
       			},
       		],
-       		target: ((this.state.grades[4] === null || this.state.grades[4] == "") ? 0 : parseInt(this.state.grades[4]))
+       		target: ((this.state.grades[4] === null || this.state.grades[4] === "") ? 0 : parseInt(this.state.grades[4]))
       	};
     console.log(grades);
     const results = calculate(grades);

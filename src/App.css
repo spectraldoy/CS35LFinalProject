@@ -1,9 +1,14 @@
+:root {
+  --header-height: 10vh;
+  --side-menu-font-size: 15px;
+}
+
 .App {
   text-align: center;
 }
 
 .App-logo {
-  height: 7vmin;
+  height: var(--header-height);
   pointer-events: none;
 }
 
@@ -24,13 +29,14 @@
 
 .App-brand {
   /* background-color: #282c34; */
-  min-height: 5vh;
-  min-width: 5vh;
+  min-height: var(--header-height);
+  max-height: var(--header-height);
+  min-width: 8vh;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: left;
-  font-size: calc(10px + 1vmin);
+  font-size: calc(10px + var(--header-height) / 5);
   color: black;
 }
 
@@ -43,9 +49,41 @@
   color: #61dafb;
 }
 
-.Assignment{
+.Assignment {
   text-align: left;
   padding-left: 20px;
+}
+
+.SideMenu {
+  height: calc(98.9vh - var(--header-height));
+  width: 13.5vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  border-right: 1px solid black;
+  padding-left: 1.5vw;
+  align-items: flex-start;
+  font-size: var(--side-menu-font-size);
+}
+
+.SideMenu-h {
+  display: flex;
+  justify-content: center;
+  width: 10vw;
+  height: calc(var(--side-menu-font-size) * 1.8vh);
+  border: 2px solid black;
+  border-radius: 1vmin;
+  padding: 1vmin;
+  margin-top: 4vh;
+  margin-bottom: 1vh;
+}
+
+.SideMenu-nava {
+  display: block;
+  text-align: left;
+  padding: 1.4vmin;
+  cursor: pointer;
+  width: 10vw;
 }
 
 @keyframes App-logo-spin {
