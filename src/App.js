@@ -17,11 +17,13 @@ function App() {
         </ul>
    */
   // for now, switch pages by changing the url in the browser
+  // TODO: make the home page like a login page or something, which routes to Dashboard after user has logged in
   return (
     <div className="App">
       <BrowserRouter>
         <Switch>
-            <Route exact path="/" component={Dashboard} />
+            <Route exact path="/" component={Dashboard} /> 
+            <Route path="/dashboard" component={Dashboard} />
             <Route path="/calculatorInterface" component={calculatorInterface} />
         </Switch>
       </BrowserRouter>

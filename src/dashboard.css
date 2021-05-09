@@ -1,0 +1,140 @@
+@import url('https://fonts.googleapis.com/css?family=Lato|Inconsolata|Fira+Sans|Comic+Sans');
+
+.App-header {
+	display: flex;
+	height: var(--header-height);
+	flex-direction: row;
+	flex-shrink: 0;
+	position: fixed;
+	width: 100vw;
+	justify-content: space-between;
+	border-bottom: 1px solid black;
+	align-items: center;
+	overflow: hidden;
+}
+
+.App-brand {
+	/* background-color: #282c34; */
+	height: var(--header-height);
+	min-width: 8vh;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: left;
+	font-size: calc(10px + var(--header-height) / 5);
+}
+
+.App-search {
+	font-size: 15px;
+	padding-right: 6vmin;
+}
+
+.App-bottom {
+	display: flex;
+	flex-direction: row;
+	flex-shrink: 0;
+}
+
+.SideMenu {
+	position: fixed;
+	display: flex;
+	flex-direction: column;
+	font-size: var(--side-menu-font-size);
+	/* height: calc(98.9vh - var(--header-height)); */
+	height: 100vh;
+	width: var(--side-menu-width);
+	justify-content: flex-start;
+	align-items: center;
+	margin-top: var(--header-height);
+	border-right: 1px solid black;
+	overflow: hidden;
+}
+
+.SideMenu-h {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 10vw;
+	height: 1.4em;
+	border: 2px solid black;
+	border-radius: 1vmin;
+	padding: 1vmin;
+	margin-top: 4vh;
+	margin-bottom: 1vh;
+}
+
+.SideMenu-nava {
+	display: block;
+	font-size: var(--side-menu-font-size);
+	text-align: left;
+	padding: 1em;
+	padding-left: 0.5em;
+	cursor: pointer;
+	width: 11.5vw;
+	transition-duration: 0.3s;
+	background: none;
+	border-color: var(--background-color);
+	border-style: solid;
+	border-radius: 1vmin;
+}
+
+.SideMenu-nava:hover {
+	background-color: #61dafb;
+}
+
+.Window {
+	display: flex;
+	flex-direction: column;
+	margin-left: var(--side-menu-width);
+	margin-top: var(--header-height);
+	overflow-x: scroll;
+}
+
+.WinHeader {
+	display: block;
+	text-align: left;
+	padding: 5vmin;
+	padding-bottom: 0;
+	padding-left: 7vmin;
+}
+
+.MySchemes {
+	display: flex;
+	flex-direction: row;
+	padding: 3vmin;
+	padding-top: 2vmin;
+	overflow-x: scroll;
+	/* TODO: wrap around or scroll? */
+}
+
+.MySchemes::-webkit-scrollbar {
+	display: none;
+}
+
+.Scheme {
+	background-color:#61dafb; 
+	border: 2px solid black;
+	border-radius: 2vmin;
+	display: flex;
+	flex-direction: column;
+	/* 15:9 aspect ratio */
+	width: 40vmin;
+	height: 24vmin;
+	margin: 2vmin;
+	transition-duration: 0.3s;
+	cursor: pointer;
+	flex-shrink: 0;
+}
+
+.Scheme:hover {
+	background-color:cornflowerblue;
+}
+
+.Scheme-bottom {
+	display: flex;
+	flex-direction: row;
+}
+
+.Scheme-bottom ul {
+	list-style: none;
+}

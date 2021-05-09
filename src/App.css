@@ -1,9 +1,14 @@
+/* TODO: viewport or other units? */
+
 :root {
-  --header-height: 10vh;
+  --header-height: 9vh;
+  --side-menu-width: 15vw;
   --side-menu-font-size: 15px;
+  --background-color: white;
 }
 
 .App {
+  background-color: var(--background-color);
   text-align: center;
 }
 
@@ -18,72 +23,9 @@
   }
 }
 
-.App-header {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  border-bottom: 1px solid black;
-  padding: 0.5vmin;
-  align-items: center;
-}
-
-.App-brand {
-  /* background-color: #282c34; */
-  min-height: var(--header-height);
-  max-height: var(--header-height);
-  min-width: 8vh;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: left;
-  font-size: calc(10px + var(--header-height) / 5);
-  color: black;
-}
-
-.App-search {
-  font-size: 15px;
-  padding-right: 6vmin;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
 .Assignment {
   text-align: left;
   padding-left: 20px;
-}
-
-.SideMenu {
-  height: calc(98.9vh - var(--header-height));
-  width: 13.5vw;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  border-right: 1px solid black;
-  padding-left: 1.5vw;
-  align-items: flex-start;
-  font-size: var(--side-menu-font-size);
-}
-
-.SideMenu-h {
-  display: flex;
-  justify-content: center;
-  width: 10vw;
-  height: calc(var(--side-menu-font-size) * 1.8vh);
-  border: 2px solid black;
-  border-radius: 1vmin;
-  padding: 1vmin;
-  margin-top: 4vh;
-  margin-bottom: 1vh;
-}
-
-.SideMenu-nava {
-  display: block;
-  text-align: left;
-  padding: 1.4vmin;
-  cursor: pointer;
-  width: 10vw;
 }
 
 @keyframes App-logo-spin {

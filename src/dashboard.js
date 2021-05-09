@@ -1,13 +1,8 @@
 import logo from './logo.svg';
-import './App.css';
+import './dashboard.css';
 import React from 'react';
+import MySchemes from './dashwins';
 
-// TODO: check with team, and a framework component, of which dashboard
-//       is a subclass, that is used for the Browse Schemes, and search
-//       windows, and so on, with top and left panels floating there
-//       being optionally collapsible, except for logo. Maybe only left
-//       panel collapsible
-// TODO: a lagoon component with all the links to click to browse schemes, etc.
 // TODO: a recent schemes thing with label dashboard
 // TODO: an account thing at the bottom
 
@@ -46,14 +41,14 @@ class SideMenu extends React.Component {
       <div className="SideMenu">
         <nav>
           <h className="SideMenu-h">SCHEMING</h>
-          <a className="SideMenu-nava" onClick={this.onClick}>My Schemes</a>
-          <a className="SideMenu-nava" onClick={this.onClick}>Browse Schemes</a>
-          <a className="SideMenu-nava" onClick={this.onClick}>My University's Schemes</a>
+          <button className="SideMenu-nava" onClick={this.onClick}>My Schemes</button>
+          <button className="SideMenu-nava" onClick={this.onClick}>Browse Schemes</button>
+          <button className="SideMenu-nava" onClick={this.onClick}>My University's Schemes</button>
         </nav> 
         <nav>
           <h className="SideMenu-h">ACCOUNT</h>
-          <a className="SideMenu-nava" onClick={this.onClick}>Profile</a>
-          <a className="SideMenu-nava" onClick={this.onClick}>Settings</a>
+          <button className="SideMenu-nava" onClick={this.onClick}>Profile</button>
+          <button className="SideMenu-nava" onClick={this.onClick}>Settings</button>
         </nav> 
       </div>
     );
@@ -76,9 +71,8 @@ class Dashboard extends React.Component {
 
     this.submitQuery = this.submitQuery.bind(this);
     this.displayQuery = this.displayQuery.bind(this);
+    this.renderSearchBar = this.renderSearchBar.bind(this);
   }
-
-  // SEARCHBAR
 
   submitQuery(event) {
     // TODO: search database using this.state.searchQuery
@@ -115,13 +109,14 @@ class Dashboard extends React.Component {
     );
   }
 
-  // SIDE PANEL
-
   render() {
       return (
         <div>
-          <Header renderSearchBar={this.renderSearchBar.bind(this)} />
-          <SideMenu/>
+          <Header renderSearchBar={this.renderSearchBar} />
+          <div className="App-bottom">
+            <SideMenu />
+            <MySchemes />
+          </div>
         </div>
       );
   }
