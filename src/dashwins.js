@@ -92,7 +92,7 @@ class MySchemes extends React.Component {
 			renderedSchemes.push(this.displayScheme(scheme))
 		}
 		return (
-			<div className="Window">
+			<div className="DashWin">
 				<h className="WinHeader">My Schemes</h>
 				<div className="MySchemes">
 					{renderedSchemes}

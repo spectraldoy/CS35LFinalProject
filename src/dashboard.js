@@ -1,22 +1,23 @@
 import logo from './logo.svg';
 import './dashboard.css';
 import React from 'react';
+import { Link } from "react-router-dom";
 import MySchemes from './dashwins';
-
-// TODO: a recent schemes thing with label dashboard
-// TODO: an account thing at the bottom
 
 class Header extends React.Component {
 
   renderBrand() {
     const name = "Foxtrot";
+    // edit header font color here
     return (
-      <div className="App-brand">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          {name}
-        </p>
-      </div>
+      <Link to="/" style={{textDecoration: 'none', color: 'black'}}>
+        <div className="App-brand">
+            <img src={logo} className="App-logo" alt="logo" />
+            <p>
+              {name}
+            </p>
+        </div>
+      </Link>
     );
   }
 

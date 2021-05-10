@@ -1,7 +1,9 @@
 @import url('https://fonts.googleapis.com/css?family=Lato|Inconsolata|Fira+Sans|Comic+Sans');
 
 .App-header {
+	background-color: var(--background-color);
 	display: flex;
+	z-index: 999;
 	height: var(--header-height);
 	flex-direction: row;
 	flex-shrink: 0;
@@ -10,7 +12,6 @@
 	justify-content: space-between;
 	border-bottom: 1px solid black;
 	align-items: center;
-	overflow: hidden;
 }
 
 .App-brand {
@@ -32,10 +33,10 @@
 .App-bottom {
 	display: flex;
 	flex-direction: row;
-	flex-shrink: 0;
 }
 
 .SideMenu {
+	background-color: var(--background-color);
 	position: fixed;
 	display: flex;
 	flex-direction: column;
@@ -47,7 +48,6 @@
 	align-items: center;
 	margin-top: var(--header-height);
 	border-right: 1px solid black;
-	overflow: hidden;
 }
 
 .SideMenu-h {
@@ -82,12 +82,12 @@
 	background-color: #61dafb;
 }
 
-.Window {
+.DashWin {
 	display: flex;
 	flex-direction: column;
 	margin-left: var(--side-menu-width);
 	margin-top: var(--header-height);
-	overflow-x: scroll;
+	overflow: scroll;
 }
 
 .WinHeader {
