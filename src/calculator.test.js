@@ -39,6 +39,16 @@ test("Graded and projected, no target, assignments out of 0", () => {
 	  expect(results4.projectedNeededScore).toEqual(null);
 });
 
+var grades5 = createGrades5();
+var results5 = calculate(grades5);
+test("Standard graded and projected, with target, empty categories", () => {
+	  expect(results5.currentGrade).toEqual(80);
+	  expect(results5.projectedGrade).toEqual(80);
+	  expect(results5.gradedNeededScore).toEqual(100);
+	  expect(results5.projectedNeededScore).toEqual(100);
+});
+
+
 // TODO:
 // Category with 0 weight
 // Decimal weights
@@ -155,14 +165,48 @@ function createGrades4() {
 		graded: graded3,
 		projected: [],
 	})
-	var category3 = ({
+	var category4 = ({
 		weight: 10,
 		graded: [],
 		projected: projected4,
 	})
 
-	var categories = [category1, category2, category3];
+	var categories = [category1, category2, category3, category4];
 	var target = null;
+
+	return ({
+		categories: categories,
+		target: target,
+	});
+}
+
+function createGrades5() {
+	var graded1 = [{ptsReceived: 80, ptsOutOf: 100,}];
+	var graded2 = [{ptsReceived: 80, ptsOutOf: 100,}];
+
+	var category1 = ({
+		weight: 40,
+		graded: graded1,
+		projected: [],
+	});
+	var category2 = ({
+		weight: 10,
+		graded: graded2,
+		projected: [],
+	})
+	var category3 = ({
+		weight: 20,
+		graded: [],
+		projected: [],
+	})
+	var category4 = ({
+		weight: 30,
+		graded: [],
+		projected: [],
+	})
+
+	var categories = [category1, category2, category3, category4];
+	var target = 90;
 
 	return ({
 		categories: categories,

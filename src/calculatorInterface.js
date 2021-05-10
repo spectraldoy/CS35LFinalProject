@@ -31,7 +31,7 @@ class calculatorInterface extends React.Component {
       		categories: [
       			{
       				weight: 10,
-      				graded: ((this.state.grades[0] === null || this.state.grades[0] == "") ? [] : [{ptsReceived: parseInt(this.state.grades[0]), ptsOutOf: 100}]),
+      				graded: ((this.state.grades[0] === null || this.state.grades[0] === "") ? [] : [{ptsReceived: parseInt(this.state.grades[0]), ptsOutOf: 100}]),
       				projected: []
       			},
       			{
@@ -73,7 +73,7 @@ class calculatorInterface extends React.Component {
       message += "Grade Needed: 0%"; 
     }
     else{
-      message += ("Grade Needed: " + results.gradeNeededScore + "%");
+      message += ("Grade Needed: " + results.gradedNeededScore + "%");
     }
     message += "\n";
     if(results.projectedNeededScore === null){
