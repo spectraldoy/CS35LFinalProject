@@ -1,27 +1,23 @@
 import logo from './logo.svg';
-import './App.css';
+import './dashboard.css';
 import React from 'react';
-
-// TODO: check with team, and a framework component, of which dashboard
-//       is a subclass, that is used for the Browse Schemes, and search
-//       windows, and so on, with top and left panels floating there
-//       being optionally collapsible, except for logo. Maybe only left
-//       panel collapsible
-// TODO: a lagoon component with all the links to click to browse schemes, etc.
-// TODO: a recent schemes thing with label dashboard
-// TODO: an account thing at the bottom
+import { Link } from "react-router-dom";
+import MySchemes from './dashwins';
 
 class Header extends React.Component {
 
   renderBrand() {
     const name = "Foxtrot";
+    // edit header font color here
     return (
-      <div className="App-brand">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          {name}
-        </p>
-      </div>
+      <Link to="/" style={{textDecoration: 'none', color: 'black'}}>
+        <div className="App-brand">
+            <img src={logo} className="App-logo" alt="logo" />
+            <p>
+              {name}
+            </p>
+        </div>
+      </Link>
     );
   }
 
@@ -35,13 +31,39 @@ class Header extends React.Component {
   }
 }
 
-class Lagoon extends React.Component {
+class SideMenu extends React.Component {
+
+  onClick() {
+    alert("r");
+  }
+
   render() {
-    return 3;
+    return (
+      <div className="SideMenu">
+        <nav>
+          <h className="SideMenu-h">SCHEMING</h>
+          <button className="SideMenu-nava" onClick={this.onClick}>My Schemes</button>
+          <button className="SideMenu-nava" onClick={this.onClick}>Browse Schemes</button>
+          <button className="SideMenu-nava" onClick={this.onClick}>My University's Schemes</button>
+        </nav> 
+        <nav>
+          <h className="SideMenu-h">ACCOUNT</h>
+          <button className="SideMenu-nava" onClick={this.onClick}>Profile</button>
+          <button className="SideMenu-nava" onClick={this.onClick}>Settings</button>
+        </nav> 
+      </div>
+    );
   }
 }
 
 class Dashboard extends React.Component {
+  /**
+   * Header and side panel to display links to various pages / functionality
+   * Such as Scheme Creator, My Schemes, Home, Search Schemes, etc.
+   * If a link is clicked in the side panel, the page / url will not change,
+   * it will just load that specific window into the Dashboard viewer
+   */
+
   constructor(props) {
     super(props);
     this.state = {
@@ -50,6 +72,7 @@ class Dashboard extends React.Component {
 
     this.submitQuery = this.submitQuery.bind(this);
     this.displayQuery = this.displayQuery.bind(this);
+    this.renderSearchBar = this.renderSearchBar.bind(this);
   }
 
   submitQuery(event) {
@@ -89,7 +112,13 @@ class Dashboard extends React.Component {
 
   render() {
       return (
-        <Header renderSearchBar={this.renderSearchBar.bind(this)} />
+        <div>
+          <Header renderSearchBar={this.renderSearchBar} />
+          <div className="App-bottom">
+            <SideMenu />
+            <MySchemes />
+          </div>
+        </div>
       );
   }
 }

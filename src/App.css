@@ -1,10 +1,19 @@
+/* TODO: viewport or other units? */
+
+:root {
+  --header-height: 9vh;
+  --side-menu-width: 15vw;
+  --side-menu-font-size: 15px;
+  --background-color: white;
+}
+
 .App {
+  background-color: var(--background-color);
   text-align: center;
 }
 
 .App-logo {
-  height: 7vmin;
-  pointer-events: none;
+  height: var(--header-height);
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -13,37 +22,12 @@
   }
 }
 
-.App-header {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  border-bottom: 1px solid black;
-  padding: 0.5vmin;
-  align-items: center;
+.App-router {
+  list-style: none;
+  text-align: left;
 }
 
-.App-brand {
-  /* background-color: #282c34; */
-  min-height: 5vh;
-  min-width: 5vh;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: left;
-  font-size: calc(10px + 1vmin);
-  color: black;
-}
-
-.App-search {
-  font-size: 15px;
-  padding-right: 6vmin;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-.Assignment{
+.Assignment {
   text-align: left;
   padding-left: 20px;
 }
