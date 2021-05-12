@@ -1,5 +1,5 @@
-// Code for calculateing grades
-// Can be used by includeing the following line
+// Code for calculating grades
+// Can be used by including the following line
 // import {calculate} from './calculator.js'
 
 // Parameters: grades should have the following format
@@ -13,10 +13,10 @@
 //			{ another category },
 //			...
 //		]
-// 		target: 00 (can be a falsy value to mean unspecified)
+// 		target: 00 (can be a falsy value to mean unspecified) Note: may want to change as to treat 0 as false
 //	}
 //
-// Sum of weights should be 100
+// Enforce: Weights should be in range [0, 100] and sum of weights should be 100
 //
 // Return value: An object containing four fields
 // 		currentGrade: grade based on current graded scores

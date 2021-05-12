@@ -73,7 +73,7 @@ class calculatorInterface extends React.Component {
       message += "Grade Needed: 0%"; 
     }
     else{
-      message += ("Grade Needed: " + results.gradeNeededScore + "%");
+      message += ("Grade Needed: " + results.gradedNeededScore + "%");
     }
     message += "\n";
     if(results.projectedNeededScore === null){
