@@ -30,6 +30,17 @@ app.get("/api", (req, res) =>
 });
 
 
+// For get requests, we use req.query to retrieve the query parameters we send through Postman. I assume that the client
+// would simply have to append the query parameters to the API endpoint (URL) in order to make this get request
+app.get("/get_scheme", async (req, res) =>
+{
+    professor = req.query.professsor;
+    var requestedSchemes = await Scheme.find({ "prof": req.query.professor }, (err, schemes) => {});
+
+    res.send("These are the scheme objects found for Professor " + req.query.professor + ": \n " + requestedSchemes);
+});
+
+
 
 // NOTE: As of now, there is no front-end for scheme saving, so in order to test out the database, 
 // you may want to use Postman or REST and send over a JSON object in the same format as the Scheme model in scheme.js
