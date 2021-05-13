@@ -74,6 +74,39 @@ app.post("/create_scheme", async (req, res) =>
 });
 
 
+
+// NOTE: As of now, there is no front-end for scheme saving, so in order to test out the database, 
+// you may want to use Postman or REST and send over a JSON object in the same format as the Scheme model in scheme.js
+
+
+
+app.post("/create_scheme", async (req, res) =>
+{
+    try
+    {
+        const newScheme = new Scheme(req.body);     // Here we attempt to construct a Scheme object from the JSON the server receives
+        await newScheme.save();                     // Attempts to save the newly constructed Scheme object in database
+
+
+        console.log("Received scheme for course \"" + req.body.course + "\"");   // This is a message for the server
+
+        let cat_names = "";
+        for(var i = 0; i < req.body.categories.length; i++)     // We combine all the category names into a comma-sep string
+        {
+            cat_names += req.body.categories[i].name;
+            if(i != req.body.categories.length - 1)
+                cat_names += ", ";
+        }
+        res.send(`Successfully saved scheme for course "${req.body.course}" with categories: ${cat_names}`); // This is a message for the client
+    }
+    catch (err)
+    {
+        res.send({ message: err });     // Send back an object containing the error we found
+    }
+    
+});
+
+
 // NOTE: Remember to install the dotenv package and then create a new file called .env within this project folder.
 // Within this file, you must declare a variable called DB_CONNECTION_STRING and set it equal to the string that
 // MongoDB provides you with (substituting in your database username and password)
