@@ -1,5 +1,8 @@
 /* TODO: viewport or other units? */
 
+/* Get any fonts you like here */
+@import url('https://fonts.googleapis.com/css?family=Lato|Inconsolata|Fira+Sans');
+
 :root {
   --header-height: 9vh;
   --side-menu-width: 15vw;

@@ -1,11 +1,18 @@
 import './dashboard.css';
 import React from 'react';
-
 // Dashboard Windows: MySchemes, BrowseSchemes, SearchSchemes, MyUnivSchemes, Profile, Settings
 
 class MySchemes extends React.Component {
 	// TODO: make this a generic loadScheme function, which loads by userID or schemeID from the database
 	//       so that we don't duplicate code for other parts of the web app
+
+	async getMySchemes() {
+		const response = await fetch(
+			'http://localhost:3001/get_scheme?word=Eggert',
+		);
+		alert(response);
+	}
+	/*
 	getMySchemes() {
 			// TODO: Search through database using this.props.userID 
     return ([
@@ -67,9 +74,10 @@ class MySchemes extends React.Component {
 				],
 			},
 		]);
-	}
+	}*/
 
 	displayScheme(scheme) {
+		// NOTE: hover over scheme to show preview, don't display on the right
 		return (
 			<div className="Scheme">
 				<h>{scheme.schemeName}</h>
@@ -86,11 +94,13 @@ class MySchemes extends React.Component {
 	}
 
 	render() {
-		const mySchemes = this.getMySchemes();
+		this.getMySchemes();
+		const mySchemes = []; // this.getMySchemes();
 		let renderedSchemes = [];
 		for (const scheme of mySchemes) {
 			renderedSchemes.push(this.displayScheme(scheme))
 		}
+		// NOTE: WinHeader must have a New Scheme button always
 		return (
 			<div className="DashWin">
 				<h className="WinHeader">My Schemes</h>

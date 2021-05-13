@@ -77,6 +77,7 @@ class Dashboard extends React.Component {
 
   submitQuery(event) {
     // TODO: search database using this.state.searchQuery
+    // enforce order of search as professor, uni, course
     event.preventDefault();
     alert(this.state.searchQuery);
 
