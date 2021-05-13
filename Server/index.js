@@ -30,6 +30,50 @@ app.get("/api", (req, res) =>
 });
 
 
+// For get requests, we use req.query to retrieve the query parameters we send through Postman. I assume that the client
+// would simply have to append the query parameters to the API endpoint (URL) in order to make this get request
+app.get("/get_scheme", async (req, res) =>
+{
+    professor = req.query.professsor;
+    var requestedSchemes = await Scheme.find({ "prof": req.query.professor }, (err, schemes) => {});
+
+    res.send("These are the scheme objects found for Professor " + req.query.professor + ": \n " + requestedSchemes);
+});
+
+
+
+// NOTE: As of now, there is no front-end for scheme saving, so in order to test out the database, 
+// you may want to use Postman or REST and send over a JSON object in the same format as the Scheme model in scheme.js
+
+
+
+app.post("/create_scheme", async (req, res) =>
+{
+    try
+    {
+        const newScheme = new Scheme(req.body);     // Here we attempt to construct a Scheme object from the JSON the server receives
+        await newScheme.save();                     // Attempts to save the newly constructed Scheme object in database
+
+
+        console.log("Received scheme for course \"" + req.body.course + "\"");   // This is a message for the server
+
+        let cat_names = "";
+        for(var i = 0; i < req.body.categories.length; i++)     // We combine all the category names into a comma-sep string
+        {
+            cat_names += req.body.categories[i].name;
+            if(i != req.body.categories.length - 1)
+                cat_names += ", ";
+        }
+        res.send(`Successfully saved scheme for course "${req.body.course}" with categories: ${cat_names}`); // This is a message for the client
+    }
+    catch (err)
+    {
+        res.send({ message: err });     // Send back an object containing the error we found
+    }
+    
+});
+
+
 
 // NOTE: As of now, there is no front-end for scheme saving, so in order to test out the database, 
 // you may want to use Postman or REST and send over a JSON object in the same format as the Scheme model in scheme.js
