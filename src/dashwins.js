@@ -34,22 +34,26 @@ class MySchemes extends React.Component {
 
 	componentWillUnmount() {
 		if (this._asyncRequest) {
-			this._asyncRequest.cancel();
+			this._asyncRequest = null;
 		}
 	}
 
 	displayScheme(scheme) {
-		// NOTE: hover over scheme to show preview, don't display on the right
 		return (
 			<div className="Scheme">
-				<h>{scheme._id}</h>
-				<div className="Scheme-bottom">
-					<ul>
-						<li>{scheme.course}</li>
-						<li>{scheme.prof}</li>
-						<li>{scheme.uni}</li>
-					</ul>
+				{/* <h>{scheme._id}</h> */}
+				<div className="Scheme-preview">
+					{scheme.categories.map(
+						(category) => <li key={category._id}>{
+							category.name + " " + category.weight
+						}</li>
+					)}
 				</div>
+				<ul>
+					<li>{scheme.course}</li>
+					<li>{scheme.prof}</li>
+					<li>{scheme.uni}</li>
+				</ul>
 			</div>
 		);
 	}
@@ -62,6 +66,7 @@ class MySchemes extends React.Component {
 		for (const scheme of this.state.mySchemes) {
 			renderedSchemes.push(this.displayScheme(scheme));
 		}
+		console.log(this.state.mySchemes)
 		// NOTE: WinHeader must have a New Scheme button always
 		return (
 			<div className="DashWin">
