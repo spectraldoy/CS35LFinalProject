@@ -1,3 +1,5 @@
+@charset "UTF-8";
+
 /* TODO: viewport or other units? */
 
 /* Get any fonts you like here */
@@ -8,6 +10,8 @@
   --side-menu-width: 15vw;
   --side-menu-font-size: 15px;
   --background-color: white;
+  --xwalk: 0px;
+  --ywalk: 0px;
 }
 
 .App {
@@ -41,5 +45,16 @@
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+@keyframes fadein {
+  from { 
+    opacity: 0;
+    transform: translate(var(--xwalk), var(--ywalk));
+  }
+  to {
+    opacity: 1; 
+    transform: translate(0, 0);
   }
 }

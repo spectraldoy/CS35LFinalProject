@@ -19,8 +19,9 @@
     "web-vitals": "^1.1.1"
   },
   "scripts": {
-    "start": "nodemon Server/index.js",
-    "app-start": "react-scripts start",
+    "start": "react-scripts start",
+    "start-db": "nodemon Server/index.js",
+    "dev": "concurrently --kill-others \"npm run start\" \"npm run start-db\"",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

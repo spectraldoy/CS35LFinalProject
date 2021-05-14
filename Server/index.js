@@ -20,10 +20,6 @@ app.use(function (req, res, next) {
 });
 
 
-
-
-
-
 app.use(express.json());        // express.json is the middleware that processes JSON files sent to the server
 
 
@@ -48,7 +44,7 @@ app.get("/get_scheme", async (req, res) =>
     professor = req.query.professsor;
     var requestedSchemes = await Scheme.find({ "prof": req.query.professor }, (err, schemes) => {});
 
-    res.send("These are the scheme objects found for Professor " + req.query.professor + ": \n " + requestedSchemes);
+    res.send(requestedSchemes);
 });
 
 
