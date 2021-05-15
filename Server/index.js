@@ -9,8 +9,15 @@ const PORT = process.env.PORT || 3001;  // Our port defaults to port 3001 (if no
 
 const app = express();
 
+// var cors = require("cors");
+// app.use(cors());
 
-
+app.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT,DELETE");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+    next();
+});
 
 
 app.use(express.json());        // express.json is the middleware that processes JSON files sent to the server
@@ -37,7 +44,7 @@ app.get("/get_scheme", async (req, res) =>
     professor = req.query.professsor;
     var requestedSchemes = await Scheme.find({ "prof": req.query.professor }, (err, schemes) => {});
 
-    res.send("These are the scheme objects found for Professor " + req.query.professor + ": \n " + requestedSchemes);
+    res.send(requestedSchemes);
 });
 
 
@@ -74,37 +81,6 @@ app.post("/create_scheme", async (req, res) =>
 });
 
 
-
-// NOTE: As of now, there is no front-end for scheme saving, so in order to test out the database, 
-// you may want to use Postman or REST and send over a JSON object in the same format as the Scheme model in scheme.js
-
-
-
-app.post("/create_scheme", async (req, res) =>
-{
-    try
-    {
-        const newScheme = new Scheme(req.body);     // Here we attempt to construct a Scheme object from the JSON the server receives
-        await newScheme.save();                     // Attempts to save the newly constructed Scheme object in database
-
-
-        console.log("Received scheme for course \"" + req.body.course + "\"");   // This is a message for the server
-
-        let cat_names = "";
-        for(var i = 0; i < req.body.categories.length; i++)     // We combine all the category names into a comma-sep string
-        {
-            cat_names += req.body.categories[i].name;
-            if(i != req.body.categories.length - 1)
-                cat_names += ", ";
-        }
-        res.send(`Successfully saved scheme for course "${req.body.course}" with categories: ${cat_names}`); // This is a message for the client
-    }
-    catch (err)
-    {
-        res.send({ message: err });     // Send back an object containing the error we found
-    }
-    
-});
 
 
 // NOTE: Remember to install the dotenv package and then create a new file called .env within this project folder.

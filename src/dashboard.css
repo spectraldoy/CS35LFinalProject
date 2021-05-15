@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css?family=Lato|Inconsolata|Fira+Sans|Comic+Sans');
-
 .App-header {
 	background-color: var(--background-color);
 	display: flex;
@@ -88,9 +86,18 @@
 	margin-left: var(--side-menu-width);
 	margin-top: var(--header-height);
 	overflow: scroll;
+
+	--xwalk: 30px;
+	-webkit-animation: fadein;
+	-moz-animation: fadein;
+	 -ms-animation: fadein;
+	  -o-animation: fadein;
+		 animation: fadein;
+	animation-duration: 1.5s;
+	/* animation-timing-function: ease; */
 }
 
-.WinHeader {
+.WinHeader h {
 	display: block;
 	text-align: left;
 	padding: 5vmin;
@@ -112,29 +119,49 @@
 }
 
 .Scheme {
-	background-color:#61dafb; 
-	border: 2px solid black;
-	border-radius: 2vmin;
+	position: relative;
+	/* background-color:#61dafb; */
+	border-top-right-radius: 2vmin;
+	border-top-left-radius: 2vmin;
 	display: flex;
 	flex-direction: column;
-	/* 15:9 aspect ratio */
-	width: 40vmin;
-	height: 24vmin;
+	align-items: center;
+	justify-content: center;
+	width: 16vw;
+	height: 40vh;
 	margin: 2vmin;
 	transition-duration: 0.3s;
 	cursor: pointer;
 	flex-shrink: 0;
+	box-shadow: none;
+}
+
+.Scheme ul {
+	width: 100%;
+	z-index: 1;
+	list-style: none;
+	margin: 0;
+	text-align: left;
+	padding: 0;
+	border: 2px solid black;
 }
 
 .Scheme:hover {
-	background-color:cornflowerblue;
+	box-shadow: 2px 2px 4px gray;
 }
 
-.Scheme-bottom {
-	display: flex;
-	flex-direction: row;
-}
-
-.Scheme-bottom ul {
+.Scheme-preview {
 	list-style: none;
+	padding: 0;
+	background-color: cornflowerblue;
+	z-index: 0;
+	width: inherit;
+	height: 110%;
+	border-top-right-radius: 2vmin;
+	border-top-left-radius: 2vmin;
+	border-bottom: 0;
+	display: flex;
+	flex-direction: column;
+	transition-duration: 0.3s;
+	box-shadow: none;
 }

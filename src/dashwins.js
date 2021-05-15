@@ -1,99 +1,78 @@
 import './dashboard.css';
 import React from 'react';
-
+import { getScheme } from './schemes';
 // Dashboard Windows: MySchemes, BrowseSchemes, SearchSchemes, MyUnivSchemes, Profile, Settings
 
 class MySchemes extends React.Component {
-	// TODO: make this a generic loadScheme function, which loads by userID or schemeID from the database
+	// TODO: make a generic loadScheme function, which loads by userID or schemeID from the database
 	//       so that we don't duplicate code for other parts of the web app
-	getMySchemes() {
-			// TODO: Search through database using this.props.userID 
-    return ([
-			{
-				schemeName: "Za Scheme",
-				university: "UCLA",
-				professor: "Eggert",
-				class: "CS35L",
-				userID: "1234",
-				schemeID: "5678",
-				categories: [
-						{name: "HW", weight: 0.05},
-						{name: "Midterm", weight: 0.2},
-						{name: "Assignments", weight: 0.05},
-						{name: "Final Exam", weight: 0.4},
-						{name: "Final Project", weight: 0.3},
-				],
-			},
-			{
-				schemeName: "Potatscheme Schemeovitch",
-				university: "UCLA",
-				professor: "Reinman",
-				class: "CS33",
-				userID: "1234",
-				schemeID: "2352",
-				categories: [
-					{name: "HW", weight: 0.1},
-					{name: "Labs", weight: 0.3},
-					{name: "Midterm", weight: 0.2},
-					{name: "Final", weight: 0.4},
-				],
-			},
-			{
-				schemeName: "Potatscheme Schemeovitch",
-				university: "UCLA",
-				professor: "Reinman",
-				class: "CS33",
-				userID: "1234",
-				schemeID: "2352",
-				categories: [
-					{name: "HW", weight: 0.1},
-					{name: "Labs", weight: 0.3},
-					{name: "Midterm", weight: 0.2},
-					{name: "Final", weight: 0.4},
-				],
-			},
-			{
-				schemeName: "Potatscheme Schemeovitch",
-				university: "UCLA",
-				professor: "Reinman",
-				class: "CS33",
-				userID: "1234",
-				schemeID: "2352",
-				categories: [
-					{name: "HW", weight: 0.1},
-					{name: "Labs", weight: 0.3},
-					{name: "Midterm", weight: 0.2},
-					{name: "Final", weight: 0.4},
-				],
-			},
-		]);
+	constructor(props) {
+		super(props);
+		this.state = {
+			mySchemes: null,
+		};
+	}
+
+	async getMySchemes() {
+		// TODO: getscheme by userID=user.USERID or something like that
+		const response = await getScheme("professor=Reinmann");
+		return response;
+	}
+
+	componentDidMount() {
+		this._asyncRequest = this.getMySchemes()
+		.then( data => data.json() ) 
+		.then(
+			data => {
+				this._asyncRequest = null;
+				this.setState({
+					mySchemes: data,
+				});
+			}
+		);
+	}
+
+	componentWillUnmount() {
+		if (this._asyncRequest) {
+			this._asyncRequest = null;
+		}
 	}
 
 	displayScheme(scheme) {
 		return (
 			<div className="Scheme">
-				<h>{scheme.schemeName}</h>
-				<div className="Scheme-bottom">
-					<ul>
-						<li>{scheme.class}</li>
-						<li>{scheme.professor}</li>
-						<li>{scheme.university}</li>
-					</ul>
-					<p>TODO: Preview</p>
+				{/* <h>{scheme._id}</h> */}
+				<div className="Scheme-preview">
+					{scheme.categories.map(
+						(category) => <li key={category._id}>{
+							category.name + " " + category.weight
+						}</li>
+					)}
 				</div>
+				<ul>
+					<li>{scheme.course}</li>
+					<li>{scheme.prof}</li>
+					<li>{scheme.uni}</li>
+				</ul>
 			</div>
 		);
 	}
-
+	
 	render() {
-		const mySchemes = this.getMySchemes();
-		let renderedSchemes = [];
-		for (const scheme of mySchemes) {
-			renderedSchemes.push(this.displayScheme(scheme))
+		if (this.state.mySchemes == null) {
+			return null;	
 		}
+		let renderedSchemes = []
+		for (const scheme of this.state.mySchemes) {
+			renderedSchemes.push(this.displayScheme(scheme));
+		}
+		console.log(this.state.mySchemes)
+		// NOTE: WinHeader must have a New Scheme button always
 		return (
 			<div className="DashWin">
-				<h className="WinHeader">My Schemes</h>
+				<div className="WinHeader">
+					<h>My Schemes</h>
+				</div>
 				<div className="MySchemes">
 					{renderedSchemes}
 				</div>
