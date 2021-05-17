@@ -9,9 +9,8 @@ const PORT = process.env.PORT || 3001;  // Our port defaults to port 3001 (if no
 
 const app = express();
 
-// var cors = require("cors");
-// app.use(cors());
-
+// following links client to server, sourced from:
+// https://stackoverflow.com/questions/58450951/blocked-by-cors-policy-error-when-calling-to-mongo-golang-db-with-angular-web-ap
 app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT,DELETE");

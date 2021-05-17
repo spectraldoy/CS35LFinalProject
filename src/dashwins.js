@@ -7,6 +7,7 @@ class MySchemes extends React.Component {
 	// TODO: make a generic loadScheme function, which loads by userID or schemeID from the database
 	//       so that we don't duplicate code for other parts of the web app
 	constructor(props) {
+		// props.userID?
 		super(props);
 		this.state = {
 			mySchemes: null,
@@ -15,7 +16,7 @@ class MySchemes extends React.Component {
 
 	async getMySchemes() {
 		// TODO: getscheme by userID=user.USERID or something like that
-		const response = await getScheme("professor=Reinmann");
+		const response = await getScheme("professor=Eggert");
 		return response;
 	}
 

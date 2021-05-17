@@ -26,22 +26,27 @@ function HomePage() {
 function App() {
   const [token, setToken] = useToken();
 
-  if(!token) {
-    return <Login setToken={setToken} />
-  }
-
-  // TODO: put these links in the header?
-  return (
+  const app = (
     <div className="App">
       <BrowserRouter className="App-router">
         <Switch>
             <Route exact path="/">{HomePage()}</Route> 
+            <Route path="/login"><Login setToken={setToken} /></Route>
             <Route path="/dashboard" component={Dashboard} />
             <Route path="/calculatorInterface" component={calculatorInterface} />
         </Switch>
       </BrowserRouter>
     </div>
   );
+
+  // Make this a page with a link in router?
+  if(!token) {
+    // instead of calling login here, redirect to a login page?
+    return <Login setToken={setToken} />;
+  }
+
+  // TODO: put these links in the header?
+  return app;
 }
 
 function useToken() {

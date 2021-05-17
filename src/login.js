@@ -2,6 +2,7 @@
 
 import React from 'react';
 import './login.css';
+import { Logo, Name } from './globals';
 
 export default class Login extends React.Component {
     constructor(props) {
@@ -24,20 +25,21 @@ export default class Login extends React.Component {
     render() {
         return (
         <div className="login-wrapper">
-        <h1>Put Logo Here</h1>
-        <form onSubmit={this.handleSubmit}>
-            <label>
-            <p>Username</p>
-            <input type="text" onChange={e => this.setState({username: e.target.value})}/>
-            </label>
-            <label>
-            <p>Password</p>
-            <input type="password" onChange={e => this.setState({password: e.target.value})}/>
-            </label>
-            <div>
-            <button type="submit">Submit</button>
-            </div>
-        </form>
+			<div className="login-brand">
+				<img src={Logo} className="App-logo" alt="logo" />
+				<p>{Name}</p>
+			</div>
+			<form onSubmit={this.handleSubmit} className="login-credentials">
+				<label>
+					<p>Username</p>
+					<input type="text" onChange={e => this.setState({username: e.target.value})}/>
+				</label>
+				<label>
+					<p>Password</p>
+					<input type="password" onChange={e => this.setState({password: e.target.value})}/>
+				</label>
+				<button type="submit">Submit</button>
+			</form>
         </div>);
     }
 }
