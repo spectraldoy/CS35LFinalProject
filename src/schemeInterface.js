@@ -7,12 +7,8 @@ import { render } from 'react-dom/cjs/react-dom.development';
 
 class schemeInterface extends React.Component {
     
-//TODO: make method to create scheme from inputs, then pass to postScheme
-//TODO: make a component for a category to add, and a button to add these components. same for deletion
-//TODO: reset button
+//TODO: delete button, reset button
 //back button/homepage/dashboard button
-//load schemes button
-//maybe other features
 
     componentDidMount() {
         console.log('Component Mounted');
