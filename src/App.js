@@ -4,6 +4,7 @@ import { BrowserRouter, Route, Switch, Link } from "react-router-dom"; // also i
 import './App.css';
 import Dashboard from './dashboard';
 import calculatorInterface from './calculatorInterface';
+import schemeInterface from './schemeInterface'
 
 function HomePage() {
   return (
@@ -16,6 +17,9 @@ function HomePage() {
       </li>
       <li>
         <Link to="/calculatorInterface">Calculator Interface</Link>
+      </li>
+      <li>
+        <Link to="/schemeInterface">Scheme Interface</Link>
       </li>
     </ul>
   );
@@ -31,6 +35,7 @@ function App() {
             <Route exact path="/">{HomePage()}</Route> 
             <Route path="/dashboard" component={Dashboard} />
             <Route path="/calculatorInterface" component={calculatorInterface} />
+            <Route path="/schemeInterface" component={schemeInterface} />
         </Switch>
       </BrowserRouter>
     </div>
