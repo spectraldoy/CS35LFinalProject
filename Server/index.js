@@ -1,7 +1,10 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const Scheme = require("../model/scheme");      // We're storing a pointer to a Scheme object constructor (which we implemented in scheme.js)
+const Scheme = require("../model/scheme");      // OLD GRADING SCHEME -- USE GradingScheme instead
 
+const User = require("../model/user");
+const GradingScheme = require("../model/grading_scheme");   // NEW GRADING SCHEME
+const { default: userEvent } = require("@testing-library/user-event");
 
 require("dotenv/config");               // Allow us to use a .env file containing our credentials for the database
 
@@ -39,6 +42,9 @@ app.get("/api", (req, res) =>
 
 // For get requests, we use req.query to retrieve the query parameters we send through Postman. I assume that the client
 // would simply have to append the query parameters to the API endpoint (URL) in order to make this get request
+
+
+// OUTDATED!  \/\/\/\/  
 app.get("/get_scheme", async (req, res) =>
 {
     professor = req.query.professsor;
@@ -46,6 +52,53 @@ app.get("/get_scheme", async (req, res) =>
 
     res.send(requestedSchemes);
 });
+// OUTDATED!  /\/\/\/\
+
+
+
+
+app.get("/grading_schemes", async (req, res) =>
+{
+    search_creatorID = req.query.creatorID;
+    search_professor = req.query.professor;
+
+    var requestedSchemes;
+
+    if(search_creatorID != undefined)
+        requestedSchemes = await GradingScheme.find({ "creatorID": search_creatorID }, (err, grading_schemes) => {});
+    else if(search_professor != undefined)
+        requestedSchemes = await GradingScheme.find({ "professor": search_professor }, (err, grading_schemes) => {});
+    else
+    {
+        res.send({message: "ERROR: Invalid query"});
+        return;
+    }
+    
+    res.send(requestedSchemes);
+
+    console.log("userID requested: " + search_creatorID);
+});
+
+app.get("/users", async (req, res) => 
+{
+    try
+    {
+        var userAccount = await User.findOne({ "username": req.query.username, "password": req.query.password}, 
+            (err, userEvent) => {});
+        
+        if(userAccount != null)
+            res.send(userAccount);
+        else
+            res.send("");           // Empty return string signals that account could not be found
+    
+    }
+    catch(err)
+    {
+        res.send({message: err});
+    }
+});
+
+
 
 
 
@@ -53,7 +106,7 @@ app.get("/get_scheme", async (req, res) =>
 // you may want to use Postman or REST and send over a JSON object in the same format as the Scheme model in scheme.js
 
 
-
+// OUTDATED!  \/\/\/\/  Use app.post("/grading_schemes"...) !!!
 app.post("/create_scheme", async (req, res) =>
 {
     try
@@ -78,6 +131,42 @@ app.post("/create_scheme", async (req, res) =>
         res.send({ message: err });     // Send back an object containing the error we found
     }
     
+});
+// OUTDATED!  /\/\/\/\
+
+
+
+
+app.post("/grading_schemes", async (req, res) =>
+{
+    try
+    {
+        const newGradingScheme = new GradingScheme(req.body);
+        await newGradingScheme.save();
+
+        console.log("Saved new grading scheme for class \"" + req.body.class + "\" by userID \"" + req.body.creatorID + "\"");
+        res.send("Saved new grading scheme for class \"" + req.body.class + "\" by userID \"" + req.body.creatorID + "\"");
+    }
+    catch (err)
+    {
+        res.send({message: err});
+    }
+});
+
+app.post("/users", async (req, res) =>
+{
+    try
+    {
+        const newUser = new User(req.body);
+        await newUser.save();
+
+        console.log("Saved new user \"" + req.body.username + "\"");
+        res.send("Saved new user \"" + req.body.username + "\"");
+    }
+    catch(err)
+    {
+        res.send({message: err});
+    }
 });
 
 
