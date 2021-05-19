@@ -1,9 +1,11 @@
 import React from "react";
+import { useState } from 'react';
 import { BrowserRouter, Route, Switch, Link } from "react-router-dom"; // also import Link
 
 import './App.css';
 import Dashboard from './dashboard';
 import calculatorInterface from './calculatorInterface';
+import Login from './login'
 
 function HomePage() {
   return (
@@ -22,7 +24,12 @@ function HomePage() {
 }
 
 function App() {
-  // TODO: make the home page like a login page or something, which routes to Dashboard after user has logged in
+  const [token, setToken] = useToken();
+
+  if(!token) {
+    return <Login setToken={setToken} />
+  }
+
   // TODO: put these links in the header?
   return (
     <div className="App">
@@ -36,5 +43,22 @@ function App() {
     </div>
   );
 }
+
+function useToken() {
+  const getToken = () => {
+    const tokenString = sessionStorage.getItem('token');
+    return tokenString;
+  };
+  
+  const saveToken = userToken => {
+    sessionStorage.setItem('token', JSON.stringify(userToken));
+    setToken(userToken);
+  };
+
+  const [token, setToken] = useState(getToken());
+
+  return [token, saveToken];
+}
+
 
 export default App;

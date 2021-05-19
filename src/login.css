@@ -1,0 +1,7 @@
+/* modified from https://www.digitalocean.com/community/tutorials/how-to-add-login-authentication-to-react-applications */
+
+.login-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
