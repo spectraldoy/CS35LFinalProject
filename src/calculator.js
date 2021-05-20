@@ -70,10 +70,10 @@ export function calculate(grades) {
 	}
 
 	return ({
-		currentGrade: currentGrade,
-		projectedGrade: projectedGrade,
-		gradedNeededScore: gradedNeededScore,
-		projectedNeededScore: projectedNeededScore,
+		currentGrade: roundToHundredths(currentGrade),
+		projectedGrade: roundToHundredths(projectedGrade),
+		gradedNeededScore: roundToHundredths(gradedNeededScore),
+		projectedNeededScore: roundToHundredths(projectedNeededScore),
 	});
 }
 
@@ -115,4 +115,9 @@ function calculateCategory(category, summary) {
 		summary.finalProjectedScore += category.weight * (gradedPtsReceived + projectedPtsReceived) / ptsTotal;
 		summary.finalProjectedWeights += category.weight * (gradedPtsTotal + projectedPtsTotal) / ptsTotal;	
 	}
+}
+
+// Round the given num to two decimal points
+function roundToHundredths(num) {
+	return num; //Math.round((num + Number.EPSILON) * 100) / 100;
 }
