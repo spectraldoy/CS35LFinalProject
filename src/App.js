@@ -58,7 +58,7 @@ function useToken() {
   };
   
   const saveToken = userToken => {
-    sessionStorage.setItem('token', JSON.stringify(userToken));
+    sessionStorage.setItem('token', userToken);
     setToken(userToken);
   };
 

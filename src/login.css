@@ -11,17 +11,19 @@
 .login-brand {
 	/* background-color: #282c34; */
     --header-height: 25vh;
-	min-width: 8vh;
+	min-width: 10vw;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	font-size: calc(10px + var(--header-height) / 5);
+	font-size: calc(10px + var(--header-height) / 3);
+	font-family: 'KoHo';
     margin-top: 10vh;
 }
 
 .login-brand p {
     margin-top: 0;
+    margin-bottom: 7vh;
 }
 
 .login-credentials {

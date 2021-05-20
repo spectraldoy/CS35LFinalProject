@@ -1,9 +1,16 @@
 import React from 'react';
 import { Link } from "react-router-dom";
+import { Button, Grid } from '@material-ui/core';
+import { withStyles } from '@material-ui/core/styles';
 
 import './dashboard.css';
-import MySchemes from './dashwins';
 import { Logo, Name } from './globals';
+import SchemeViewer from './schemeviewer';
+
+const fs = getComputedStyle(document.documentElement).getPropertyValue('--side-menu-font-size');
+const bg = getComputedStyle(document.documentElement).getPropertyValue('--background-color');
+const hc = getComputedStyle(document.documentElement).getPropertyValue('--highlight-color');
+const sw = getComputedStyle(document.documentElement).getPropertyValue('--side-menu-width');
 
 class Header extends React.Component {
 
@@ -29,27 +36,44 @@ class Header extends React.Component {
   }
 }
 
+const ColorButton = withStyles({
+  root: {
+    boxShadow: 'none',
+    display: "block",
+	  padding: "1em",
+    paddingLeft: "0.5em",
+    width: `calc(${sw} * 2/3 + 1.5vw)`,
+    textAlign: "left",
+    fontSize: fs,
+    border: "none",
+    backgroundColor: bg,
+    '&:hover': {
+      backgroundColor: hc,
+    },
+    '&:active': {
+      backgroundColor: hc,
+    },
+  }
+})(Button);
+
 class SideMenu extends React.Component {
 
   onClick() {
     alert("r");
   }
 
+  // TODO: change the onClicks to change the window loaded in the Dashboard Schemeviewer
+
   render() {
     return (
-      <div className="SideMenu">
-        <nav>
-          <h className="SideMenu-h">SCHEMING</h>
-          <button className="SideMenu-nava" onClick={this.onClick}>My Schemes</button>
-          <button className="SideMenu-nava" onClick={this.onClick}>Browse Schemes</button>
-          <button className="SideMenu-nava" onClick={this.onClick}>My University's Schemes</button>
-        </nav> 
-        <nav>
-          <h className="SideMenu-h">ACCOUNT</h>
-          <button className="SideMenu-nava" onClick={this.onClick}>Profile</button>
-          <button className="SideMenu-nava" onClick={this.onClick}>Settings</button>
-        </nav> 
-      </div>
+      <Grid className="SideMenu">
+        <h className="SideMenu-h">SCHEMING</h>
+        <ColorButton onClick={this.onClick}>My Schemes</ColorButton>
+        <ColorButton onClick={this.onClick}>Browse Schemes</ColorButton>
+        <ColorButton onClick={this.onClick}>My Univ's Schemes</ColorButton>
+        <h className="SideMenu-h">ACCOUNT</h>
+        <ColorButton onClick={this.onClick}>Profile</ColorButton>
+      </Grid> 
     );
   }
 }
@@ -115,7 +139,7 @@ class Dashboard extends React.Component {
           <Header renderSearchBar={this.renderSearchBar} />
           <div className="App-bottom">
             <SideMenu />
-            <MySchemes />
+            <SchemeViewer header={this.state.window} />
           </div>
         </div>
       );

@@ -1,3 +1,5 @@
+@charset "UTF-8";
+
 .App-header {
 	background-color: var(--background-color);
 	display: flex;
@@ -5,21 +7,25 @@
 	height: var(--header-height);
 	flex-direction: row;
 	flex-shrink: 0;
+	flex-grow: 1;
 	position: fixed;
 	width: 100vw;
 	justify-content: space-between;
 	border-bottom: 1px solid black;
 	align-items: center;
+	padding: 1vmin;
+	padding-bottom: 0;
+	padding-top: 0;
 }
 
 .App-brand {
 	/* background-color: #282c34; */
-	height: var(--header-height);
-	min-width: 8vh;
+	width: calc(var(--header-height) * 2.3);
+	font-family: 'KoHo';
 	display: flex;
 	flex-direction: row;
 	align-items: center;
-	justify-content: flex-start;
+	justify-content: space-evenly;
 	font-size: calc(10px + var(--header-height) / 5);
 }
 
@@ -53,7 +59,7 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	width: 10vw;
+	width: calc(var(--side-menu-width) * 2/3);
 	height: 1.4em;
 	border: 2px solid black;
 	border-radius: 1vmin;
@@ -69,7 +75,7 @@
 	padding: 1em;
 	padding-left: 0.5em;
 	cursor: pointer;
-	width: 11.5vw;
+	width: calc(var(--side-menu-width) * 2/3 + 1.5vw);
 	transition-duration: 0.3s;
 	background: none;
 	border-color: var(--background-color);
@@ -78,7 +84,7 @@
 }
 
 .SideMenu-nava:hover {
-	background-color: #61dafb;
+	background-color: var(--highlight-color);
 }
 
 .DashWin {
@@ -87,7 +93,6 @@
 	flex-direction: column;
 	margin-left: var(--side-menu-width);
 	margin-top: var(--header-height);
-	overflow: scroll;
 
 	--xwalk: 30px;
 	-webkit-animation: fadein;
@@ -99,21 +104,23 @@
 	/* animation-timing-function: ease; */
 }
 
-.WinHeader h {
-	display: block;
-	text-align: left;
-	padding: 5vmin;
-	padding-bottom: 0;
-	padding-left: 7vmin;
+.DashWinLoading {
+	display: flex;
+	z-index: 10;
+	flex-direction: column;
+	margin-left: var(--side-menu-width);
+	margin-top: var(--header-height);
 }
 
 .MySchemes {
 	display: flex;
 	flex-direction: row;
-	padding: 3vmin;
-	padding-top: 2vmin;
-	overflow-x: scroll;
-	/* TODO: wrap around or scroll? */
+	flex-wrap: wrap;
+	flex-grow: 1;
+	padding: 2vw;
+	padding-top: 2vh;
+	align-items: center;
+	justify-content: flex-start;
 }
 
 .MySchemes::-webkit-scrollbar {
@@ -124,18 +131,24 @@
 	position: relative;
 	/* background-color:#61dafb; */
 	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
+	flex-direction: column-reverse;
+	align-items: flex-start;
+	justify-content: flex-start;
 	width: 16vw;
-	height: 40vh;
-	margin: 2vmin;
+	height: 30vh;
+	margin: 1.5vw;
 	cursor: pointer;
 	flex-shrink: 0;
 	box-shadow: none;
 	transition-duration: 0.3s;
+	background-color: gray;
 }
 
+.Scheme:hover {
+	box-shadow: 2px 2px 4px gray;
+}
+
+/*
 .Scheme ul {
 	width: 100%;
 	z-index: 1;
@@ -143,25 +156,32 @@
 	margin: 0;
 	text-align: left;
 	padding: 0;
-	border: 2px solid black;
 }
-
-.Scheme:hover {
-	box-shadow: 2px 2px 4px gray;
-}
+*/
 
 .Scheme-preview {
-	list-style: none;
-	padding: 0;
-	background-color: cornflowerblue;
-	z-index: 0;
+	flex-grow: 1;
 	width: inherit;
-	height: 110%;
-	border-top-right-radius: 2vmin;
-	border-top-left-radius: 2vmin;
-	border-bottom: 0;
 	display: flex;
 	flex-direction: column;
+	box-shadow: none;
+	overflow: scroll;
+	white-space: nowrap;
+}
+
+.Scheme-preview::-webkit-scrollbar {
+	display: none;
+}
+
+.Scheme-preview ul {
+	list-style-type: none; /* "\2610" */
+	padding: 2vmin;
+	padding-top: 0;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	justify-content: space-between;
 	transition-duration: 0.3s;
 	box-shadow: none;
+	text-overflow: ellipsis;
 }

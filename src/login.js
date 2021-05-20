@@ -23,6 +23,7 @@ export default class Login extends React.Component {
                 this.props.setToken(this.state.username);
                 break;
             case "1":
+                // todo: make this a div
                 alert('Incorrect password! Please try again.');
                 break;
             case "2":
