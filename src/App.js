@@ -44,6 +44,8 @@ function App() {
   );
 }
 
+// Custom hook. Essentially, when you submit login info, this will change its state, 
+// causing a re-render.
 function useToken() {
   const getToken = () => {
     const tokenString = sessionStorage.getItem('token');
