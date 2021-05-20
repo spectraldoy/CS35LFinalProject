@@ -59,8 +59,29 @@ app.get("/get_scheme", async (req, res) =>
 
 app.get("/grading_schemes", async (req, res) =>
 {
-    search_creatorID = req.query.creatorID;
+    search_username = req.query.username;
     search_professor = req.query.professor;
+
+
+
+
+    // CODE TO GET ID FROM USERNAME
+
+    var matchingUserAccount = await User.findOne({ "username": search_username }, (err, grading_schemse) => {});
+
+    if(matchingUserAccount == null)
+    {
+        res.send({message: "ERROR: User does not exist"});
+        return;
+    }
+    search_creatorID = matchingUserAccount.userID;
+    console.log("CreatorID found: " + search_creatorID);
+
+
+
+
+
+
 
     var requestedSchemes;
 
@@ -76,20 +97,27 @@ app.get("/grading_schemes", async (req, res) =>
     
     res.send(requestedSchemes);
 
-    console.log("userID requested: " + search_creatorID);
+    console.log("Username of requested grading schemes: " + search_creatorID);
 });
 
 app.get("/users", async (req, res) => 
 {
     try
     {
+
         var userAccount = await User.findOne({ "username": req.query.username, "password": req.query.password}, 
             (err, userEvent) => {});
         
         if(userAccount != null)
-            res.send(userAccount);
+            res.send("0");        // Credentials are correct; account exists          
         else
-            res.send("");           // Empty return string signals that account could not be found
+        {
+            userAccount = await User.findOne({ "username": req.query.username}, (err, userEvent) => {});
+            if(userAccount != null)
+                res.send("1");    // Error code 1: Account exists, but credentials are wrong
+            else
+                res.send("2");    // Error code 2: Account does not exist
+        }
     
     }
     catch(err)
