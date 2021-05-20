@@ -6,7 +6,7 @@
 @import url('https://fonts.googleapis.com/css?family=Lato|Inconsolata|Fira+Sans|Roboto');
 
 :root {
-  --header-height: 9vh;
+  --header-height: 10vh;
   --side-menu-width: 15vw;
   --side-menu-font-size: 15px;
   --background-color: white;

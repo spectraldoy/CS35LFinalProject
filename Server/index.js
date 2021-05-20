@@ -58,24 +58,17 @@ app.get("/get_scheme", async (req, res) =>
 
 app.get("/grading_schemes", async (req, res) =>
 {
-    search_creatorID = req.query.creatorID;
-    search_professor = req.query.professor;
-
-    var requestedSchemes;
-
-    if(search_creatorID != undefined)
-        requestedSchemes = await GradingScheme.find({ "creatorID": search_creatorID }, (err, grading_schemes) => {});
-    else if(search_professor != undefined)
-        requestedSchemes = await GradingScheme.find({ "professor": search_professor }, (err, grading_schemes) => {});
-    else
-    {
-        res.send({message: "ERROR: Invalid query"});
-        return;
-    }
-    
+    requestedSchemes = await GradingScheme.find(
+        { $or: [
+            { university: req.query.university },
+            { professor: req.query.professor },
+            { class: req.query.class },
+            { schemeID: req.query.schemeID },
+            { creatorID: req.query.creatorID },
+        ]}, 
+        (err, schemes) => {}
+    );
     res.send(requestedSchemes);
-
-    console.log("userID requested: " + search_creatorID);
 });
 
 app.get("/users", async (req, res) => 
