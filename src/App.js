@@ -1,11 +1,12 @@
 import React from "react";
 import { useState } from 'react';
-import { BrowserRouter, Route, Switch, Link } from "react-router-dom"; // also import Link
+import { BrowserRouter, Route, Switch, Link, Redirect } from "react-router-dom"; // also import Link
 
 import './App.css';
 import Dashboard from './dashboard';
 import calculatorInterface from './calculatorInterface';
 import Login from './login'
+import CreateAccount from './CreateAccount'
 
 function HomePage() {
   return (
@@ -19,31 +20,36 @@ function HomePage() {
       <li>
         <Link to="/calculatorInterface">Calculator Interface</Link>
       </li>
+      <li>
+        <Link to="/createAccount">Create Account</Link>
+      </li>
     </ul>
   );
 }
 
 function App() {
-  const [token, setToken] = useToken();
+  const [user, setUser] = UserState();
 
-  const app = (
+  let startPage = "/login";
+  if (user) // already logged in
+    startPage = "/homePage";
+
+  let app = (
     <div className="App">
       <BrowserRouter className="App-router">
         <Switch>
-            <Route exact path="/">{HomePage()}</Route> 
-            <Route path="/login"><Login setToken={setToken} /></Route>
+            <Route exact path="/">
+              <Redirect to={startPage}/>
+            </Route>
+            <Route path="/homePage" component={HomePage} /> 
+            <Route path="/login"><Login setUser={setUser} /></Route>
             <Route path="/dashboard" component={Dashboard} />
             <Route path="/calculatorInterface" component={calculatorInterface} />
+            <Route path="/createAccount" component={CreateAccount} />
         </Switch>
       </BrowserRouter>
     </div>
   );
-
-  // Make this a page with a link in router?
-  if(!token) {
-    // instead of calling login here, redirect to a login page?
-    return <Login setToken={setToken} />;
-  }
 
   // TODO: put these links in the header?
   return app;
@@ -51,20 +57,20 @@ function App() {
 
 // Custom hook. Essentially, when you submit login info, this will change its state, 
 // causing a re-render.
-function useToken() {
-  const getToken = () => {
-    const tokenString = sessionStorage.getItem('token');
-    return tokenString;
+function UserState() {
+  const getUser = () => {
+    const user = sessionStorage.getItem('user');
+    return user;
   };
   
-  const saveToken = userToken => {
-    sessionStorage.setItem('token', JSON.stringify(userToken));
-    setToken(userToken);
+  const saveUser = username => {
+    sessionStorage.setItem('user', JSON.stringify(username));
+    setUser(username);
   };
 
-  const [token, setToken] = useState(getToken());
+  const [user, setUser] = useState(getUser());
 
-  return [token, saveToken];
+  return [user, saveUser];
 }
 
 
