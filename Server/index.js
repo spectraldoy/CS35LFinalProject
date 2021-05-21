@@ -92,6 +92,12 @@ app.get("/grading_schemes", async (req, res) =>
     res.send(requestedSchemes);
 });
 
+app.get("/all_schemes", async (req, res) => 
+{
+    var allSchemes = await GradingScheme.find({}, (err, grading_schemes) => {});
+    res.send(allSchemes);
+});
+
 app.get("/users", async (req, res) => 
 {
     try
