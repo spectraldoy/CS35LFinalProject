@@ -2,6 +2,8 @@
 
 import React from 'react';
 import './login.css';
+import { Logo, Name } from './globals';
+import { Link, Redirect } from "react-router-dom";
 
 export default class Login extends React.Component {
     constructor(props) {
@@ -16,10 +18,10 @@ export default class Login extends React.Component {
 
     handleSubmit = async e => {
         e.preventDefault();
-        var res = await loginUser(this.state.username, this.state.password);
+        const res = await loginUser(this.state.username, this.state.password);
         switch (res) {
             case "0":
-                this.props.setToken(this.state.username);
+                this.props.setUser(this.state.username);
                 break;
             case "1":
                 alert('Incorrect password! Please try again.');
@@ -27,35 +29,41 @@ export default class Login extends React.Component {
             case "2":
                 alert('Username not found. Check your username or consider creating an account.');
                 break;
-
+            default:
+                alert('Unknown Error');
+                break;
         }
     }
     
     render() {
+        if (sessionStorage.getItem('user')) // already logged in
+            return <Redirect to="/homePage"/>;
+
         return (
         <div className="login-wrapper">
-        <h1>Put Logo Here</h1>
-        <form onSubmit={this.handleSubmit}>
-            <label>
-            <p>Username</p>
-            <input type="text" onChange={e => this.setState({username: e.target.value})}/>
-            </label>
-            <label>
-            <p>Password</p>
-            <input type="password" onChange={e => this.setState({password: e.target.value})}/>
-            </label>
-            <div>
-            <button type="submit">Submit</button>
-            </div>
-        </form>
+			<div className="login-brand">
+				<img src={Logo} className="App-logo" alt="logo" />
+				<p>{Name}</p>
+			</div>
+			<form onSubmit={this.handleSubmit} className="login-credentials">
+				<label>
+					<p>Username</p>
+					<input type="text" onChange={e => this.setState({username: e.target.value})}/>
+				</label>
+				<label>
+					<p>Password</p>
+					<input type="password" onChange={e => this.setState({password: e.target.value})}/>
+				</label>
+				<button type="submit">Submit</button>
+			</form>
+            <Link to="/createAccount"><h2>Create a new account</h2></Link>
         </div>);
     }
 }
 
 async function loginUser(username, password) {
-    // Use to communicate with db
-    // TODO: return 0 on success, 1 if password is incorrect, 2 if username is not found
-    var res = await fetch("http://localhost:3001/users?username=" + username + "&password=" + password);
+    // check username and password with database
+    let res = await fetch("http://localhost:3001/users?username=" + username + "&password=" + password);
     res = res.text();
     return res;
 }
