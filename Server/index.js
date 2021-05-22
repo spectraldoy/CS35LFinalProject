@@ -177,6 +177,17 @@ app.post("/users", async (req, res) =>
 {
     try
     {
+
+        // TODO: We need a way of automatically assigning a new unique userID when a new user is created
+        // There may be a way to store this data on the database (like find the last user to be added
+        // and then add 1 to that user's ID)
+        const existingUser = await User.findOne({ "username": req.body.username }, (err, grading_schemse) => {});
+        if(existingUser != null)
+        {
+            res.send("User already exists!");   // We may want to send over a number as a way of specifying the error?
+            console.log("User already exists!");
+            return;
+        }
         const newUser = new User(req.body);
         await newUser.save();
 
