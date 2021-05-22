@@ -70,12 +70,13 @@ app.get("/grading_schemes", async (req, res) =>
     var matchingUserAccount = await User.findOne({ "username": search_username }, (err, grading_schemse) => {});
 
     if(matchingUserAccount == null)
+        search_creatorID = null;
+    else
     {
-        res.send({message: "ERROR: User does not exist"});
-        return;
+        search_creatorID = matchingUserAccount.userID;
+        console.log("CreatorID found: " + search_creatorID);
     }
-    search_creatorID = matchingUserAccount.userID;
-    console.log("CreatorID found: " + search_creatorID);
+    
 
 
 
