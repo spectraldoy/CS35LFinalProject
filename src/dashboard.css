@@ -19,7 +19,7 @@
 	display: flex;
 	flex-direction: row;
 	align-items: center;
-	justify-content: left;
+	justify-content: flex-start;
 	font-size: calc(10px + var(--header-height) / 5);
 }
 
@@ -38,6 +38,7 @@
 	position: fixed;
 	display: flex;
 	flex-direction: column;
+	z-index: 998;
 	font-size: var(--side-menu-font-size);
 	/* height: calc(98.9vh - var(--header-height)); */
 	height: 100vh;
@@ -82,6 +83,7 @@
 
 .DashWin {
 	display: flex;
+	z-index: 10;
 	flex-direction: column;
 	margin-left: var(--side-menu-width);
 	margin-top: var(--header-height);
@@ -121,8 +123,6 @@
 .Scheme {
 	position: relative;
 	/* background-color:#61dafb; */
-	border-top-right-radius: 2vmin;
-	border-top-left-radius: 2vmin;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -130,10 +130,10 @@
 	width: 16vw;
 	height: 40vh;
 	margin: 2vmin;
-	transition-duration: 0.3s;
 	cursor: pointer;
 	flex-shrink: 0;
 	box-shadow: none;
+	transition-duration: 0.3s;
 }
 
 .Scheme ul {

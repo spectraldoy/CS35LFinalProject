@@ -12,9 +12,8 @@ const PORT = process.env.PORT || 3001;  // Our port defaults to port 3001 (if no
 
 const app = express();
 
-// var cors = require("cors");
-// app.use(cors());
-
+// following links client to server, sourced from:
+// https://stackoverflow.com/questions/58450951/blocked-by-cors-policy-error-when-calling-to-mongo-golang-db-with-angular-web-ap
 app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT,DELETE");
@@ -59,46 +58,38 @@ app.get("/get_scheme", async (req, res) =>
 
 app.get("/grading_schemes", async (req, res) =>
 {
-    search_username = req.query.username;
-    search_professor = req.query.professor;
-
-
-
-
-    // CODE TO GET ID FROM USERNAME
-
-    var matchingUserAccount = await User.findOne({ "username": search_username }, (err, grading_schemse) => {});
-
-    if(matchingUserAccount == null)
-        search_creatorID = null;
-    else
-    {
-        search_creatorID = matchingUserAccount.userID;
-        console.log("CreatorID found: " + search_creatorID);
-    }
-    
-
-
-
-
-
-
-
     var requestedSchemes;
+    search_username = req.query.username;
 
-    if(search_creatorID != undefined)
+    if (search_username != undefined) {
+        // CODE TO GET ID FROM USERNAME
+        var matchingUserAccount = await User.findOne({ "username": search_username }, (err, grading_schemse) => {});
+
+        if(matchingUserAccount == null)
+            search_creatorID = null;
+        else
+        {
+            search_creatorID = matchingUserAccount.userID;
+            console.log("CreatorID found: " + search_creatorID);
+        }
+
         requestedSchemes = await GradingScheme.find({ "creatorID": search_creatorID }, (err, grading_schemes) => {});
-    else if(search_professor != undefined)
-        requestedSchemes = await GradingScheme.find({ "professor": search_professor }, (err, grading_schemes) => {});
-    else
-    {
-        res.send({message: "ERROR: Invalid query"});
-        return;
+    } 
+    else {
+        // otherwise just use search query
+        requestedSchemes = await GradingScheme.find(
+            { $or: [
+                { university: req.query.university },
+                { professor: req.query.professor },
+                { class: req.query.class },
+                { schemeID: req.query.schemeID },
+                { creatorID: req.query.creatorID },
+            ]}, 
+            (err, schemes) => {}
+        );
     }
     
     res.send(requestedSchemes);
-
-    console.log("Username of requested grading schemes: " + search_creatorID);
 });
 
 app.get("/users", async (req, res) => 

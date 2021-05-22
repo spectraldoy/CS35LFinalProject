@@ -5,6 +5,6 @@
 export async function getScheme(query) {
     // fetches query from SCHEME database
     // if this ends up being useless, just copy this code wherever you need it:
-    const response = await fetch("http://localhost:3001/get_scheme?" + query);
+    const response = await fetch("http://localhost:3001/grading_schemes?" + query);
     return response;
 }
