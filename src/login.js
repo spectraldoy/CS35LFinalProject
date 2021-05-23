@@ -1,11 +1,13 @@
 // modified from https://www.digitalocean.com/community/tutorials/how-to-add-login-authentication-to-react-applications
 
 import React from 'react';
-import './login.css';
 import { Logo, Name } from './globals';
 import { Link, Redirect } from "react-router-dom";
+import { withAlert } from 'react-alert'
 
-export default class Login extends React.Component {
+import './login.css';
+
+class Login extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -18,19 +20,21 @@ export default class Login extends React.Component {
 
     handleSubmit = async e => {
         e.preventDefault();
+        const alert = this.props.alert;
+
         const res = await loginUser(this.state.username, this.state.password);
         switch (res) {
             case "0":
                 this.props.setUser(this.state.username);
                 break;
             case "1":
-                alert('Incorrect password! Please try again.');
+                alert.error('Incorrect password');
                 break;
             case "2":
-                alert('Username not found. Check your username or consider creating an account.');
+                alert.error('Username not found');
                 break;
             default:
-                alert('Unknown Error');
+                alert.error('Unknown Error');
                 break;
         }
     }
@@ -67,3 +71,6 @@ async function loginUser(username, password) {
     res = res.text();
     return res;
 }
+
+export default withAlert()(Login)
+

@@ -1,15 +1,18 @@
 import React from 'react';
-import './CreateAccount.css';
 import { Logo, Name } from './globals';
 import { Link } from "react-router-dom";
+import { withAlert } from 'react-alert'
 
-export default class CreateAccount extends React.Component {
+import './CreateAccount.css';
+
+class CreateAccount extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             username: "",
             password: "",
             confirmPassword: "",
+            university: ""
         };
 
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -17,14 +20,37 @@ export default class CreateAccount extends React.Component {
 
     handleSubmit = async e => {
         e.preventDefault();
-        if (this.state.password === this.state.confirmPassword) {
-            // ******
-            // TODO: Create a new user with this.state.username and this.state.password
-            // ******
-            alert("New account created");
+        alert = this.props.alert;
+        if (this.state.username === "") {
+            alert.error("Please enter a username.");
+        }
+        else if (this.state.password === "") {
+            alert.error("Please enter a password.");
+        }
+        else if (this.state.password !== this.state.confirmPassword) {
+            alert.error("Passwords don't match");
+        }
+        else if (this.state.university === "") {
+            alert.error("Please enter a university");
         }
         else {
-            alert("Passwords don't match. Please try again.");
+            const user = {
+                username: this.state.username,
+                password: this.state.password,
+                university: this.state.university,
+                userID: "0000"
+            }
+            
+            let res = await fetch("http://localhost:3001/users", {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(user),
+            })
+            res = await res.text();
+            alert.success(res);
         }
     }
     
@@ -48,9 +74,16 @@ export default class CreateAccount extends React.Component {
 					<p>Confirm Password</p>
 					<input type="password" onChange={e => this.setState({confirmPassword: e.target.value})}/>
 				</label>
+                <label>
+					<p>University</p>
+					<input type="text" onChange={e => this.setState({university: e.target.value})}/>
+				</label>
 				<button type="submit">Submit</button>
 			</form>
             <Link to="/login"><h2>Return to Login/Dashboard</h2></Link>
         </div>);
     }
 }
+
+export default withAlert()(CreateAccount)
+
