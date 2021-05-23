@@ -1,9 +1,11 @@
 import React from 'react';
-import './CreateAccount.css';
 import { Logo, Name } from './globals';
 import { Link } from "react-router-dom";
+import { withAlert } from 'react-alert'
 
-export default class CreateAccount extends React.Component {
+import './CreateAccount.css';
+
+class CreateAccount extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -17,14 +19,24 @@ export default class CreateAccount extends React.Component {
 
     handleSubmit = async e => {
         e.preventDefault();
-        if (this.state.password === this.state.confirmPassword) {
+        alert = this.props.alert;
+        if (this.state.username === "") {
+            alert.error("Please enter a username.");
+        }
+        else if (this.state.password === "") {
+            alert.error("Please enter a password.");
+        }
+        else if (this.state.confirmPassword === "") {
+            alert.error("Please confirm your password.");
+        }
+        else if (this.state.password !== this.state.confirmPassword) {
+            alert.error("Passwords don't match");
+        }
+        else {
             // ******
             // TODO: Create a new user with this.state.username and this.state.password
             // ******
-            alert("New account created");
-        }
-        else {
-            alert("Passwords don't match. Please try again.");
+            alert.success("New account created");
         }
     }
     
@@ -54,3 +66,5 @@ export default class CreateAccount extends React.Component {
         </div>);
     }
 }
+
+export default withAlert()(CreateAccount)
