@@ -5,7 +5,7 @@ import { fade, makeStyles } from '@material-ui/core/styles';
 import SearchIcon from '@material-ui/icons/Search';
 
 import './dashboard.css';
-import { Logo, Name } from './globals';
+import { Logo, Name, getScheme } from './globals';
 import SchemeViewer from './schemeviewer';
 
 const fs = getComputedStyle(document.documentElement).getPropertyValue('--side-menu-font-size');
@@ -73,6 +73,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
+
 function Header(props) {
   function brand() {
     return (
@@ -94,12 +95,13 @@ function Header(props) {
 
 function SideMenu(props) {
   const classes = useStyles();
+
   return (
       <Grid className="SideMenu">
         <h className="SideMenu-h">SCHEMING</h>
         <Button className={classes.colorButton} onClick={props.onClickMySchemes}>My Schemes</Button>
         <Button className={classes.colorButton} onClick={props.onClickBrowseSchemes}>Browse Schemes</Button>
-        <Button className={classes.colorButton} onClick={props.onClickUnivSchemes}>My Univ's Schemes</Button>
+        <Button className={classes.colorButton} onClick={props.onClickMyUnivSchemes}>My Univ's Schemes</Button>
         <h className="SideMenu-h">ACCOUNT</h>
         <Button className={classes.colorButton} onClick={props.onClickProfile}>Profile</Button>
         <Button className={classes.colorButton} onClick={props.onLogout}>Logout</Button>
@@ -107,7 +109,8 @@ function SideMenu(props) {
   );
 }
 
-function Dashboard() {
+
+function Dashboard(sess) {
   /*
    * Header and side panel to display links to various pages / functionality
    * Such as Scheme Creator, My Schemes, Home, Search Schemes, etc.
@@ -116,8 +119,11 @@ function Dashboard() {
    */
 
   const classes = useStyles();
-  const [searchQuery, updateQuery] = useState("");
-  const [window, updateWindow] = useState("My Schemes");
+  const [searchQuery, updateSearchQuery] = useState("");
+  const [schemeQuery, updateSchemeQuery] = useState("username=" + sess[0]);
+  const [window, updateWindow] = useState("Memes");
+  const [schemes, setSchemes] = useState([]);
+  const [animate, setAnimate] = useState(false);
 
   function searchBar() {
     return (
@@ -127,11 +133,9 @@ function Dashboard() {
         </div>
         
         <form onSubmit={(e) => {
-            // TODO: search database using this.state.searchQuery
-            // enforce order of search as professor, uni, course
             e.preventDefault();
-            alert(searchQuery);
-            updateQuery("");
+            updateSchemeQuery(searchQuery);
+            updateSearchQuery("");
         }}>
           <InputBase
             placeholder="Search schemes..."
@@ -141,21 +145,48 @@ function Dashboard() {
             }}
             type="search"
             inputProps={{ 'aria-label': 'search' }}
-            onChange={(e) => updateQuery(e.target.value)}
+            onChange={ (e) => updateSearchQuery(e.target.value) }
           />
         </form>
       </div>
     );
   }
 
-  // TODO: onLogout
+  async function getSchemes(query, prefix="grading_schemes") {
+    const response = await getScheme(query, prefix);
+    return response;
+  }
+
+  // SideMenu Button functions
+  function updateSchemeViewer(header, query, prefix) {
+    if (header === window) {
+      return () => {};
+    }
+    return () => {
+      updateSchemeQuery(query);
+      getSchemes(query, prefix)
+      .then( data => data.json() ) 
+      .then(
+        data => {
+          setSchemes(data);
+          setAnimate(true);
+        }
+      );
+      updateWindow(header);
+      setAnimate(false);
+    };
+  }
 
   return (
     <div>
       {Header({searchBar: searchBar})}
       <div className="App-bottom">
-        {SideMenu({})}
-        <SchemeViewer header={window} />
+        {SideMenu({
+          onClickMySchemes: updateSchemeViewer("My Schemes", "username=" + sess[0]),
+          onClickBrowseSchemes: updateSchemeViewer("Browse Schemes", "", "all_schemes"),
+          onClickMyUnivSchemes: updateSchemeViewer("My University's Schemes", "university=" + sess[1]),
+        })}
+        <SchemeViewer header={window} schemes={schemes} animate={animate}/>
       </div>
     </div>
   );

@@ -105,9 +105,9 @@ app.get("/users", async (req, res) =>
 
         var userAccount = await User.findOne({ "username": req.query.username, "password": req.query.password}, 
             (err, userEvent) => {});
-        
         if(userAccount != null)
-            res.send("0");        // Credentials are correct; account exists          
+            // for easier my univ's schemes view
+            res.send("0" + userAccount.university);        // Credentials are correct; account exists          
         else
         {
             userAccount = await User.findOne({ "username": req.query.username}, (err, userEvent) => {});

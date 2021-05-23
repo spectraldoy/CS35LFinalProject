@@ -26,22 +26,20 @@ function HomePage() {
 function App() {
   const [token, setToken] = useToken();
 
-  const app = (
-    <Switch className="App">
-        <Route exact path="/">{HomePage()}</Route> 
-        <Route path="/login"><Login setToken={setToken} /></Route>
-        <Route path="/dashboard">{Dashboard()}</Route>
-        <Route path="/calculatorInterface" component={calculatorInterface} />
-    </Switch>
-  );
-
-  // Make this a page with a link in router?
   if(!token) {
     // instead of calling login here, redirect to a login page?
     return <Login setToken={setToken} />;
   }
 
-  return app;
+  const sess = sessionStorage.getItem('token').split(",");  // sess[0] = username, sess[1] = university
+  return (
+    <Switch className="App">
+        <Route exact path="/">{HomePage()}</Route> 
+        <Route path="/login"><Login setToken={setToken} /></Route>
+        <Route path="/dashboard">{Dashboard(sess)}</Route>
+        <Route path="/calculatorInterface" component={calculatorInterface} />
+    </Switch>
+  );
 }
 
 // Custom hook. Essentially, when you submit login info, this will change its state, 

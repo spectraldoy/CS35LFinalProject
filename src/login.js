@@ -18,8 +18,10 @@ const useStyles = makeStyles((theme) => ({
     },
     textField: {
         width: '25ch',
+        color: 'black',
     },
     colorButton: {
+        margin: theme.spacing(1),
         marginTop: theme.spacing(2),
         backgroundColor: fade(hc, 0.15),
         '&:hover': {
@@ -41,9 +43,10 @@ function Login(props) {
     async function handleSubmit(e) {
         e.preventDefault();
         var res = await loginUser(username, password);
-        switch (res) {
+        switch (res[0]) {
             case "0":
-                props.setToken(username);
+                // add university here
+                props.setToken(username + "," + res.slice(1));
                 break;
             case "1":
                 // todo: make this a div
@@ -68,10 +71,9 @@ function Login(props) {
                     <InputLabel htmlFor="username">Username</InputLabel>
                     <Input
                         id="username"
-                        type={'text'}
+                        type="text"
                         value={username}
                         onChange={ (e) => setUsername(e.target.value) }
-                        labelWidth={80}
                     />
                 </FormControl>
                 <FormControl className={clsx(classes.margin, classes.textField)}>
@@ -93,10 +95,9 @@ function Login(props) {
                                 </IconButton>
                             </InputAdornment>
                         }
-                        labelWidth={70}
                     />
                 </FormControl>
-                <Button className={clsx(classes.margin, classes.colorButton, "login-credentials-button")} type='submit'>Next</Button>
+                <Button className={clsx(classes.colorButton, "login-credentials-button")} type='submit'>Next</Button>
             </form>
         </div>
     );
