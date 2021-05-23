@@ -86,3 +86,4 @@ class CreateAccount extends React.Component {
 }
 
 export default withAlert()(CreateAccount)
+
