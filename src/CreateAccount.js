@@ -12,6 +12,7 @@ class CreateAccount extends React.Component {
             username: "",
             password: "",
             confirmPassword: "",
+            university: ""
         };
 
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -26,17 +27,30 @@ class CreateAccount extends React.Component {
         else if (this.state.password === "") {
             alert.error("Please enter a password.");
         }
-        else if (this.state.confirmPassword === "") {
-            alert.error("Please confirm your password.");
-        }
         else if (this.state.password !== this.state.confirmPassword) {
             alert.error("Passwords don't match");
         }
+        else if (this.state.university === "") {
+            alert.error("Please enter a university");
+        }
         else {
-            // ******
-            // TODO: Create a new user with this.state.username and this.state.password
-            // ******
-            alert.success("New account created");
+            const user = {
+                username: this.state.username,
+                password: this.state.password,
+                university: this.state.university,
+                userID: "0000"
+            }
+            
+            let res = await fetch("http://localhost:3001/users", {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(user),
+            })
+            res = await res.text();
+            alert.success(res);
         }
     }
     
@@ -59,6 +73,10 @@ class CreateAccount extends React.Component {
                 <label>
 					<p>Confirm Password</p>
 					<input type="password" onChange={e => this.setState({confirmPassword: e.target.value})}/>
+				</label>
+                <label>
+					<p>University</p>
+					<input type="text" onChange={e => this.setState({university: e.target.value})}/>
 				</label>
 				<button type="submit">Submit</button>
 			</form>

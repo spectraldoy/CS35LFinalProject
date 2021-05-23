@@ -9,7 +9,7 @@ import AlertTemplate from 'react-alert-template-snackbar-material-ui'
 // optional configuration for alert messages
 const options = {
   position: positions.TOP_CENTER,
-  timeout: 0,
+  timeout: 5000,
   offset: '30px',
   transition: transitions.FADE
 }
