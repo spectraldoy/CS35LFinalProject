@@ -1,6 +1,6 @@
 import React from "react";
 import { useState } from 'react';
-import { BrowserRouter, Route, Switch, Link } from "react-router-dom"; // also import Link
+import { Route, Switch, Link } from "react-router-dom"; // also import Link
 
 import './App.css';
 import Dashboard from './dashboard';
@@ -27,16 +27,12 @@ function App() {
   const [token, setToken] = useToken();
 
   const app = (
-    <div className="App">
-      <BrowserRouter className="App-router">
-        <Switch>
-            <Route exact path="/">{HomePage()}</Route> 
-            <Route path="/login"><Login setToken={setToken} /></Route>
-            <Route path="/dashboard" component={Dashboard} />
-            <Route path="/calculatorInterface" component={calculatorInterface} />
-        </Switch>
-      </BrowserRouter>
-    </div>
+    <Switch className="App">
+        <Route exact path="/">{HomePage()}</Route> 
+        <Route path="/login"><Login setToken={setToken} /></Route>
+        <Route path="/dashboard">{Dashboard()}</Route>
+        <Route path="/calculatorInterface" component={calculatorInterface} />
+    </Switch>
   );
 
   // Make this a page with a link in router?
@@ -45,7 +41,6 @@ function App() {
     return <Login setToken={setToken} />;
   }
 
-  // TODO: put these links in the header?
   return app;
 }
 

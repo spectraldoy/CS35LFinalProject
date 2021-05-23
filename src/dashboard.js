@@ -13,7 +13,7 @@ const bg = getComputedStyle(document.documentElement).getPropertyValue('--backgr
 const hc = getComputedStyle(document.documentElement).getPropertyValue('--highlight-color');
 const sw = getComputedStyle(document.documentElement).getPropertyValue('--side-menu-width');
 
-/* mostly from https://material-ui.com/components/app-bar/ */
+/* mostly copied from https://material-ui.com/components/app-bar/ */
 const useStyles = makeStyles((theme) => ({
   search: {
     position: 'relative',
@@ -102,6 +102,7 @@ function SideMenu(props) {
         <Button className={classes.colorButton} onClick={props.onClickUnivSchemes}>My Univ's Schemes</Button>
         <h className="SideMenu-h">ACCOUNT</h>
         <Button className={classes.colorButton} onClick={props.onClickProfile}>Profile</Button>
+        <Button className={classes.colorButton} onClick={props.onLogout}>Logout</Button>
       </Grid> 
   );
 }
@@ -146,6 +147,8 @@ function Dashboard() {
       </div>
     );
   }
+
+  // TODO: onLogout
 
   return (
     <div>
