@@ -4,14 +4,14 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { transitions, positions, Provider as AlertProvider } from 'react-alert'
-import AlertTemplate from 'react-alert-template-basic'
+import AlertTemplate from 'react-alert-template-snackbar-material-ui'
 
 // optional configuration for alert messages
 const options = {
   position: positions.TOP_CENTER,
   timeout: 0,
   offset: '30px',
-  transition: transitions.SCALE
+  transition: transitions.FADE
 }
 
 
