@@ -58,36 +58,17 @@ app.get("/get_scheme", async (req, res) =>
 
 app.get("/grading_schemes", async (req, res) =>
 {
-    var requestedSchemes;
-    search_username = req.query.username;
 
-    if (search_username != undefined) {
-        // CODE TO GET ID FROM USERNAME
-        var matchingUserAccount = await User.findOne({ "username": search_username }, (err, grading_schemse) => {});
-
-        if(matchingUserAccount == null)
-            search_creatorID = null;
-        else
-        {
-            search_creatorID = matchingUserAccount.userID;
-            console.log("CreatorID found: " + search_creatorID);
-        }
-
-        requestedSchemes = await GradingScheme.find({ "creatorID": search_creatorID }, (err, grading_schemes) => {});
-    } 
-    else {
-        // otherwise just use search query
-        requestedSchemes = await GradingScheme.find(
-            { $or: [
-                { university: req.query.university },
-                { professor: req.query.professor },
-                { class: req.query.class },
-                { schemeID: req.query.schemeID },
-                { creatorID: req.query.creatorID },
-            ]}, 
-            (err, schemes) => {}
-        );
-    }
+    // otherwise just use search query
+    requestedSchemes = await GradingScheme.find(
+        { $or: [
+            { owner: req.query.owner },
+            { university: req.query.university },
+            { professor: req.query.professor },
+            { class: req.query.class },
+        ]}, 
+        (err, schemes) => {}
+    );
     
     res.send(requestedSchemes);
 });
@@ -164,8 +145,8 @@ app.post("/grading_schemes", async (req, res) =>
         const newGradingScheme = new GradingScheme(req.body);
         await newGradingScheme.save();
 
-        console.log("Saved new grading scheme for class \"" + req.body.class + "\" by userID \"" + req.body.creatorID + "\"");
-        res.send("Saved new grading scheme for class \"" + req.body.class + "\" by userID \"" + req.body.creatorID + "\"");
+        console.log("Saved new grading scheme for class \"" + req.body.class + "\" by user \"" + req.body.owner + "\"");
+        res.send("Saved new grading scheme for class \"" + req.body.class + "\" by user \"" + req.body.owner + "\"");
     }
     catch (err)
     {
