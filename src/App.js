@@ -1,11 +1,12 @@
 import React from "react";
 import { useState } from 'react';
-import { Route, Switch, Link } from "react-router-dom"; // also import Link
+import { BrowserRouter, Route, Switch, Link, Redirect } from "react-router-dom"; // also import Link
 
 import './App.css';
 import Dashboard from './dashboard';
 import calculatorInterface from './calculatorInterface';
 import Login from './login'
+import CreateAccount from './CreateAccount'
 
 function HomePage() {
   return (
@@ -19,45 +20,57 @@ function HomePage() {
       <li>
         <Link to="/calculatorInterface">Calculator Interface</Link>
       </li>
+      <li>
+        <Link to="/createAccount">Create Account</Link>
+      </li>
     </ul>
   );
 }
 
 function App() {
-  const [token, setToken] = useToken();
+  const [user, setUser] = UserState();
 
-  if(!token) {
-    // instead of calling login here, redirect to a login page?
-    return <Login setToken={setToken} />;
-  }
+  let startPage = "/login";
+  if (user) // already logged in
+    startPage = "/homePage";
 
-  const sess = sessionStorage.getItem('token').split(",");  // sess[0] = username, sess[1] = university
-  return (
-    <Switch className="App">
-        <Route exact path="/" component={HomePage}></Route> 
-        <Route path="/login"><Login setToken={setToken} /></Route>
-        <Route path="/dashboard"><Dashboard sess={sess} /></Route>
-        <Route path="/calculatorInterface" component={calculatorInterface} />
-    </Switch>
+  let app = (
+    <div className="App">
+      <BrowserRouter className="App-router">
+        <Switch>
+            <Route exact path="/">
+              <Redirect to={startPage}/>
+            </Route>
+            <Route path="/homePage" component={HomePage} /> 
+            <Route path="/login"><Login setUser={setUser} /></Route>
+            <Route path="/dashboard" component={Dashboard} />
+            <Route path="/calculatorInterface" component={calculatorInterface} />
+            <Route path="/createAccount" component={CreateAccount} />
+        </Switch>
+      </BrowserRouter>
+    </div>
   );
+
+  // TODO: put these links in the header?
+  return app;
 }
 
 // Custom hook. Essentially, when you submit login info, this will change its state, 
 // causing a re-render.
-function useToken() {
-  const getToken = () => {
-    const tokenString = sessionStorage.getItem('token');
-    return tokenString;
+function UserState() {
+  const getUser = () => {
+    const user = sessionStorage.getItem('user');
+    return user;
   };
   
-  const saveToken = userToken => {
-    sessionStorage.setItem('token', userToken);
-    setToken(userToken);
+  const saveUser = username => {
+    sessionStorage.setItem('user', JSON.stringify(username));
+    setUser(username);
   };
 
-  const [token, setToken] = useState(getToken());
+  const [user, setUser] = useState(getUser());
 
-  return [token, saveToken];
+  return [user, saveUser];
 }
 
 

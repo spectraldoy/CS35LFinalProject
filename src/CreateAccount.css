@@ -1,0 +1,43 @@
+/* modified from https://www.digitalocean.com/community/tutorials/how-to-add-login-authentication-to-react-applications */
+
+.create-account-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+.create-account-brand {
+	/* background-color: #282c34; */
+    --header-height: 25vh;
+	min-width: 8vh;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	font-size: calc(10px + var(--header-height) / 5);
+    margin-top: 10vh;
+}
+
+.create-account-brand p {
+    margin-top: 0;
+}
+
+.login-credentials {
+    margin-top: -2vh;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    flex: 1;
+}
+
+.login-credentials label {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+}
+
+.login-credentials button {
+    width: 40%;
+    margin-top: 0.3em;
+}

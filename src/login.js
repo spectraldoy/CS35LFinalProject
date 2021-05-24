@@ -1,6 +1,8 @@
 // modified from https://www.digitalocean.com/community/tutorials/how-to-add-login-authentication-to-react-applications
 
 import React, { useState } from 'react';
+import { Link, Redirect } from "react-router-dom";
+import { withAlert } from 'react-alert'
 import clsx from 'clsx';
 import { fade, makeStyles } from '@material-ui/core/styles';
 import { FormControl, InputAdornment, InputLabel, Input, IconButton, Button } from '@material-ui/core';
@@ -42,23 +44,28 @@ function Login(props) {
 
     async function handleSubmit(e) {
         e.preventDefault();
-        var res = await loginUser(username, password);
-        switch (res[0]) {
+        const alert = this.props.alert;
+
+        const res = await loginUser(this.state.username, this.state.password);
+        switch (res) {
             case "0":
-                // add university here
-                props.setToken(username + "," + res.slice(1));
+                this.props.setUser(this.state.username);
                 break;
             case "1":
-                // todo: make this a div
-                alert('Incorrect password! Please try again.');
+                alert.error('Incorrect password');
                 break;
             case "2":
-                alert('Username not found. Check your username or consider creating an account.');
+                alert.error('Username not found');
                 break;
             default:
-                alert('Something went wrong. Try again.');
+                alert.error('Unknown Error');
+                break;
         }
     }
+
+    if (sessionStorage.getItem('user')) // already logged in
+        return <Redirect to="/homePage"/>;
+
     
     return (
         <div className="login-wrapper">
@@ -104,11 +111,12 @@ function Login(props) {
 }
 
 async function loginUser(username, password) {
-    // Use to communicate with db
-    // TODO: return 0 on success, 1 if password is incorrect, 2 if username is not found
-    var res = await fetch("http://localhost:3001/users?username=" + username + "&password=" + password);
+    // check username and password with database
+    // 0 = success, 1 = wrong password, 2 = username not found
+    let res = await fetch("http://localhost:3001/users?username=" + username + "&password=" + password);
     res = res.text();
     return res;
 }
 
-export default Login;
+export default withAlert()(Login)
+
