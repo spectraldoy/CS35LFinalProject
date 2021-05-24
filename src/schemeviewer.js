@@ -48,38 +48,33 @@ function displayScheme(scheme) {
 }
 
 
-class SchemeViewer extends React.Component {
-	// TODO: make a generic loadScheme function, which loads by userID or schemeID from the database
-	//       so that we don't duplicate code for other parts of the web app
-	
-	render() {
-		if (this.props.schemes === undefined) {
-			return null;
-		}
-		let renderedSchemes = []
-		for (const scheme of this.props.schemes) {
-			renderedSchemes.push(displayScheme(scheme));
-		}
-		//console.log(renderedSchemes);
-
-		// NOTE: WinHeader must have a New Scheme button always
-		if (!this.props.animate)
-			return <div className="DashWinLoading"></div>
-		else
-			return (
-				<div className="DashWin">
-					<Typography variant="h6">
-						<CardHeader 
-							title={this.props.header} 
-							style={{textAlign: "left", paddingRight: "3vw", paddingTop: "5vh", paddingBottom: "0", paddingLeft: "4.5vw"}} 
-						/>
-					</Typography>
-					<Grid className="SchemesView">
-						{renderedSchemes}
-					</Grid>
-				</div>
-			);
+function SchemeViewer(props) {
+	if (props.schemes === undefined) {
+		return null;
 	}
+	let renderedSchemes = []
+	for (const scheme of props.schemes) {
+		renderedSchemes.push(displayScheme(scheme));
+	}
+	//console.log(renderedSchemes);
+
+	// NOTE: WinHeader must have a New Scheme button always
+	if (!props.animate)
+		return <div className="DashWinLoading"></div>
+	else
+		return (
+			<div className="DashWin">
+				<Typography variant="h6">
+					<CardHeader 
+						title={props.header} 
+						style={{textAlign: "left", paddingRight: "3vw", paddingTop: "5vh", paddingBottom: "0", paddingLeft: "4.5vw"}} 
+					/>
+				</Typography>
+				<Grid className="SchemesView">
+					{renderedSchemes}
+				</Grid>
+			</div>
+		);
 }
 
 export default SchemeViewer;

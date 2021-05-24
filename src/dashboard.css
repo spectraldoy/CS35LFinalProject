@@ -62,13 +62,12 @@
 }
 
 .SideMenu-nava {
-	display: block;
+	flex-shrink: 1;
 	font-size: var(--side-menu-font-size);
 	text-align: left;
 	padding: 1em;
 	padding-left: 0.5em;
 	cursor: pointer;
-	width: calc(var(--side-menu-width) * 2/3 + 1.5vw);
 	transition-duration: 0.3s;
 	background: none;
 	border-color: var(--background-color);
@@ -129,7 +128,7 @@
 	justify-content: flex-start;
 	width: 16vw;
 	height: 30vh;
-	margin: 1.5vw;
+	margin: 1.5vmax;
 	cursor: pointer;
 	flex-shrink: 0;
 	box-shadow: none;

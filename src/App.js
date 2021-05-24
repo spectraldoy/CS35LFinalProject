@@ -34,9 +34,9 @@ function App() {
   const sess = sessionStorage.getItem('token').split(",");  // sess[0] = username, sess[1] = university
   return (
     <Switch className="App">
-        <Route exact path="/">{HomePage()}</Route> 
+        <Route exact path="/" component={HomePage}></Route> 
         <Route path="/login"><Login setToken={setToken} /></Route>
-        <Route path="/dashboard">{Dashboard(sess)}</Route>
+        <Route path="/dashboard"><Dashboard sess={sess} /></Route>
         <Route path="/calculatorInterface" component={calculatorInterface} />
     </Switch>
   );

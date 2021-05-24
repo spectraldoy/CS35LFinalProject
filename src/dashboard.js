@@ -96,6 +96,12 @@ function Header(props) {
 function SideMenu(props) {
   const classes = useStyles();
 
+  // loads MySchemes first into the SchemeViewer, which doesn't happen automatically due to async rendering
+  if (props.mySchemesInfo[0] === 0) {
+    props.onClickMySchemes();
+    props.mySchemesInfo[1](1);
+  }
+
   return (
       <Grid className="SideMenu">
         <h className="SideMenu-h">SCHEMING</h>
@@ -110,7 +116,7 @@ function SideMenu(props) {
 }
 
 
-function Dashboard(sess) {
+function Dashboard(props) {
   /*
    * Header and side panel to display links to various pages / functionality
    * Such as Scheme Creator, My Schemes, Home, Search Schemes, etc.
@@ -118,12 +124,18 @@ function Dashboard(sess) {
    * it will just load that specific window into the Scheme viewer
    */
 
+  if (props.sess === undefined) {
+    return null;
+  }
+
   const classes = useStyles();
   const [searchQuery, updateSearchQuery] = useState("");
-  const [schemeQuery, updateSchemeQuery] = useState("username=" + sess[0]);
+  const [schemeQuery, updateSchemeQuery] = useState("username=" + props.sess[0]);
   const [window, updateWindow] = useState("Memes");
   const [schemes, setSchemes] = useState([]);
   const [animate, setAnimate] = useState(false);
+  // to load MySchemes after the async getSchemes request
+  const [mySchemesLoaded, loadMySchemes] = useState(0);
 
   function searchBar() {
     return (
@@ -182,9 +194,10 @@ function Dashboard(sess) {
       {Header({searchBar: searchBar})}
       <div className="App-bottom">
         {SideMenu({
-          onClickMySchemes: updateSchemeViewer("My Schemes", "username=" + sess[0]),
+          mySchemesInfo: [mySchemesLoaded, loadMySchemes],
+          onClickMySchemes: updateSchemeViewer("My Schemes", "username=" + props.sess[0]),
           onClickBrowseSchemes: updateSchemeViewer("Browse Schemes", "", "all_schemes"),
-          onClickMyUnivSchemes: updateSchemeViewer("My University's Schemes", "university=" + sess[1]),
+          onClickMyUnivSchemes: updateSchemeViewer("My University's Schemes", "university=" + props.sess[1]),
         })}
         <SchemeViewer header={window} schemes={schemes} animate={animate}/>
       </div>
