@@ -1,12 +1,12 @@
 // modified from https://www.digitalocean.com/community/tutorials/how-to-add-login-authentication-to-react-applications
 
 import React, { useState } from 'react';
-import { Link, Redirect } from "react-router-dom";
-import { withAlert } from 'react-alert'
 import clsx from 'clsx';
 import { fade, makeStyles } from '@material-ui/core/styles';
-import { FormControl, InputAdornment, InputLabel, Input, IconButton, Button } from '@material-ui/core';
+import { Box, FormControl, InputAdornment, InputLabel, Input, IconButton, Button } from '@material-ui/core';
 import { Visibility, VisibilityOff } from '@material-ui/icons';
+import { Redirect } from "react-router-dom";
+import { withAlert } from 'react-alert'
 
 import './login.css';
 import { Logo, Name } from './globals';
@@ -21,35 +21,42 @@ const useStyles = makeStyles((theme) => ({
     textField: {
         width: '25ch',
         color: 'black',
+        paddingTop: theme.spacing(1),
     },
     colorButton: {
         margin: theme.spacing(1),
         marginTop: theme.spacing(2),
+        width: "40%",
         backgroundColor: fade(hc, 0.15),
         '&:hover': {
             backgroundColor: fade(hc, 0.55),
         }
+    },
+    visibility: {
+        paddingBottom: theme.spacing(1),
     }
   }));
 
 function Login(props) {
+
+    if (sessionStorage.getItem('user'))  // already logged in
+        return <Redirect to="/homePage" />;
+
+    // put useAlert() here?
     const classes = useStyles();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, changeVisibilityOfPassword] = useState(false);
 
-    const handleMouseDownPassword = (e) => {
-        e.preventDefault();
-    }
-
     async function handleSubmit(e) {
         e.preventDefault();
-        const alert = this.props.alert;
+        const alert = props.alert;
 
-        const res = await loginUser(this.state.username, this.state.password);
-        switch (res) {
+        const res = await loginUser(username, password);
+        switch (res[0]) {
             case "0":
-                this.props.setUser(this.state.username);
+                // stores university is session storage as well
+                props.setUser(username + "," + res.slice(1));
                 break;
             case "1":
                 alert.error('Incorrect password');
@@ -63,10 +70,6 @@ function Login(props) {
         }
     }
 
-    if (sessionStorage.getItem('user')) // already logged in
-        return <Redirect to="/homePage"/>;
-
-    
     return (
         <div className="login-wrapper">
 			<div className="login-brand">
@@ -91,11 +94,11 @@ function Login(props) {
                         value={password}
                         onChange={ (e) => setPassword(e.target.value) }
                         endAdornment={
-                            <InputAdornment position="end">
+                            <InputAdornment position="end" className={classes.visibility}>
                                 <IconButton
                                     aria-label="toggle password visibility"
                                     onClick={ (e) => changeVisibilityOfPassword( !showPassword ) }
-                                    onMouseDown={handleMouseDownPassword}
+                                    onMouseDown={ (e) => e.preventDefault() }
                                     edge="end"
                                 >
                                     {showPassword ? <Visibility /> : <VisibilityOff />}
@@ -104,7 +107,9 @@ function Login(props) {
                         }
                     />
                 </FormControl>
-                <Button className={clsx(classes.colorButton, "login-credentials-button")} type='submit'>Next</Button>
+                <Box display="flex" mt={2} width="100%" justifyContent="flex-end">
+                    <Button type='submit' className={classes.colorButton}>Next</Button>
+                </Box>
             </form>
         </div>
     );

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import { Button, Grid, InputBase } from '@material-ui/core';
 import { fade, makeStyles } from '@material-ui/core/styles';
 import SearchIcon from '@material-ui/icons/Search';
@@ -124,13 +124,16 @@ function Dashboard(props) {
    * it will just load that specific window into the Scheme viewer
    */
 
-  if (props.sess === undefined) {
-    return null;
+  // TEST THIS
+  if (!sessionStorage.getItem('user')) {
+    return <Redirect to="/homePage"/>;
   }
+
+  const sess = props.sess.split(",");  // sess[0] = username, sess[1] = university
 
   const classes = useStyles();
   const [searchQuery, updateSearchQuery] = useState("");
-  const [schemeQuery, updateSchemeQuery] = useState("username=" + props.sess[0]);
+  const [schemeQuery, updateSchemeQuery] = useState("username=" + sess[0]);
   const [window, updateWindow] = useState("Memes");
   const [schemes, setSchemes] = useState([]);
   const [animate, setAnimate] = useState(false);
@@ -195,9 +198,9 @@ function Dashboard(props) {
       <div className="App-bottom">
         {SideMenu({
           mySchemesInfo: [mySchemesLoaded, loadMySchemes],
-          onClickMySchemes: updateSchemeViewer("My Schemes", "username=" + props.sess[0]),
+          onClickMySchemes: updateSchemeViewer("My Schemes", "username=" + sess[0]),
           onClickBrowseSchemes: updateSchemeViewer("Browse Schemes", "", "all_schemes"),
-          onClickMyUnivSchemes: updateSchemeViewer("My University's Schemes", "university=" + props.sess[1]),
+          onClickMyUnivSchemes: updateSchemeViewer("My University's Schemes", "university=" + sess[1]),
         })}
         <SchemeViewer header={window} schemes={schemes} animate={animate}/>
       </div>
