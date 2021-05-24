@@ -33,23 +33,18 @@ class CreateAccount extends React.Component {
         else if (this.state.university === "") {
             alert.error("Please enter a university");
         }
+        else if (await isDuplicate(this.state.username)) {
+            alert.error("Username " + this.state.username + " is already taken")
+        }
         else {
             const user = {
                 username: this.state.username,
                 password: this.state.password,
                 university: this.state.university,
                 userID: "0000"
-            }
-            
-            let res = await fetch("http://localhost:3001/users", {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(user),
-            })
-            res = await res.text();
+            };
+
+            const res = await createUser(user);
             alert.success(res);
         }
     }
@@ -83,6 +78,25 @@ class CreateAccount extends React.Component {
             <Link to="/login"><h2>Return to Login/Dashboard</h2></Link>
         </div>);
     }
+}
+
+async function isDuplicate(username) {
+    // check username with database
+    let res = await fetch("http://localhost:3001/users?username=" + username);
+    res = await res.text();
+    return res !== "2";
+}
+
+async function createUser(user) {
+    let res = await fetch("http://localhost:3001/users", {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(user),
+    })
+    return res.text();
 }
 
 export default withAlert()(CreateAccount)

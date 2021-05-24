@@ -67,6 +67,7 @@ class Login extends React.Component {
 
 async function loginUser(username, password) {
     // check username and password with database
+    // 0 = success, 1 = wrong password, 2 = username not found
     let res = await fetch("http://localhost:3001/users?username=" + username + "&password=" + password);
     res = res.text();
     return res;
