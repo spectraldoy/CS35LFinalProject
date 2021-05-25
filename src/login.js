@@ -1,9 +1,8 @@
 // modified from https://www.digitalocean.com/community/tutorials/how-to-add-login-authentication-to-react-applications
-
 import React, { useState } from 'react';
 import clsx from 'clsx';
 import { fade, makeStyles } from '@material-ui/core/styles';
-import { Box, FormControl, InputAdornment, InputLabel, Input, IconButton, Button } from '@material-ui/core';
+import { Box, FormControl, InputAdornment, InputLabel, Input, IconButton, Button, Typography } from '@material-ui/core';
 import { Visibility, VisibilityOff } from '@material-ui/icons';
 import { Redirect } from "react-router-dom";
 import { useAlert } from 'react-alert'
@@ -13,29 +12,32 @@ import { Logo, Name } from './globals';
 
 const hc = getComputedStyle(document.documentElement).getPropertyValue('--highlight-color');
 
-// Material-UI code mostly taken from: https://material-ui.com/components/text-fields/
 const useStyles = makeStyles((theme) => ({
+    credentials: {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+    },
     margin: {
-        margin: theme.spacing(0.75),
+        margin: theme.spacing(1),
     },
     textField: {
-        width: '25ch',
+        width: '25h',
         color: 'black',
-        paddingTop: theme.spacing(1),
     },
     colorButton: {
-        margin: theme.spacing(1),
-        marginTop: theme.spacing(2),
-        width: "40%",
+        fullWidth: true,
         backgroundColor: fade(hc, 0.15),
         '&:hover': {
             backgroundColor: fade(hc, 0.55),
         }
     },
-    visibility: {
-        paddingBottom: theme.spacing(1),
-        marginRight: theme.spacing(-1),
-    }
+    box: {
+        marginTop: theme.spacing(2),
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center'
+    },
   }));
 
 function Login(props) {
@@ -76,7 +78,7 @@ function Login(props) {
 				<img src={Logo} className="App-logo" alt="logo" />
 				<p>{Name}</p>
 			</div>
-            <form className="login-credentials" onSubmit={handleSubmit}>
+            <form className={classes.credentials} onSubmit={handleSubmit}>
                 <FormControl className={clsx(classes.margin, classes.textField)}>
                     <InputLabel htmlFor="username">Username</InputLabel>
                     <Input
@@ -94,7 +96,7 @@ function Login(props) {
                         value={password}
                         onChange={ (e) => setPassword(e.target.value) }
                         endAdornment={
-                            <InputAdornment position="end" className={classes.visibility}>
+                            <InputAdornment position="end">
                                 <IconButton
                                     aria-label="toggle password visibility"
                                     onClick={ (e) => changeVisibilityOfPassword( !showPassword ) }
@@ -107,8 +109,10 @@ function Login(props) {
                         }
                     />
                 </FormControl>
-                <Box display="flex" mt={2} width="100%" justifyContent="flex-end">
-                    <Button type='submit' className={classes.colorButton}>Next</Button>
+                <Box className={clsx(classes.box, classes.margin)}>
+                    <Button type='submit' className={classes.colorButton}>Sign In</Button>
+                    <Typography variant='overline' align='center'>Or</Typography>
+                    <Button className={classes.colorButton} href="/createAccount">Create New Account</Button>
                 </Box>
             </form>
         </div>

@@ -168,9 +168,9 @@ function Dashboard(props) {
   // for SideMenu Button functions / searching
   function updateSchemeViewer(header, query, prefix="grading_schemes") {
     if (header === window) {
-      return () => {};
+      return (e) => {};
     }
-    return () => {
+    return (e) => {
       updateSchemeQuery(query);
       getScheme(query, prefix)
       .then( data => data.json() ) 

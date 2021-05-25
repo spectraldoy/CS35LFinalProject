@@ -36,7 +36,7 @@ function App() {
 
   let app = (
     <div className="App">
-      <BrowserRouter className="App-router">
+      <BrowserRouter>
         <Switch>
             <Route exact path="/">
               <Redirect to={startPage}/>
@@ -45,7 +45,7 @@ function App() {
             <Route path="/login"><Login setUser={setUser} /></Route>
             <Route path="/dashboard"><Dashboard sess={user} setUser={setUser}/></Route>
             <Route path="/calculatorInterface" component={calculatorInterface} />
-            <Route path="/createAccount" component={CreateAccount} />
+            <Route path="/createAccount"><CreateAccount setUser={setUser} /></Route>
         </Switch>
       </BrowserRouter>
     </div>
