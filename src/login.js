@@ -1,31 +1,62 @@
 // modified from https://www.digitalocean.com/community/tutorials/how-to-add-login-authentication-to-react-applications
 
-import React from 'react';
-import { Logo, Name } from './globals';
-import { Link, Redirect } from "react-router-dom";
+import React, { useState } from 'react';
+import clsx from 'clsx';
+import { fade, makeStyles } from '@material-ui/core/styles';
+import { Box, FormControl, InputAdornment, InputLabel, Input, IconButton, Button } from '@material-ui/core';
+import { Visibility, VisibilityOff } from '@material-ui/icons';
+import { Redirect } from "react-router-dom";
 import { withAlert } from 'react-alert'
 
 import './login.css';
+import { Logo, Name } from './globals';
 
-class Login extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            username: "",
-            password: "",
-        };
+const hc = getComputedStyle(document.documentElement).getPropertyValue('--highlight-color');
 
-        this.handleSubmit = this.handleSubmit.bind(this);
+// Material-UI code mostly taken from: https://material-ui.com/components/text-fields/
+const useStyles = makeStyles((theme) => ({
+    margin: {
+        margin: theme.spacing(1),
+    },
+    textField: {
+        width: '25ch',
+        color: 'black',
+        paddingTop: theme.spacing(1),
+    },
+    colorButton: {
+        margin: theme.spacing(1),
+        marginTop: theme.spacing(2),
+        width: "40%",
+        backgroundColor: fade(hc, 0.15),
+        '&:hover': {
+            backgroundColor: fade(hc, 0.55),
+        }
+    },
+    visibility: {
+        paddingBottom: theme.spacing(1),
     }
+  }));
 
-    handleSubmit = async e => {
+function Login(props) {
+
+    if (sessionStorage.getItem('user'))  // already logged in
+        return <Redirect to="/homePage" />;
+
+    // put useAlert() here?
+    const classes = useStyles();
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const [showPassword, changeVisibilityOfPassword] = useState(false);
+
+    async function handleSubmit(e) {
         e.preventDefault();
-        const alert = this.props.alert;
+        const alert = props.alert;
 
-        const res = await loginUser(this.state.username, this.state.password);
-        switch (res) {
+        const res = await loginUser(username, password);
+        switch (res[0]) {
             case "0":
-                this.props.setUser(this.state.username);
+                // stores university is session storage as well
+                props.setUser(username + "," + res.slice(1));
                 break;
             case "1":
                 alert.error('Incorrect password');
@@ -38,31 +69,50 @@ class Login extends React.Component {
                 break;
         }
     }
-    
-    render() {
-        if (sessionStorage.getItem('user')) // already logged in
-            return <Redirect to="/homePage"/>;
 
-        return (
+    return (
         <div className="login-wrapper">
 			<div className="login-brand">
 				<img src={Logo} className="App-logo" alt="logo" />
 				<p>{Name}</p>
 			</div>
-			<form onSubmit={this.handleSubmit} className="login-credentials">
-				<label>
-					<p>Username</p>
-					<input type="text" onChange={e => this.setState({username: e.target.value})}/>
-				</label>
-				<label>
-					<p>Password</p>
-					<input type="password" onChange={e => this.setState({password: e.target.value})}/>
-				</label>
-				<button type="submit">Submit</button>
-			</form>
-            <Link to="/createAccount"><h2>Create a new account</h2></Link>
-        </div>);
-    }
+            <form className="login-credentials" onSubmit={handleSubmit}>
+                <FormControl className={clsx(classes.margin, classes.textField)}>
+                    <InputLabel htmlFor="username">Username</InputLabel>
+                    <Input
+                        id="username"
+                        type="text"
+                        value={username}
+                        onChange={ (e) => setUsername(e.target.value) }
+                    />
+                </FormControl>
+                <FormControl className={clsx(classes.margin, classes.textField)}>
+                    <InputLabel htmlFor="password">Password</InputLabel>
+                    <Input
+                        id="password"
+                        type={showPassword ? 'text' : 'password'}
+                        value={password}
+                        onChange={ (e) => setPassword(e.target.value) }
+                        endAdornment={
+                            <InputAdornment position="end" className={classes.visibility}>
+                                <IconButton
+                                    aria-label="toggle password visibility"
+                                    onClick={ (e) => changeVisibilityOfPassword( !showPassword ) }
+                                    onMouseDown={ (e) => e.preventDefault() }
+                                    edge="end"
+                                >
+                                    {showPassword ? <Visibility /> : <VisibilityOff />}
+                                </IconButton>
+                            </InputAdornment>
+                        }
+                    />
+                </FormControl>
+                <Box display="flex" mt={2} width="100%" justifyContent="flex-end">
+                    <Button type='submit' className={classes.colorButton}>Next</Button>
+                </Box>
+            </form>
+        </div>
+    );
 }
 
 async function loginUser(username, password) {

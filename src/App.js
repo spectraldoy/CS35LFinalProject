@@ -43,7 +43,7 @@ function App() {
             </Route>
             <Route path="/homePage" component={HomePage} /> 
             <Route path="/login"><Login setUser={setUser} /></Route>
-            <Route path="/dashboard" component={Dashboard} />
+            <Route path="/dashboard"><Dashboard sess={user} /></Route>
             <Route path="/calculatorInterface" component={calculatorInterface} />
             <Route path="/createAccount" component={CreateAccount} />
         </Switch>
@@ -64,7 +64,8 @@ function UserState() {
   };
   
   const saveUser = username => {
-    sessionStorage.setItem('user', JSON.stringify(username));
+    // got rid of stringify - messes up the Dashboard
+    sessionStorage.setItem('user', username);
     setUser(username);
   };
 

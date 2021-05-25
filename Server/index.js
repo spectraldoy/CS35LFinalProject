@@ -58,38 +58,25 @@ app.get("/get_scheme", async (req, res) =>
 
 app.get("/grading_schemes", async (req, res) =>
 {
-    var requestedSchemes;
-    search_username = req.query.username;
 
-    if (search_username != undefined) {
-        // CODE TO GET ID FROM USERNAME
-        var matchingUserAccount = await User.findOne({ "username": search_username }, (err, grading_schemse) => {});
-
-        if(matchingUserAccount == null)
-            search_creatorID = null;
-        else
-        {
-            search_creatorID = matchingUserAccount.userID;
-            console.log("CreatorID found: " + search_creatorID);
-        }
-
-        requestedSchemes = await GradingScheme.find({ "creatorID": search_creatorID }, (err, grading_schemes) => {});
-    } 
-    else {
-        // otherwise just use search query
-        requestedSchemes = await GradingScheme.find(
-            { $or: [
-                { university: req.query.university },
-                { professor: req.query.professor },
-                { class: req.query.class },
-                { schemeID: req.query.schemeID },
-                { creatorID: req.query.creatorID },
-            ]}, 
-            (err, schemes) => {}
-        );
-    }
+    // otherwise just use search query
+    requestedSchemes = await GradingScheme.find(
+        { $or: [
+            { owner: req.query.owner },
+            { university: req.query.university },
+            { professor: req.query.professor },
+            { class: req.query.class },
+        ]}, 
+        (err, schemes) => {}
+    );
     
     res.send(requestedSchemes);
+});
+
+app.get("/all_schemes", async (req, res) => 
+{
+    var allSchemes = await GradingScheme.find({}, (err, grading_schemes) => {});
+    res.send(allSchemes);
 });
 
 app.get("/users", async (req, res) => 
@@ -99,9 +86,9 @@ app.get("/users", async (req, res) =>
 
         var userAccount = await User.findOne({ "username": req.query.username, "password": req.query.password}, 
             (err, userEvent) => {});
-        
         if(userAccount != null)
-            res.send("0");        // Credentials are correct; account exists          
+            // for easier my univ's schemes view
+            res.send("0" + userAccount.university);        // Credentials are correct; account exists          
         else
         {
             userAccount = await User.findOne({ "username": req.query.username}, (err, userEvent) => {});
@@ -164,8 +151,8 @@ app.post("/grading_schemes", async (req, res) =>
         const newGradingScheme = new GradingScheme(req.body);
         await newGradingScheme.save();
 
-        console.log("Saved new grading scheme for class \"" + req.body.class + "\" by userID \"" + req.body.creatorID + "\"");
-        res.send("Saved new grading scheme for class \"" + req.body.class + "\" by userID \"" + req.body.creatorID + "\"");
+        console.log("Saved new grading scheme for class \"" + req.body.class + "\" by user \"" + req.body.owner + "\"");
+        res.send("Saved new grading scheme for class \"" + req.body.class + "\" by user \"" + req.body.owner + "\"");
     }
     catch (err)
     {
@@ -177,6 +164,17 @@ app.post("/users", async (req, res) =>
 {
     try
     {
+
+        // TODO: We need a way of automatically assigning a new unique userID when a new user is created
+        // There may be a way to store this data on the database (like find the last user to be added
+        // and then add 1 to that user's ID)
+        const existingUser = await User.findOne({ "username": req.body.username }, (err, grading_schemse) => {});
+        if(existingUser != null)
+        {
+            res.send("User already exists!");   // We may want to send over a number as a way of specifying the error?
+            console.log("User already exists!");
+            return;
+        }
         const newUser = new User(req.body);
         await newUser.save();
 

@@ -3,13 +3,16 @@
 /* TODO: viewport or other units? */
 
 /* Get any fonts you like here */
-@import url('https://fonts.googleapis.com/css?family=Lato|Inconsolata|Fira+Sans|Roboto');
+@import url('https://fonts.googleapis.com/css?family=Lato|Inconsolata|Fira+Sans|Roboto|KoHo');
 
 :root {
   --header-height: 10vh;
-  --side-menu-width: 15vw;
-  --side-menu-font-size: 15px;
+  --side-menu-width: 18vw;
+  --side-menu-font-size: 14px;
   --background-color: white;
+  --text-color: black;
+  --highlight-color:#EA542E; /* #61dafb */
+  --default-font: 'Roboto';
   --xwalk: 0px;
   --ywalk: 0px;
 }
@@ -17,17 +20,21 @@
 .App {
   background-color: var(--background-color);
   text-align: center;
+  color: var(--text-color);
 }
 
 .App-logo {
-  height: var(--header-height);
+  height: calc(var(--header-height) * 0.8);
+  padding: calc(var(--header-height) * 0.15);
 }
 
+/*
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
   }
 }
+*/
 
 .App-router {
   list-style: none;
