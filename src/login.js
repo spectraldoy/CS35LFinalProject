@@ -6,7 +6,7 @@ import { fade, makeStyles } from '@material-ui/core/styles';
 import { Box, FormControl, InputAdornment, InputLabel, Input, IconButton, Button } from '@material-ui/core';
 import { Visibility, VisibilityOff } from '@material-ui/icons';
 import { Redirect } from "react-router-dom";
-import { withAlert } from 'react-alert'
+import { useAlert } from 'react-alert'
 
 import './login.css';
 import { Logo, Name } from './globals';
@@ -16,7 +16,7 @@ const hc = getComputedStyle(document.documentElement).getPropertyValue('--highli
 // Material-UI code mostly taken from: https://material-ui.com/components/text-fields/
 const useStyles = makeStyles((theme) => ({
     margin: {
-        margin: theme.spacing(1),
+        margin: theme.spacing(0.75),
     },
     textField: {
         width: '25ch',
@@ -34,6 +34,7 @@ const useStyles = makeStyles((theme) => ({
     },
     visibility: {
         paddingBottom: theme.spacing(1),
+        marginRight: theme.spacing(-1),
     }
   }));
 
@@ -42,7 +43,7 @@ function Login(props) {
     if (sessionStorage.getItem('user'))  // already logged in
         return <Redirect to="/homePage" />;
 
-    // put useAlert() here?
+    const alert = useAlert();
     const classes = useStyles();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
@@ -50,7 +51,6 @@ function Login(props) {
 
     async function handleSubmit(e) {
         e.preventDefault();
-        const alert = props.alert;
 
         const res = await loginUser(username, password);
         switch (res[0]) {
@@ -123,5 +123,5 @@ async function loginUser(username, password) {
     return res;
 }
 
-export default withAlert()(Login)
+export default Login;
 

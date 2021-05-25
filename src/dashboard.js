@@ -124,22 +124,20 @@ function Dashboard(props) {
    * it will just load that specific window into the Scheme viewer
    */
 
-  // TEST THIS
   if (!sessionStorage.getItem('user')) {
-    return <Redirect to="/homePage"/>;
+    return <Redirect to="/" />;
   }
 
   const sess = props.sess.split(",");  // sess[0] = username, sess[1] = university
-
   const classes = useStyles();
   const [searchQuery, updateSearchQuery] = useState("");
-  const [schemeQuery, updateSchemeQuery] = useState("username=" + sess[0]);
+  const [schemeQuery, updateSchemeQuery] = useState("owner=" + sess[0]);
   const [window, updateWindow] = useState("Memes");
   const [schemes, setSchemes] = useState([]);
   const [animate, setAnimate] = useState(false);
   // to load MySchemes after the async getSchemes request
   const [mySchemesLoaded, loadMySchemes] = useState(0);
-
+  
   function searchBar() {
     return (
       <div className={classes.search}>
@@ -167,19 +165,14 @@ function Dashboard(props) {
     );
   }
 
-  async function getSchemes(query, prefix="grading_schemes") {
-    const response = await getScheme(query, prefix);
-    return response;
-  }
-
-  // SideMenu Button functions
-  function updateSchemeViewer(header, query, prefix) {
+  // for SideMenu Button functions / searching
+  function updateSchemeViewer(header, query, prefix="grading_schemes") {
     if (header === window) {
       return () => {};
     }
     return () => {
       updateSchemeQuery(query);
-      getSchemes(query, prefix)
+      getScheme(query, prefix)
       .then( data => data.json() ) 
       .then(
         data => {
@@ -191,16 +184,17 @@ function Dashboard(props) {
       setAnimate(false);
     };
   }
-
+  
   return (
     <div>
       {Header({searchBar: searchBar})}
       <div className="App-bottom">
         {SideMenu({
           mySchemesInfo: [mySchemesLoaded, loadMySchemes],
-          onClickMySchemes: updateSchemeViewer("My Schemes", "username=" + sess[0]),
+          onClickMySchemes: updateSchemeViewer("My Schemes", "owner=" + sess[0]),
           onClickBrowseSchemes: updateSchemeViewer("Browse Schemes", "", "all_schemes"),
           onClickMyUnivSchemes: updateSchemeViewer("My University's Schemes", "university=" + sess[1]),
+          onLogout: () => props.setUser(""),
         })}
         <SchemeViewer header={window} schemes={schemes} animate={animate}/>
       </div>

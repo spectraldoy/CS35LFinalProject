@@ -54,6 +54,7 @@ function SchemeViewer(props) {
 	}
 	let renderedSchemes = []
 	for (const scheme of props.schemes) {
+		// need a key here?
 		renderedSchemes.push(displayScheme(scheme));
 	}
 	//console.log(renderedSchemes);
