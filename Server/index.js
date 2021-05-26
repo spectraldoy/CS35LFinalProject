@@ -1,6 +1,5 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const Scheme = require("../model/scheme");      // OLD GRADING SCHEME -- USE GradingScheme instead
 
 const User = require("../model/user");
 const GradingScheme = require("../model/grading_scheme");   // NEW GRADING SCHEME
@@ -43,16 +42,6 @@ app.get("/api", (req, res) =>
 // would simply have to append the query parameters to the API endpoint (URL) in order to make this get request
 
 
-// OUTDATED!  \/\/\/\/  
-app.get("/get_scheme", async (req, res) =>
-{
-    professor = req.query.professsor;
-    var requestedSchemes = await Scheme.find({ "prof": req.query.professor }, (err, schemes) => {});
-
-    res.send(requestedSchemes);
-});
-// OUTDATED!  /\/\/\/\
-
 
 
 
@@ -66,6 +55,7 @@ app.get("/grading_schemes", async (req, res) =>
             { university: req.query.university },
             { professor: req.query.professor },
             { class: req.query.class },
+            { _id: req.query.id}
         ]}, 
         (err, schemes) => {}
     );
@@ -139,35 +129,6 @@ app.get("/users", async (req, res) =>
 
 // NOTE: As of now, there is no front-end for scheme saving, so in order to test out the database, 
 // you may want to use Postman or REST and send over a JSON object in the same format as the Scheme model in scheme.js
-
-
-// OUTDATED!  \/\/\/\/  Use app.post("/grading_schemes"...) !!!
-app.post("/create_scheme", async (req, res) =>
-{
-    try
-    {
-        const newScheme = new Scheme(req.body);     // Here we attempt to construct a Scheme object from the JSON the server receives
-        await newScheme.save();                     // Attempts to save the newly constructed Scheme object in database
-
-
-        console.log("Received scheme for course \"" + req.body.course + "\"");   // This is a message for the server
-
-        let cat_names = "";
-        for(var i = 0; i < req.body.categories.length; i++)     // We combine all the category names into a comma-sep string
-        {
-            cat_names += req.body.categories[i].name;
-            if(i != req.body.categories.length - 1)
-                cat_names += ", ";
-        }
-        res.send(`Successfully saved scheme for course "${req.body.course}" with categories: ${cat_names}`); // This is a message for the client
-    }
-    catch (err)
-    {
-        res.send({ message: err });     // Send back an object containing the error we found
-    }
-    
-});
-// OUTDATED!  /\/\/\/\
 
 
 
