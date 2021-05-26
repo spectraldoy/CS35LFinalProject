@@ -36,16 +36,16 @@ function App() {
 
   let app = (
     <div className="App">
-      <BrowserRouter className="App-router">
+      <BrowserRouter>
         <Switch>
             <Route exact path="/">
               <Redirect to={startPage}/>
             </Route>
             <Route path="/homePage" component={HomePage} /> 
             <Route path="/login"><Login setUser={setUser} /></Route>
-            <Route path="/dashboard"><Dashboard sess={user} /></Route>
+            <Route path="/dashboard"><Dashboard sess={user} setUser={setUser}/></Route>
             <Route path="/calculatorInterface" component={calculatorInterface} />
-            <Route path="/createAccount" component={CreateAccount} />
+            <Route path="/createAccount"><CreateAccount setUser={setUser} /></Route>
         </Switch>
       </BrowserRouter>
     </div>
@@ -64,7 +64,7 @@ function UserState() {
   };
   
   const saveUser = username => {
-    // got rid of stringify - messes up the Dashboard
+    // got rid of JSON.stringify - messes up Dashboard
     sessionStorage.setItem('user', username);
     setUser(username);
   };

@@ -85,6 +85,7 @@
 	flex-direction: column;
 	margin-left: var(--side-menu-width);
 	margin-top: var(--header-height);
+	flex-grow: 1;
 
 	--xwalk: 30px;
 	-webkit-animation: fadein;
@@ -133,7 +134,6 @@
 	flex-shrink: 0;
 	box-shadow: none;
 	transition-duration: 0.3s;
-	background-color: gray;
 }
 
 .Scheme:hover {
@@ -157,6 +157,7 @@
 	list-style-type: none; /* "\2610" */
 	padding: 2vmin;
 	padding-top: 0;
+	padding-bottom: 0;
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;

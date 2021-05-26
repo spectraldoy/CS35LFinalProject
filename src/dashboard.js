@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import clsx from 'clsx';
 import { Link, Redirect } from "react-router-dom";
 import { Button, Grid, InputBase } from '@material-ui/core';
 import { fade, makeStyles } from '@material-ui/core/styles';
@@ -11,6 +12,7 @@ import SchemeViewer from './schemeviewer';
 const fs = getComputedStyle(document.documentElement).getPropertyValue('--side-menu-font-size');
 const bg = getComputedStyle(document.documentElement).getPropertyValue('--background-color');
 const hc = getComputedStyle(document.documentElement).getPropertyValue('--highlight-color');
+const oc = getComputedStyle(document.documentElement).getPropertyValue('--opposite-color');
 const sw = getComputedStyle(document.documentElement).getPropertyValue('--side-menu-width');
 
 /* mostly copied from https://material-ui.com/components/app-bar/ */
@@ -67,10 +69,17 @@ const useStyles = makeStyles((theme) => ({
     fontSize: fs,
     border: "none",
     backgroundColor: bg,
+  },
+  hc: {
     '&:hover': {
       backgroundColor: hc,
     }
-  }
+  },
+  oc: {
+    '&:hover': {
+      backgroundColor: oc,
+    }
+  },
 }));
 
 
@@ -105,12 +114,12 @@ function SideMenu(props) {
   return (
       <Grid className="SideMenu">
         <h className="SideMenu-h">SCHEMING</h>
-        <Button className={classes.colorButton} onClick={props.onClickMySchemes}>My Schemes</Button>
-        <Button className={classes.colorButton} onClick={props.onClickBrowseSchemes}>Browse Schemes</Button>
-        <Button className={classes.colorButton} onClick={props.onClickMyUnivSchemes}>My Univ's Schemes</Button>
+        <Button className={clsx(classes.colorButton, classes.hc)} onClick={props.onClickMySchemes}>My Schemes</Button>
+        <Button className={clsx(classes.colorButton, classes.hc)} onClick={props.onClickBrowseSchemes}>Browse Schemes</Button>
+        <Button className={clsx(classes.colorButton, classes.hc)} onClick={props.onClickMyUnivSchemes}>My Univ's Schemes</Button>
         <h className="SideMenu-h">ACCOUNT</h>
-        <Button className={classes.colorButton} onClick={props.onClickProfile}>Profile</Button>
-        <Button className={classes.colorButton} onClick={props.onLogout}>Logout</Button>
+        <Button className={clsx(classes.colorButton, classes.oc)} onClick={props.onClickProfile}>Profile</Button>
+        <Button className={clsx(classes.colorButton, classes.oc)} onClick={props.onLogout}>Logout</Button>
       </Grid> 
   );
 }
@@ -124,21 +133,56 @@ function Dashboard(props) {
    * it will just load that specific window into the Scheme viewer
    */
 
-  // TEST THIS
   if (!sessionStorage.getItem('user')) {
-    return <Redirect to="/homePage"/>;
+    return <Redirect to="/" />;
   }
 
   const sess = props.sess.split(",");  // sess[0] = username, sess[1] = university
-
   const classes = useStyles();
   const [searchQuery, updateSearchQuery] = useState("");
-  const [schemeQuery, updateSchemeQuery] = useState("username=" + sess[0]);
+  // schemequery necessary?
   const [window, updateWindow] = useState("Memes");
   const [schemes, setSchemes] = useState([]);
   const [animate, setAnimate] = useState(false);
   // to load MySchemes after the async getSchemes request
   const [mySchemesLoaded, loadMySchemes] = useState(0);
+
+  // for SideMenu Button functions / searching
+  function updateSchemeViewer(header, query, prefix="grading_schemes") {
+    if (header === window) {
+      return (e) => {};
+    }
+    console.log(query);
+    return (e) => {
+      // this is where the search occurs for the scheme views
+      getScheme(query, prefix)
+      .then( data => data.json() ) 
+      .then(
+        data => {
+          setSchemes(data);
+          setAnimate(true);
+        }
+      );
+      updateWindow(header);
+      setAnimate(false);
+    };
+  }
+
+  function search(query) {
+    // parse search query
+    const delimiter = "`";
+    const punctuation = /[\u2000-\u206F\u2E00-\u2E7F\\'!"#$%&()*+,\-.\/:;<=>?@\[\]^_{|}~]/;
+    let withPunctuation = query.replace(delimiter, "");
+    let withoutPunctuation = query.replace(punctuation, "");
+    const finalQuery = "string=" + withoutPunctuation + delimiter + withPunctuation;
+
+    // possible problems: case sensitive
+    return updateSchemeViewer(
+      "Scheme Search Results for \"" + query + "\"", 
+      finalQuery,
+      "searchquery",
+    );
+  }
 
   function searchBar() {
     return (
@@ -149,8 +193,7 @@ function Dashboard(props) {
         
         <form onSubmit={(e) => {
             e.preventDefault();
-            updateSchemeQuery(searchQuery);
-            updateSearchQuery("");
+            search(searchQuery)();
         }}>
           <InputBase
             placeholder="Search schemes..."
@@ -166,43 +209,19 @@ function Dashboard(props) {
       </div>
     );
   }
-
-  async function getSchemes(query, prefix="grading_schemes") {
-    const response = await getScheme(query, prefix);
-    return response;
-  }
-
-  // SideMenu Button functions
-  function updateSchemeViewer(header, query, prefix) {
-    if (header === window) {
-      return () => {};
-    }
-    return () => {
-      updateSchemeQuery(query);
-      getSchemes(query, prefix)
-      .then( data => data.json() ) 
-      .then(
-        data => {
-          setSchemes(data);
-          setAnimate(true);
-        }
-      );
-      updateWindow(header);
-      setAnimate(false);
-    };
-  }
-
+  
   return (
     <div>
       {Header({searchBar: searchBar})}
       <div className="App-bottom">
         {SideMenu({
           mySchemesInfo: [mySchemesLoaded, loadMySchemes],
-          onClickMySchemes: updateSchemeViewer("My Schemes", "username=" + sess[0]),
+          onClickMySchemes: updateSchemeViewer("My Schemes", "owner=" + sess[0]),
           onClickBrowseSchemes: updateSchemeViewer("Browse Schemes", "", "all_schemes"),
           onClickMyUnivSchemes: updateSchemeViewer("My University's Schemes", "university=" + sess[1]),
+          onLogout: () => props.setUser(""),
         })}
-        <SchemeViewer header={window} schemes={schemes} animate={animate}/>
+        <SchemeViewer header={window} schemes={schemes} animate={animate} userSearch={search}/>
       </div>
     </div>
   );
