@@ -41,10 +41,6 @@ const useStyles = makeStyles((theme) => ({
 
 function CreateAccount(props) {
 
-    // successful login
-    if (sessionStorage.getItem('user'))
-        return <Redirect to="/" />;
-
     const alert = useAlert();
     const classes = useStyles();
     const [username, setUsername] = useState("");
@@ -83,6 +79,10 @@ function CreateAccount(props) {
             alert.success(res);
             // including university makes my university's schemes view simpler
             props.setUser(username + ',' + university);
+
+            // successful create account
+            if (sessionStorage.getItem('user'))
+                return <Redirect to="/" />;
         }
     }
 

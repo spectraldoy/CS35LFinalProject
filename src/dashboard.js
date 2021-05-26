@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import clsx from 'clsx';
 import { Link, Redirect } from "react-router-dom";
 import { Button, Grid, InputBase } from '@material-ui/core';
 import { fade, makeStyles } from '@material-ui/core/styles';
@@ -11,6 +12,7 @@ import SchemeViewer from './schemeviewer';
 const fs = getComputedStyle(document.documentElement).getPropertyValue('--side-menu-font-size');
 const bg = getComputedStyle(document.documentElement).getPropertyValue('--background-color');
 const hc = getComputedStyle(document.documentElement).getPropertyValue('--highlight-color');
+const oc = getComputedStyle(document.documentElement).getPropertyValue('--opposite-color');
 const sw = getComputedStyle(document.documentElement).getPropertyValue('--side-menu-width');
 
 /* mostly copied from https://material-ui.com/components/app-bar/ */
@@ -67,10 +69,17 @@ const useStyles = makeStyles((theme) => ({
     fontSize: fs,
     border: "none",
     backgroundColor: bg,
+  },
+  hc: {
     '&:hover': {
       backgroundColor: hc,
     }
-  }
+  },
+  oc: {
+    '&:hover': {
+      backgroundColor: oc,
+    }
+  },
 }));
 
 
@@ -105,12 +114,12 @@ function SideMenu(props) {
   return (
       <Grid className="SideMenu">
         <h className="SideMenu-h">SCHEMING</h>
-        <Button className={classes.colorButton} onClick={props.onClickMySchemes}>My Schemes</Button>
-        <Button className={classes.colorButton} onClick={props.onClickBrowseSchemes}>Browse Schemes</Button>
-        <Button className={classes.colorButton} onClick={props.onClickMyUnivSchemes}>My Univ's Schemes</Button>
+        <Button className={clsx(classes.colorButton, classes.hc)} onClick={props.onClickMySchemes}>My Schemes</Button>
+        <Button className={clsx(classes.colorButton, classes.hc)} onClick={props.onClickBrowseSchemes}>Browse Schemes</Button>
+        <Button className={clsx(classes.colorButton, classes.hc)} onClick={props.onClickMyUnivSchemes}>My Univ's Schemes</Button>
         <h className="SideMenu-h">ACCOUNT</h>
-        <Button className={classes.colorButton} onClick={props.onClickProfile}>Profile</Button>
-        <Button className={classes.colorButton} onClick={props.onLogout}>Logout</Button>
+        <Button className={clsx(classes.colorButton, classes.oc)} onClick={props.onClickProfile}>Profile</Button>
+        <Button className={clsx(classes.colorButton, classes.oc)} onClick={props.onLogout}>Logout</Button>
       </Grid> 
   );
 }

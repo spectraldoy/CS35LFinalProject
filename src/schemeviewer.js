@@ -1,8 +1,32 @@
 import './dashboard.css';
 import React from 'react';
-import { Card, Grid, CardHeader, Typography, Paper } from '@material-ui/core';
+import { Card, Grid, CardHeader, Typography, Paper, Button } from '@material-ui/core';
+import { fade, makeStyles } from '@material-ui/core/styles';
+import AddBoxSharpIcon from '@material-ui/icons/AddBoxSharp';
 
-// Dashboard Windows: MySchemes, BrowseSchemes, SearchSchemes, MyUnivSchemes, Profile, Settings
+// const hc = getComputedStyle(document.documentElement).getPropertyValue('--highlight-color');
+const oc = getComputedStyle(document.documentElement).getPropertyValue('--opposite-color');
+
+const useStyles = makeStyles((theme) => ({
+    colorButton: {
+		marginRight: theme.spacing(0.75),
+		width: `26.5ch`, /* 16vw */
+		// vertical padding + font size from searchIcon
+        backgroundColor: fade(oc, 0.25),
+        '&:hover': {
+            backgroundColor: fade(oc, 0.55),
+        }
+    },
+    cardHeader: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'center'
+    },
+	addicon: {
+		paddingRight: `1rem`,
+	},
+}));
+
 
 function formatCategory(name, weight) {
 	if (weight != null) {
@@ -52,6 +76,8 @@ function SchemeViewer(props) {
 	if (props.schemes === undefined) {
 		return null;
 	}
+	
+	const classes = useStyles();
 	let renderedSchemes = []
 	for (const scheme of props.schemes) {
 		// need a key here?
@@ -65,12 +91,21 @@ function SchemeViewer(props) {
 	else
 		return (
 			<div className="DashWin">
-				<Typography variant="h6">
-					<CardHeader 
-						title={props.header} 
-						style={{textAlign: "left", paddingRight: "3vw", paddingTop: "5vh", paddingBottom: "0", paddingLeft: "4.5vw"}} 
-					/>
-				</Typography>
+				<CardHeader
+					action={ 
+						<Button 
+							className={classes.colorButton}
+							align="right"
+							aria-label="create new shceme"
+							onClick={ (e) => { /* props.createNewScheme() */ } }
+							edge="end"
+						>
+							<AddBoxSharpIcon className={classes.addicon}/> Create Scheme
+						</Button>
+					}
+					title={props.header} 
+					style={{textAlign: "left", paddingRight: "3vw", paddingTop: "5vh", paddingBottom: "0", paddingLeft: "4.5vw"}} 
+				/>
 				<Grid className="SchemesView">
 					{renderedSchemes}
 				</Grid>
