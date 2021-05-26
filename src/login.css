@@ -4,7 +4,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     height: 100vh;
 }
 
@@ -18,18 +18,10 @@
 	justify-content: center;
 	font-size: calc(10px + var(--header-height) / 3);
 	font-family: 'KoHo';
-    margin-top: 10vh;
+    margin-top: 7vh;
 }
 
 .login-brand p {
     margin-top: 0;
-    margin-bottom: 5vh;
-}
-
-.login-credentials {
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
+    margin-bottom: 4vh;
 }
