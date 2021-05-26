@@ -140,7 +140,7 @@ function Dashboard(props) {
   const sess = props.sess.split(",");  // sess[0] = username, sess[1] = university
   const classes = useStyles();
   const [searchQuery, updateSearchQuery] = useState("");
-  const [schemeQuery, updateSchemeQuery] = useState("owner=" + sess[0]);
+  // schemequery necessary?
   const [window, updateWindow] = useState("Memes");
   const [schemes, setSchemes] = useState([]);
   const [animate, setAnimate] = useState(false);
@@ -152,10 +152,9 @@ function Dashboard(props) {
     if (header === window) {
       return (e) => {};
     }
-
+    console.log(query);
     return (e) => {
       // this is where the search occurs for the scheme views
-      updateSchemeQuery(query);
       getScheme(query, prefix)
       .then( data => data.json() ) 
       .then(
@@ -175,11 +174,9 @@ function Dashboard(props) {
     const punctuation = /[\u2000-\u206F\u2E00-\u2E7F\\'!"#$%&()*+,\-.\/:;<=>?@\[\]^_{|}~]/;
     let withPunctuation = query.replace(delimiter, "");
     let withoutPunctuation = query.replace(punctuation, "");
-    const finalQuery = "string=" + withPunctuation + delimiter + withoutPunctuation;
-    console.log(finalQuery);
+    const finalQuery = "string=" + withoutPunctuation + delimiter + withPunctuation;
 
     // possible problems: case sensitive
-
     return updateSchemeViewer(
       "Scheme Search Results for \"" + query + "\"", 
       finalQuery,
@@ -196,7 +193,6 @@ function Dashboard(props) {
         
         <form onSubmit={(e) => {
             e.preventDefault();
-            updateSchemeQuery(searchQuery);
             search(searchQuery)();
         }}>
           <InputBase
