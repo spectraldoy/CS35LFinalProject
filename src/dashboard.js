@@ -146,7 +146,47 @@ function Dashboard(props) {
   const [animate, setAnimate] = useState(false);
   // to load MySchemes after the async getSchemes request
   const [mySchemesLoaded, loadMySchemes] = useState(0);
-  
+
+  // for SideMenu Button functions / searching
+  function updateSchemeViewer(header, query, prefix="grading_schemes") {
+    if (header === window) {
+      return (e) => {};
+    }
+
+    return (e) => {
+      // this is where the search occurs for the scheme views
+      updateSchemeQuery(query);
+      getScheme(query, prefix)
+      .then( data => data.json() ) 
+      .then(
+        data => {
+          setSchemes(data);
+          setAnimate(true);
+        }
+      );
+      updateWindow(header);
+      setAnimate(false);
+    };
+  }
+
+  function search(query) {
+    // parse search query
+    const delimiter = "`";
+    const punctuation = /[\u2000-\u206F\u2E00-\u2E7F\\'!"#$%&()*+,\-.\/:;<=>?@\[\]^_{|}~]/;
+    let withPunctuation = query.replace(delimiter, "");
+    let withoutPunctuation = query.replace(punctuation, "");
+    const finalQuery = "string=" + withPunctuation + delimiter + withoutPunctuation;
+    console.log(finalQuery);
+
+    // possible problems: case sensitive
+
+    return updateSchemeViewer(
+      "Scheme Search Results for \"" + query + "\"", 
+      finalQuery,
+      "searchquery",
+    );
+  }
+
   function searchBar() {
     return (
       <div className={classes.search}>
@@ -157,7 +197,7 @@ function Dashboard(props) {
         <form onSubmit={(e) => {
             e.preventDefault();
             updateSchemeQuery(searchQuery);
-            updateSearchQuery("");
+            search(searchQuery)();
         }}>
           <InputBase
             placeholder="Search schemes..."
@@ -173,26 +213,6 @@ function Dashboard(props) {
       </div>
     );
   }
-
-  // for SideMenu Button functions / searching
-  function updateSchemeViewer(header, query, prefix="grading_schemes") {
-    if (header === window) {
-      return (e) => {};
-    }
-    return (e) => {
-      updateSchemeQuery(query);
-      getScheme(query, prefix)
-      .then( data => data.json() ) 
-      .then(
-        data => {
-          setSchemes(data);
-          setAnimate(true);
-        }
-      );
-      updateWindow(header);
-      setAnimate(false);
-    };
-  }
   
   return (
     <div>
@@ -205,7 +225,7 @@ function Dashboard(props) {
           onClickMyUnivSchemes: updateSchemeViewer("My University's Schemes", "university=" + sess[1]),
           onLogout: () => props.setUser(""),
         })}
-        <SchemeViewer header={window} schemes={schemes} animate={animate}/>
+        <SchemeViewer header={window} schemes={schemes} animate={animate} userSearch={search}/>
       </div>
     </div>
   );

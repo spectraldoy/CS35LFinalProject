@@ -13,6 +13,7 @@
   --text-color: black;
   --highlight-color:#EA542E; /* #61dafb */
   --opposite-color:#15ABD1; /* https://www.colortools.net/color_complementary.html */
+  --alternate-color:#36f184;
   --default-font: 'Roboto';
   --xwalk: 0px;
   --ywalk: 0px;

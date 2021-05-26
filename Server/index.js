@@ -60,7 +60,7 @@ app.get("/grading_schemes", async (req, res) =>
 {
 
     // otherwise just use search query
-    requestedSchemes = await GradingScheme.find(
+    let requestedSchemes = await GradingScheme.find(
         { $or: [
             { owner: req.query.owner },
             { university: req.query.university },
@@ -72,6 +72,35 @@ app.get("/grading_schemes", async (req, res) =>
     
     res.send(requestedSchemes);
 });
+
+app.get("/searchquery", async (req, res) => {
+    if (!req.query.string) {
+        res.send("");
+        return;
+    }
+    // the search string will be of the form withPunctuation + '`' + withoutPunctuation
+    // and is parsed accordingly by the following code
+    let requestString = req.query.string; 
+    let searches = requestString.split("`");
+    let parsedSearches = [];
+    if (searches.length == 1) // in case ` was not in the string
+        parsedSearches = [searches[0].split(" "), searches[0].split(" ")];
+    else
+        parsedSearches = [searches[0].split(" "), searches[1].split(" ")];
+
+    // brute force search
+    let requestedSchemes = await GradingScheme.find(
+        { $or: [
+            { owner: { $in: [...parsedSearches[1]] } },
+            { university: { $in: [...parsedSearches[0]] } },
+            { professor: { $in: [...parsedSearches[0]] } },
+            { class: { $in: [...parsedSearches[1]] } },
+        ]},
+        (err, schemes) => {}
+    );
+
+    res.send(requestedSchemes);
+})
 
 app.get("/all_schemes", async (req, res) => 
 {
