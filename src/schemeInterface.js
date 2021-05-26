@@ -2,14 +2,9 @@ import './App.css';
 import React from 'react';
 import axios from 'axios';
 import { render } from 'react-dom/cjs/react-dom.development';
-//import Scheme from '../model/scheme.js'; // Error:  Module not found: You attempted to import ../model/scheme.js which falls outside of the project src/ directory. Relative imports outside of src/ are not supported.
-//scheme.js must be within the same folder
 
 class schemeInterface extends React.Component {
     
-//TODO: delete button, reset button
-//back button/homepage/dashboard button
-
     componentDidMount() {
         console.log('Component Mounted');
     }
@@ -26,17 +21,23 @@ class schemeInterface extends React.Component {
 }
 
 class Scheme extends React.Component {
+    //Used as a key for categories
+    categoriesCreated = 0;
+    
+    //May be better to not have button in categories, and instead use the map() function when rendering
+    //May be better to use controlled components instead of DOM
     constructor(props) {
         super(props);
         this.state = {
-            categories: []
+            categories: [],
+            ids: []
         };
     }
 
     postScheme() {
         var university = document.getElementById('University').value;
-        var course = document.getElementById('Course').value;
         var professor = document.getElementById('Professor').value;
+        var course = document.getElementById('Course').value;
         var categoryNames = document.getElementsByClassName('Name');
         var categoryWeights = document.getElementsByClassName('Weight');
         var categories = [];
@@ -46,14 +47,14 @@ class Scheme extends React.Component {
         }
 
         const scheme = { 
-            uni:university,
-            course:course,
-            prof:professor,
+            university:university,
+            professor:professor,
+            class:course,
             categories: categories
          }
          console.log(JSON.stringify(scheme));
          console.log('POST Called')
-         axios.post('http://localhost:3001/create_scheme', scheme)
+         axios.post('http://localhost:3001/grading_schemes', scheme)
          .catch(error => {
             this.setState({ errorMessage: error.message });
             console.error('There was an error!', error);
@@ -61,11 +62,45 @@ class Scheme extends React.Component {
     }
 
     addCategory() {
+        var num = this.categoriesCreated++;
         this.setState(() => ({
-            categories: [...this.state.categories, <Category></Category>]
+            categories: [...this.state.categories, <Category key={'Category' + num}></Category>, 
+            <> <button type="button" key={'Button' + num} onClick={() => {this.removeCategory(num)}}>
+            Delete Category
+            </button><br></br> </>],
+            ids: [...this.state.ids, num, num]
         })); 
     }
 
+    //Go through all ids and find the corresponding index that matches. Remove the Category and Id that matches.
+    removeCategory(id) {
+        
+        var i = 0;
+        while ( i < this.state.ids.length)
+        {
+            if (this.state.ids[i] === id)
+            {
+                break;
+            }
+            i++
+        }
+        var newCategories = this.state.categories.slice();
+        newCategories.splice(i, 2);
+        var newIds = this.state.ids.slice();
+        newIds.splice(i, 2);
+        
+        this.setState(() => ({
+            categories:newCategories,
+            ids:newIds
+        }));
+    }
+
+    reset() {
+        this.setState(() => ({
+            categories: [],
+            ids: []
+        })); 
+    }
 
     render() {
         return(
@@ -81,14 +116,18 @@ class Scheme extends React.Component {
                         <input type="text" id="Course" name="Course"></input><br></br>
                         <label htmlFor="Professor">Professor</label><br></br>
                         <input type="text" id="Professor" name="Professor"></input><br></br>
+                        Categories:<br></br>
                         {this.state.categories}
                     </form>
                     
                     <button type="button" onClick={() => {this.addCategory()}}>
                     Add Category
                     </button>
+                    <button type="button" onClick={() => {this.reset()}}>
+                    Reset
+                    </button>
                     <button type="button" onClick={() => {this.postScheme()}}>
-                    Upload Scheme:
+                    Upload Scheme
                     </button>
                 </h1>
             </div>
@@ -99,8 +138,9 @@ class Scheme extends React.Component {
 class Category extends React.Component {
     constructor(props) {
         super(props);
+        
     }
-    //must set up these because categories have lifecycle
+
     componentDidMount() {
         
     }
@@ -108,18 +148,18 @@ class Category extends React.Component {
     componentWillUnmount() {
 
     }
-    //need to create keys
+    
     render() {
         return(
             <>
-            <label>Name: </label><br></br>
-            <input type="text" class="Name" id="Name" name="Name"></input><br></br>
-            <label>Weight: </label><br></br>
-            <input type="number" class="Weight" id="Weight" name="Weight" min='0' max='100'></input><br></br>
+            <label>Name </label><br></br>
+            <input type="text" className="Name" id="Name" name="Name"></input><br></br>
+            <label>Weight </label><br></br>
+            <input type="number" className="Weight" id="Weight" name="Weight" min='0' max='100'></input><br></br>
             </>
         );
     }
-
 }
+
 
 export default schemeInterface
