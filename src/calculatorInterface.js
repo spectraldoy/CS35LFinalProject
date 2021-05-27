@@ -2,65 +2,79 @@ import './App.css';
 import React, { Component } from 'react';
 import { calculate } from './calculator.js'
 import { InvertColorsOff, ThreeSixtySharp } from '@material-ui/icons';
-
+import {getScheme} from './globals.js'
 
 class calculatorInterface extends React.Component {
-
   constructor(props) {
     super(props);
-    this.scheme = props.scheme;
-    this.scheme =
-    {
-      Owner: "aaisara",
-      University: "UCLA",
-      Professor: "Eggert",
-      Class: "CS35L",
-      Categories: [
-        { name: "Homework", weight: 10 },
-        { name: "Midterm", weight: 30 },
-        { name: "Quizzes", weight: 20 },
-        { name: "Final", weight: 40 }
-      ]
 
+    // extract URL parameter
+    const url = window.location.href;
+    const idLocation = url.search("id");
+    var query = url.substring(idLocation, url.length);
+    
+    // TODO: Remove when URL parameter is working
+    query = "id=60aae5db54867f1138747ff7";
+
+    this.state = {
+      scheme: null,
+      animate: false,
+      assignmentsPtsReceived: null, // to be set later
+      assignmentsPtsOutOf: null, // to be set later
+      assignmentsType: null, // to be set later
+      gradeWanted: "",
+      result: ""
     };
+
     this.weights = [];
     this.names = [];
     this.count = 0;
-    for (let category of this.scheme.Categories) {
+
+    this.finishInit = this.finishInit.bind(this);
+    this.submitGrades = this.submitGrades.bind(this);
+    this.addAssignment = this.addAssignment.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+    this.handleAssignmentTypeChange = this.handleAssignmentTypeChange.bind(this);
+
+    getScheme(query, "grading_schemes").then(data => data.json()).then(schemes => {
+      this.finishInit(schemes[0])
+    });
+  }
+
+  finishInit = (myScheme) => {
+    for (let category of myScheme.categories) {
       this.weights.push(category.weight);
       this.names.push(category.name);
       this.count += 1;
     }
-    this.state = {
-      gradeQuery: "",
+
+    this.setState({
+      scheme: myScheme, 
+      animate: true,
       assignmentsPtsReceived: Array(this.count).fill(Array(0)),
       assignmentsPtsOutOf: Array(this.count).fill(Array(0)),
       assignmentsType: Array(this.count).fill(Array(0)),
       gradeWanted: "",
       result: ""
-    };
-
-    this.submitGrades = this.submitGrades.bind(this);
-    this.addAssignment = this.addAssignment.bind(this);
-    this.handleChange = this.handleChange.bind(this);
-    this.handleAssignmentTypeChange = this.handleAssignmentTypeChange.bind(this);
+    });
   }
+
 
   handleChange = arr => (event) => {
     event.preventDefault();
-    if (event.target.name == "gradeWanted") {
+    if (event.target.name === "gradeWanted") {
       this.setState({
         gradeWanted: event.target.value
       });
     }
-    else if (event.target.name == "ptsreceived") {
+    else if (event.target.name === "ptsreceived") {
       const assignment = this.state.assignmentsPtsReceived.slice();
       assignment[arr[0]][arr[1]] = event.target.value;
       this.setState({
         assignmentsPtsReceived: assignment
       });
     }
-    else if (event.target.name == "ptsoutof") {
+    else if (event.target.name === "ptsoutof") {
       const assignment = this.state.assignmentsPtsOutOf.slice();
       assignment[arr[0]][arr[1]] = event.target.value;
       this.setState({
@@ -68,6 +82,7 @@ class calculatorInterface extends React.Component {
       });
     }
   }
+
   handleAssignmentTypeChange = arr => (event) => {
     const assignment = this.state.assignmentsType.slice();
     assignment[arr[0]][arr[1]] = event.target.value;
@@ -108,6 +123,7 @@ class calculatorInterface extends React.Component {
       assignmentsType: assignment4
     });
   }
+
   submitGrades(event) {
     event.preventDefault();
     const grades = {
@@ -115,11 +131,11 @@ class calculatorInterface extends React.Component {
     };
 
     var count = 0;
-    for (let category of this.scheme.Categories) {
+    for (let category of this.state.scheme.categories) {
       let graded = [];
       let projected = [];
       for(var i = 0; i < this.state.assignmentsType[count].length; i ++){
-        if(this.state.assignmentsType[count][i] == "Graded"){
+        if(this.state.assignmentsType[count][i] === "Graded"){
           if(this.state.assignmentsPtsReceived[count][i] === null || this.state.assignmentsPtsReceived[count][i] === "" || this.state.assignmentsPtsOutOf[count][i] === null || this.state.assignmentsPtsOutOf[count][i] === ""){
             alert("All graded assignments must have all points fields filled out");
             return;
@@ -185,6 +201,9 @@ class calculatorInterface extends React.Component {
   }
 
   render() {
+    if (!this.state.animate)
+      return <h1>Retrieving Scheme...</h1>;
+
     const items = []
     for (var i = 0; i < this.count; i++) {
       items.push(
@@ -193,7 +212,7 @@ class calculatorInterface extends React.Component {
             <input type="button" value="Add Assignment" />
           </form>
             <label>
-              {this.scheme.Categories[i].name} Category ({this.scheme.Categories[i].weight}% Weight)&nbsp;&nbsp;
+              {this.state.scheme.categories[i].name} Category ({this.state.scheme.categories[i].weight}% Weight)&nbsp;&nbsp;
             </label>
         </h2>);
       for (var j = 0; j < this.state.assignmentsPtsReceived[i].length; j++) {
@@ -202,13 +221,13 @@ class calculatorInterface extends React.Component {
             <form className="inlineForm">
               <label className="Points">
                 Name:&nbsp;
-            <input type="text" className="inputForm" />
+              <input type="text" className="inputForm" />
               </label>
             </form>
             <form className="inlineForm">
               <label className="Points">
                 Points Received:&nbsp;
-            <input type="text" name="ptsreceived" onChange={this.handleChange([i, j])} value={this.state.assignmentsPtsReceived[i][j]} className="inputForm" />
+              <input type="text" name="ptsreceived" onChange={this.handleChange([i, j])} value={this.state.assignmentsPtsReceived[i][j]} className="inputForm" />
               </label>
             </form>
             <form className = "inlineForm">
@@ -257,6 +276,7 @@ class calculatorInterface extends React.Component {
       </div>
     );
   }
+  
 }
 
 export default calculatorInterface;
