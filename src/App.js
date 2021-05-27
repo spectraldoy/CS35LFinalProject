@@ -22,6 +22,9 @@ function HomePage() {
         <Link to="/calculatorInterface">Calculator Interface</Link>
       </li>
       <li>
+        <Link to="/schemeInterface">Scheme Creator Interface</Link>
+      </li>
+      <li>
         <Link to="/createAccount">Create Account</Link>
       </li>
     </ul>
@@ -44,9 +47,10 @@ function App() {
             </Route>
             <Route path="/homePage" component={HomePage} /> 
             <Route path="/login"><Login setUser={setUser} /></Route>
-            <Route path="/dashboard"><Dashboard sess={user} setUser={setUser}/></Route>
+            <Route path="/dashboard"><Dashboard sess={user} setUser={setUser} /></Route>
             <Route path="/calculatorInterface" component={calculatorInterface} />
             <Route path="/createAccount"><CreateAccount setUser={setUser} /></Route>
+            <Route path="/schemeInterface" component={schemeInterface} />
         </Switch>
       </BrowserRouter>
     </div>

@@ -1,8 +1,9 @@
 import './dashboard.css';
-import React from 'react';
-import { Box, Card, Grid, CardHeader, Typography, Paper, Button } from '@material-ui/core';
+import React, { useState } from 'react';
+import { Box, Card, Grid, CardHeader, Typography, Paper, Button, ButtonBase } from '@material-ui/core';
 import { fade, makeStyles } from '@material-ui/core/styles';
 import AddBoxSharpIcon from '@material-ui/icons/AddBoxSharp';
+import { Link, Redirect, useHistory } from 'react-router-dom';
 
 const hc = getComputedStyle(document.documentElement).getPropertyValue('--highlight-color');
 const oc = getComputedStyle(document.documentElement).getPropertyValue('--opposite-color');
@@ -36,56 +37,59 @@ function formatCategory(name, weight) {
 
 function displayScheme(scheme, userSearch) {
 	// const classes = useStyles();
-	// this needs an onclick thing to reroute to the scheme editing page
+
 	return (
-		<Card className="Scheme" style={{backgroundColor: "white"}} variant="elevated" elevation={1}>
-			<Paper
-				className="Scheme-preview"
-				square={true}
-			>
-				<CardHeader
-					title={scheme.class}
-					subheader={scheme.professor + ", " + scheme.university}
-					style={{textAlign: 'left'}}
-				/>
-			</Paper>
-			<Paper 
-				className="Scheme-preview" 
-				square={true}
-				variant="outlined"
-				style={{backgroundColor: hc, color: 'black', flexGrow: 1}}
-			>
-				<Box mt={-0.05} backgroundColor='white' style={{
-					display: 'flex',
-					flexDirection: 'row',
-					justifyContent: 'flex-end',
-				}}>
-					<Paper
-						variant="elevated" 
-						elevation={2}
-						square={true}
-						style={{
-							position:'absolute', 
-							backgroundColor: oc,
-						}}
-					>
-						<Button style={{textTransform: 'none', padding: "0.25em"}} onClick={userSearch(scheme.owner)}>
-							<Typography variant="caption">{scheme.owner}</Typography>
-						</Button>
-					</Paper>
-				</Box>
-				
-				<Typography variant="caption" style={{color: 'white'}}>
-					<ul>
-						{scheme.categories.map(
-							(category) => <li key={category._id}>{
-								formatCategory(category.name, category.weight)
-							}</li>
-						)}
-					</ul>
-				</Typography>
-			</Paper>
-		</Card>
+		<Link to={"/calculatorInterface?id=" + scheme._id} style={{textDecoration: 'none'}}>
+			<Card className="Scheme" style={{backgroundColor: "white"}} variant="elevated" elevation={1}>
+				<Paper
+					className="Scheme-preview"
+					square={true}
+				>
+					<CardHeader
+						title={scheme.class}
+						subheader={scheme.professor + ", " + scheme.university}
+						style={{textAlign: 'left'}}
+					/>
+				</Paper>
+				<Paper 
+					className="Scheme-preview" 
+					square={true}
+					variant="outlined"
+					style={{backgroundColor: hc, color: 'black', flexGrow: 1}}
+				>
+					<Box backgroundColor='white' style={{
+						display: 'flex',
+						flexDirection: 'row',
+						justifyContent: 'flex-end',
+					}}>
+						<Paper
+							variant="elevated" 
+							elevation={2}
+							square={true}
+							style={{
+								position:'absolute', 
+								backgroundColor: oc,
+								marginTop: "-0.1em",
+							}}
+						>
+							<ButtonBase style={{padding: "0.25em", paddingLeft: "0.5em", paddingRight: "0.5em"}} onClick={userSearch(scheme.owner)}>
+								<Typography variant="caption">{scheme.owner}</Typography>
+							</ButtonBase>
+						</Paper>
+					</Box>
+					
+					<Typography variant="caption" style={{color: 'white'}}>
+						<ul>
+							{scheme.categories.map(
+								(category) => <li key={category._id}>{
+									formatCategory(category.name, category.weight)
+								}</li>
+							)}
+						</ul>
+					</Typography>
+				</Paper>
+			</Card>
+		</Link>
 	);
 }
 
@@ -96,6 +100,14 @@ function SchemeViewer(props) {
 	}
 	
 	const classes = useStyles();
+	const history = useHistory();
+	const [redirectTo, changeUrl] = useState("");
+	
+	if (redirectTo) {
+		history.push("/dashboard");
+		return <Redirect to={redirectTo} />
+	}
+	
 	let renderedSchemes = []
 	for (const scheme of props.schemes) {
 		// need a key here?
@@ -115,7 +127,7 @@ function SchemeViewer(props) {
 							className={classes.colorButton}
 							align="right"
 							aria-label="create new shceme"
-							onClick={ (e) => { /* props.createNewScheme(), redirects to /schemeInterface page */ } }
+							onClick={ (e) => { changeUrl("/schemeInterface") } }
 							startIcon={<AddBoxSharpIcon className={classes.addicon}/>}
 						>
 							Create Scheme
