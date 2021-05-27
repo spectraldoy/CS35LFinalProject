@@ -5,6 +5,7 @@ import { InvertColorsOff, ThreeSixtySharp } from '@material-ui/icons';
 import {getScheme} from './globals.js'
 import { fade, makeStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
+import {Link} from 'react-router-dom';
 
 const hc = getComputedStyle(document.documentElement).getPropertyValue('--highlight-color');
 
@@ -379,13 +380,24 @@ class calculatorInterface extends React.Component {
       </form>
     );
 
-    // TODO:: Render a table with grades
     return (
       <div className="Assignment">
         {items}
+        <h2>
+        {this.state.scheme.letterGrades.map((element, index) => {
+          return(
+            <div key={'Letter' + index}>
+              {element.letter + ": " + element.cutoff} 
+            </div>
+          )
+        })}
+        </h2>
         <h2 className="Result">
           {this.state.result}
         </h2>
+        <Link to="/dashboard">
+          Return to dashboard
+        </Link>
       </div>
     );
   }

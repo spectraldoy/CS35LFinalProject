@@ -1,6 +1,7 @@
 import './App.css';
 import React from 'react';
 import axios from 'axios';
+import {Link} from 'react-router-dom';
 
 class schemeInterface extends React.Component {
     //Used as a key for categories
@@ -21,7 +22,7 @@ class schemeInterface extends React.Component {
     }
     
     handleChange(event) {
-        let i, newGrades;
+        let i, newGrades, newCategories;
         switch (event.target.name)
         {
             case 'University':
@@ -43,7 +44,7 @@ class schemeInterface extends React.Component {
                     }
                     i++;
                 }
-                var newCategories = this.state.categories.slice();
+                newCategories = this.state.categories.slice();
                 newCategories.splice(i, 1, {name:event.target.value, weight:this.state.categories[i]['weight']});
                 this.setState({categories:newCategories});
                 break;
@@ -57,7 +58,7 @@ class schemeInterface extends React.Component {
                     }
                     i++;
                 }
-                var newCategories = this.state.categories.slice();
+                newCategories = this.state.categories.slice();
                 newCategories.splice(i, 1, {name:this.state.categories[i]['name'], weight:event.target.value});
                 this.setState({categories:newCategories});
                 break;
@@ -125,7 +126,11 @@ class schemeInterface extends React.Component {
 
         for (const pair of this.state.letterGrades) {
             if (pair.letter === '') {
-                alert('One of the grade cutoffs does not have a name!');
+                alert('One of the letter grades does not have a name!');
+                return;
+            }
+            else if (!isNaN(parseFloat(pair.letter))) {
+                alert('A letter grade cannot have a number');
                 return;
             }
             else if (isNaN(parseFloat(pair.cutoff))) {
@@ -273,6 +278,9 @@ class schemeInterface extends React.Component {
                     Reset
                     </button>
                 </h2>
+                <Link to="/dashboard">
+                    Return to dashboard
+                </Link>
             </div>
         );
     }
