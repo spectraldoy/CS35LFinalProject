@@ -115,7 +115,7 @@ function SchemeViewer(props) {
 							className={classes.colorButton}
 							align="right"
 							aria-label="create new shceme"
-							onClick={ (e) => { /* props.createNewScheme() */ } }
+							onClick={ (e) => { /* props.createNewScheme(), redirects to /schemeInterface page */ } }
 							startIcon={<AddBoxSharpIcon className={classes.addicon}/>}
 						>
 							Create Scheme

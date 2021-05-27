@@ -83,17 +83,18 @@ app.get("/searchquery", async (req, res) => {
     let requestString = req.query.string; 
     let searches = requestString.split("`");
     let parsedSearches = [];
-    if (searches.length == 1) // in case ` was not in the string
-        parsedSearches = [searches[0].split(" "), searches[0].split(" ")];
-    else
-        parsedSearches = [searches[0].split(" "), searches[1].split(" ")];
+    
+    for (const search of searches) {
+        parsedSearches.push(...search.split(" "));
+    }
+
     // brute force search
     let requestedSchemes = await GradingScheme.find(
         { $or: [
-            { owner: { $in: [...parsedSearches[1]] } },
-            { university: { $in: [...parsedSearches[0]] } },
-            { professor: { $in: [...parsedSearches[0]] } },
-            { class: { $in: [...parsedSearches[1]] } },
+            { owner: { $in: parsedSearches } },
+            { university: { $in: parsedSearches } },
+            { professor: { $in: parsedSearches } },
+            { class: { $in: parsedSearches } },
         ]},
         (err, schemes) => {}
     );
