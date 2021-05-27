@@ -34,7 +34,7 @@ class calculatorInterface extends React.Component {
     this.query = url.substring(idLocation, url.length);
     
     // TODO: Remove when URL parameter is working
-    this.query = "id=60aae5db54867f1138747ff7";
+    this.query = "id=60afda146ef84d04bb6211f9";
 
     this.state = {
       scheme: null, // to be set in finishInit
@@ -165,7 +165,8 @@ class calculatorInterface extends React.Component {
   submitGrades(event) {
     event.preventDefault();
     const grades = {
-      categories: []
+      categories: [],
+      target: null
     };
     var count = 0;
     for (let category of this.state.scheme.categories) {
@@ -185,7 +186,7 @@ class calculatorInterface extends React.Component {
             return;
           }
 
-          graded.push({ptsReceived: pr, ptsOutOf: po);
+          graded.push({ptsReceived: pr, ptsOutOf: po});
         }
         else {
           if(this.state.assignmentsPtsOutOf[count][i] === ""){
@@ -202,10 +203,10 @@ class calculatorInterface extends React.Component {
           }
 
           if(toPredict){
-            projected.push({ptsReceived: "-", ptsOutOf: parseInt(this.state.assignmentsPtsOutOf[count][i])});
+            projected.push({ptsReceived: "-", ptsOutOf: po});
           }
           else{
-            projected.push({ptsReceived: parseInt(this.state.assignmentsPtsReceived[count][i]), ptsOutOf: parseInt(this.state.assignmentsPtsOutOf[count][i])});
+            projected.push({ptsReceived: pr, ptsOutOf: po});
           }
         }
       }
@@ -218,8 +219,28 @@ class calculatorInterface extends React.Component {
       );
       count += 1;
     }
-    grades.target = ((this.state.gradeWanted[count] === "") ? 0 : parseInt(this.state.gradeWanted));
-    console.log(this.state.scheme);
+
+
+    let match = false;
+    for (const pair of this.state.scheme.letterGrades) {
+      if (pair.letter === this.state.gradeWanted) {
+        grades.target = pair.cutoff;
+        match = true;
+        break;
+      }
+    }
+    if (!match) {
+      if (!isNaN(parseFloat(this.state.gradeWanted))) {
+        grades.target = parseFloat(this.state.gradeWanted);
+      }
+      else if (this.state.gradeWanted === "" || this.state.gradeWanted === "-") {
+        grades.target = null;
+      }
+      else {
+        alert("Couldn't identify your target grade as a number or a letter grade.");
+      }
+    }
+
     const results = calculate(grades);
     let message = "";
     if (results.currentGrade === null) {
@@ -343,7 +364,7 @@ class calculatorInterface extends React.Component {
       <h2 key="target">
         <form>
           <label className = "FinalGrade">
-            Final Grade You Want (0-100%):
+            Final Grade You Want (0-100%, or a defined letter grade):
           </label>
           <label>&nbsp;&nbsp;</label>
           <input type="text" name="gradeWanted" onChange={this.handleChange(this.count)} value={this.state.gradeWanted} className="inputForm" />
@@ -357,6 +378,8 @@ class calculatorInterface extends React.Component {
         </Button>
       </form>
     );
+
+    // TODO:: Render a table with grades
     return (
       <div className="Assignment">
         {items}
