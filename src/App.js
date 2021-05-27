@@ -5,6 +5,7 @@ import { BrowserRouter, Route, Switch, Link, Redirect } from "react-router-dom";
 import './App.css';
 import Dashboard from './dashboard';
 import calculatorInterface from './calculatorInterface';
+import schemeInterface from './schemeInterface'
 import Login from './login'
 import CreateAccount from './CreateAccount'
 

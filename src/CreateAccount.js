@@ -64,9 +64,6 @@ function CreateAccount(props) {
         else if (password !== confirmPassword) {
             alert.error("Passwords don't match");
         }
-        else if (await isDuplicate(username)) {
-            alert.error("Username " + username + " is already taken")
-        }
         else {
             // _id will be automatically created by mongoDB
             const user = {
@@ -76,13 +73,24 @@ function CreateAccount(props) {
             };
 
             const res = await createUser(user);
-            alert.success(res);
-            // including university makes my university's schemes view simpler
-            props.setUser(username + ',' + university);
 
-            // successful create account
-            if (sessionStorage.getItem('user'))
-                return <Redirect to="/" />;
+            switch(res) {
+                case "0":
+                    alert.success("Account created");
+                    // including university makes my university's schemes view simpler
+                    props.setUser(username + ',' + university);
+        
+                    // successful create account
+                    if (sessionStorage.getItem('user'))
+                        return <Redirect to="/" />;
+                    break;
+                case "1":
+                    alert.error("Username already taken");
+                    break;
+                default:
+                    alert.error("Unknown error");
+            }
+
         }
     }
 
@@ -163,13 +171,6 @@ function CreateAccount(props) {
     );
 }
 
-async function isDuplicate(username) {
-    // check username with database
-    let res = await fetch("http://localhost:3001/users?username=" + username);
-    res = await res.text();
-    return res !== "2";
-}
-
 async function createUser(user) {
     let res = await fetch("http://localhost:3001/users", {
         method: 'POST',
@@ -179,7 +180,7 @@ async function createUser(user) {
         },
         body: JSON.stringify(user),
     })
-    return res.text();
+    return res.text(); // 0 if succeeded, 1 if username is already taken
 }
 
 export default CreateAccount;

@@ -186,7 +186,7 @@ app.post("/users", async (req, res) =>
         const existingUser = await User.findOne({ "username": req.body.username }, (err, grading_schemse) => {});
         if(existingUser != null)
         {
-            res.send("User already exists!");   // We may want to send over a number as a way of specifying the error?
+            res.send("1");   // We may want to send over a number as a way of specifying the error?
             console.log("User already exists!");
             return;
         }
@@ -194,7 +194,7 @@ app.post("/users", async (req, res) =>
         await newUser.save();
 
         console.log("Saved new user \"" + req.body.username + "\"");
-        res.send("Saved new user \"" + req.body.username + "\"");
+        res.send("0");
     }
     catch(err)
     {
