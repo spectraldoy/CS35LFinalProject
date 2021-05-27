@@ -5,27 +5,26 @@
 	height: var(--header-height);
 	flex-direction: row;
 	flex-shrink: 0;
+	flex-grow: 1;
 	position: fixed;
 	width: 100vw;
 	justify-content: space-between;
 	border-bottom: 1px solid black;
 	align-items: center;
+	padding: 1vmin;
+	padding-bottom: 0;
+	padding-top: 0;
 }
 
 .App-brand {
 	/* background-color: #282c34; */
-	height: var(--header-height);
-	min-width: 8vh;
+	width: calc(var(--header-height) * 2.3);
+	font-family: 'KoHo';
 	display: flex;
 	flex-direction: row;
 	align-items: center;
-	justify-content: left;
+	justify-content: space-evenly;
 	font-size: calc(10px + var(--header-height) / 5);
-}
-
-.App-search {
-	font-size: 15px;
-	padding-right: 6vmin;
 }
 
 .App-bottom {
@@ -38,6 +37,7 @@
 	position: fixed;
 	display: flex;
 	flex-direction: column;
+	z-index: 998;
 	font-size: var(--side-menu-font-size);
 	/* height: calc(98.9vh - var(--header-height)); */
 	height: 100vh;
@@ -52,23 +52,22 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	width: 10vw;
+	width: calc(var(--side-menu-width) * 2/3);
 	height: 1.4em;
 	border: 2px solid black;
 	border-radius: 1vmin;
 	padding: 1vmin;
-	margin-top: 4vh;
+	margin-top: 5vh;
 	margin-bottom: 1vh;
 }
 
 .SideMenu-nava {
-	display: block;
+	flex-shrink: 1;
 	font-size: var(--side-menu-font-size);
 	text-align: left;
 	padding: 1em;
 	padding-left: 0.5em;
 	cursor: pointer;
-	width: 11.5vw;
 	transition-duration: 0.3s;
 	background: none;
 	border-color: var(--background-color);
@@ -77,15 +76,16 @@
 }
 
 .SideMenu-nava:hover {
-	background-color: #61dafb;
+	background-color: var(--highlight-color);
 }
 
 .DashWin {
 	display: flex;
+	z-index: 10;
 	flex-direction: column;
 	margin-left: var(--side-menu-width);
 	margin-top: var(--header-height);
-	overflow: scroll;
+	flex-grow: 1;
 
 	--xwalk: 30px;
 	-webkit-animation: fadein;
@@ -93,57 +93,47 @@
 	 -ms-animation: fadein;
 	  -o-animation: fadein;
 		 animation: fadein;
-	animation-duration: 1.5s;
+	animation-duration: 1s;
 	/* animation-timing-function: ease; */
 }
 
-.WinHeader h {
-	display: block;
-	text-align: left;
-	padding: 5vmin;
-	padding-bottom: 0;
-	padding-left: 7vmin;
+.DashWinLoading {
+	display: flex;
+	z-index: 10;
+	flex-direction: column;
+	margin-left: var(--side-menu-width);
+	margin-top: var(--header-height);
 }
 
-.MySchemes {
+.SchemesView {
 	display: flex;
 	flex-direction: row;
-	padding: 3vmin;
-	padding-top: 2vmin;
-	overflow-x: scroll;
-	/* TODO: wrap around or scroll? */
+	flex-wrap: wrap;
+	flex-grow: 1;
+	padding: 2vw;
+	padding-top: 2vh;
+	align-items: center;
+	justify-content: flex-start;
 }
 
-.MySchemes::-webkit-scrollbar {
+.SchemesView::-webkit-scrollbar {
 	display: none;
 }
 
 .Scheme {
 	position: relative;
 	/* background-color:#61dafb; */
-	border-top-right-radius: 2vmin;
-	border-top-left-radius: 2vmin;
 	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
+	flex-direction: column-reverse;
+	align-items: flex-start;
+	justify-content: flex-start;
 	width: 16vw;
-	height: 40vh;
-	margin: 2vmin;
-	transition-duration: 0.3s;
+	height: 30vh;
+	margin: 1.5vmax;
 	cursor: pointer;
 	flex-shrink: 0;
 	box-shadow: none;
-}
-
-.Scheme ul {
-	width: 100%;
-	z-index: 1;
-	list-style: none;
-	margin: 0;
-	text-align: left;
-	padding: 0;
-	border: 2px solid black;
+	transition-duration: 0.3s;
 }
 
 .Scheme:hover {
@@ -151,17 +141,28 @@
 }
 
 .Scheme-preview {
-	list-style: none;
-	padding: 0;
-	background-color: cornflowerblue;
-	z-index: 0;
 	width: inherit;
-	height: 110%;
-	border-top-right-radius: 2vmin;
-	border-top-left-radius: 2vmin;
-	border-bottom: 0;
 	display: flex;
 	flex-direction: column;
+	box-shadow: none;
+	overflow: scroll;
+	white-space: nowrap;
+}
+
+.Scheme-preview::-webkit-scrollbar {
+	display: none;
+}
+
+.Scheme-preview ul {
+	list-style-type: none; /* "\2610" */
+	padding: 2vmin;
+	padding-top: 0;
+	padding-bottom: 0;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	justify-content: space-between;
 	transition-duration: 0.3s;
 	box-shadow: none;
+	text-overflow: ellipsis;
 }

@@ -1,12 +1,13 @@
 import React from "react";
 import { useState } from 'react';
-import { BrowserRouter, Route, Switch, Link } from "react-router-dom"; // also import Link
+import { BrowserRouter, Route, Switch, Link, Redirect } from "react-router-dom"; // also import Link
 
 import './App.css';
 import Dashboard from './dashboard';
 import calculatorInterface from './calculatorInterface';
 import schemeInterface from './schemeInterface'
 import Login from './login'
+import CreateAccount from './CreateAccount'
 
 function HomePage() {
   return (
@@ -21,48 +22,57 @@ function HomePage() {
         <Link to="/calculatorInterface">Calculator Interface</Link>
       </li>
       <li>
-        <Link to="/schemeInterface">Scheme Interface</Link>
+        <Link to="/createAccount">Create Account</Link>
       </li>
     </ul>
   );
 }
 
 function App() {
-  const [token, setToken] = useToken();
+  const [user, setUser] = UserState();
 
-  if(!token) {
-    return <Login setToken={setToken} />
-  }
+  let startPage = "/login";
+  if (user) // already logged in
+    startPage = "/homePage";
 
-  // TODO: put these links in the header?
-  return (
+  let app = (
     <div className="App">
-      <BrowserRouter className="App-router">
+      <BrowserRouter>
         <Switch>
-            <Route exact path="/">{HomePage()}</Route> 
-            <Route path="/dashboard" component={Dashboard} />
+            <Route exact path="/">
+              <Redirect to={startPage}/>
+            </Route>
+            <Route path="/homePage" component={HomePage} /> 
+            <Route path="/login"><Login setUser={setUser} /></Route>
+            <Route path="/dashboard"><Dashboard sess={user} setUser={setUser}/></Route>
             <Route path="/calculatorInterface" component={calculatorInterface} />
-            <Route path="/schemeInterface" component={schemeInterface} />
+            <Route path="/createAccount"><CreateAccount setUser={setUser} /></Route>
         </Switch>
       </BrowserRouter>
     </div>
   );
+
+  // TODO: put these links in the header?
+  return app;
 }
 
-function useToken() {
-  const getToken = () => {
-    const tokenString = sessionStorage.getItem('token');
-    return tokenString;
+// Custom hook. Essentially, when you submit login info, this will change its state, 
+// causing a re-render.
+function UserState() {
+  const getUser = () => {
+    const user = sessionStorage.getItem('user');
+    return user;
   };
   
-  const saveToken = userToken => {
-    sessionStorage.setItem('token', JSON.stringify(userToken));
-    setToken(userToken);
+  const saveUser = username => {
+    // got rid of JSON.stringify - messes up Dashboard
+    sessionStorage.setItem('user', username);
+    setUser(username);
   };
 
-  const [token, setToken] = useState(getToken());
+  const [user, setUser] = useState(getUser());
 
-  return [token, saveToken];
+  return [user, saveUser];
 }
 
 
