@@ -36,7 +36,7 @@ function App() {
 
   let startPage = "/login";
   if (user) // already logged in
-    startPage = "/homePage";
+    startPage = "/dashboard";
 
   let app = (
     <div className="App">

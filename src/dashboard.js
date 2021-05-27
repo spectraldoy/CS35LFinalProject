@@ -168,7 +168,7 @@ function Dashboard(props) {
     };
   }
 
-  function search(query) {
+  function search(query, prefix="Scheme Search Results for") {
     // parse search query
     const delimiter = "`";
     const punctuation = /[\u2000-\u206F\u2E00-\u2E7F\\'!"#$%&()*+,\-.\/:;<=>?@\[\]^_{|}~]/;
@@ -178,7 +178,7 @@ function Dashboard(props) {
 
     // possible problems: case sensitive
     return updateSchemeViewer(
-      "Scheme Search Results for \"" + query + "\"", 
+      prefix + " \"" + query + "\"", 
       finalQuery,
       "searchquery",
     );

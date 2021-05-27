@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Box, Card, Grid, CardHeader, Typography, Paper, Button, ButtonBase } from '@material-ui/core';
 import { fade, makeStyles } from '@material-ui/core/styles';
 import AddBoxSharpIcon from '@material-ui/icons/AddBoxSharp';
-import { Link, Redirect, useHistory } from 'react-router-dom';
+import { Redirect, useHistory } from 'react-router-dom';
 
 const hc = getComputedStyle(document.documentElement).getPropertyValue('--highlight-color');
 const oc = getComputedStyle(document.documentElement).getPropertyValue('--opposite-color');
@@ -35,11 +35,11 @@ function formatCategory(name, weight) {
 	return weight + "% " + name;
 }
 
-function displayScheme(scheme, userSearch) {
+function displayScheme(scheme, userSearch, changeUrl) {
 	// const classes = useStyles();
 
 	return (
-		<Link to={"/calculatorInterface?id=" + scheme._id} style={{textDecoration: 'none'}}>
+		<ButtonBase onClick={(e) => changeUrl("/calculatorInterface?id=" + scheme._id)}>
 			<Card className="Scheme" style={{backgroundColor: "white"}} variant="elevated" elevation={1}>
 				<Paper
 					className="Scheme-preview"
@@ -72,7 +72,10 @@ function displayScheme(scheme, userSearch) {
 								marginTop: "-0.1em",
 							}}
 						>
-							<ButtonBase style={{padding: "0.25em", paddingLeft: "0.5em", paddingRight: "0.5em"}} onClick={userSearch(scheme.owner)}>
+							<ButtonBase 
+								style={{padding: "0.25em", paddingLeft: "0.5em", paddingRight: "0.5em"}} 
+								onClick={ (e) => { e.stopPropagation(); userSearch(scheme.owner, "Schemes created by")(); }}
+							>
 								<Typography variant="caption">{scheme.owner}</Typography>
 							</ButtonBase>
 						</Paper>
@@ -89,7 +92,7 @@ function displayScheme(scheme, userSearch) {
 					</Typography>
 				</Paper>
 			</Card>
-		</Link>
+		</ButtonBase>
 	);
 }
 
@@ -104,6 +107,7 @@ function SchemeViewer(props) {
 	const [redirectTo, changeUrl] = useState("");
 	
 	if (redirectTo) {
+		// potential for view persistance here
 		history.push("/dashboard");
 		return <Redirect to={redirectTo} />
 	}
@@ -111,7 +115,7 @@ function SchemeViewer(props) {
 	let renderedSchemes = []
 	for (const scheme of props.schemes) {
 		// need a key here?
-		renderedSchemes.push(displayScheme(scheme, props.userSearch));
+		renderedSchemes.push(displayScheme(scheme, props.userSearch, changeUrl));
 	}
 	//console.log(renderedSchemes);
 

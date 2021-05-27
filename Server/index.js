@@ -77,7 +77,7 @@ app.get("/searchquery", async (req, res) => {
     for (const search of searches) {
         parsedSearches.push(...search.split(" "));
     }
-    console.log(parsedSearches);
+    // console.log(parsedSearches);
     // brute force search
     let requestedSchemes = await GradingScheme.find(
         { $or: [

@@ -11,8 +11,8 @@
   --side-menu-font-size: 14px;
   --background-color: white;
   --text-color: black;
-  --highlight-color:#EA542E; /* #61dafb */
-  --opposite-color:#15ABD1; /* https://www.colortools.net/color_complementary.html */
+  --highlight-color:#ff4800; /* #EA542E; #61dafb */
+  --opposite-color:#00b7ff; /* #15ABD1; */
   --alternate-color1:#36f184;
   --alternate-color2:#9c3af8;
   --default-font: 'Roboto';
@@ -29,6 +29,7 @@
 .App-logo {
   height: calc(var(--header-height) * 0.8);
   padding: calc(var(--header-height) * 0.15);
+  padding-bottom: calc(var(--header-height) * 0.10);
 }
 
 /*
