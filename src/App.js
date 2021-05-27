@@ -24,6 +24,9 @@ function HomePage() {
       <li>
         <Link to="/createAccount">Create Account</Link>
       </li>
+      <li>
+        <Link to="/schemeInterface">Scheme Interface</Link>
+      </li>
     </ul>
   );
 }
@@ -47,6 +50,7 @@ function App() {
             <Route path="/dashboard"><Dashboard sess={user} setUser={setUser}/></Route>
             <Route path="/calculatorInterface" component={calculatorInterface} />
             <Route path="/createAccount"><CreateAccount setUser={setUser} /></Route>
+            <Route path="/schemeInterface" component={schemeInterface} />
         </Switch>
       </BrowserRouter>
     </div>
