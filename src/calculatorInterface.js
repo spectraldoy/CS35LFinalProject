@@ -37,11 +37,11 @@ class calculatorInterface extends React.Component {
     this.query = "id=60aae5db54867f1138747ff7";
 
     this.state = {
-      scheme: null,
+      scheme: null, // to be set in finishInit
       animate: false,
-      assignmentsPtsReceived: null, // to be set later
-      assignmentsPtsOutOf: null, // to be set later
-      assignmentsType: null, // to be set later
+      assignmentsPtsReceived: null, // to be set in finishInit
+      assignmentsPtsOutOf: null, // to be set in finishInit
+      assignmentsType: null, // to be set in finishInit
       gradeWanted: "",
       result: ""
     };
@@ -171,20 +171,37 @@ class calculatorInterface extends React.Component {
     for (let category of this.state.scheme.categories) {
       let graded = [];
       let projected = [];
+      let pr, po;
       for(var i = 0; i < this.state.assignmentsType[count].length; i++){
         if(this.state.assignmentsType[count][i] === "Graded"){
-          if(this.state.assignmentsPtsReceived[count][i] === null || this.state.assignmentsPtsReceived[count][i] === "" || this.state.assignmentsPtsOutOf[count][i] === null || this.state.assignmentsPtsOutOf[count][i] === ""){
+          if(this.state.assignmentsPtsReceived[count][i] === "" || this.state.assignmentsPtsOutOf[count][i] === ""){
             alert("All graded assignments must have all points fields filled out");
             return;
           }
-          graded.push({ptsReceived: parseInt(this.state.assignmentsPtsReceived[count][i]), ptsOutOf: parseInt(this.state.assignmentsPtsOutOf[count][i])});
+          pr = parseFloat(this.state.assignmentsPtsReceived[count][i]);
+          po = parseFloat(this.state.assignmentsPtsOutOf[count][i]);
+          if (isNaN(pr) || isNaN(po)) {
+            alert("All points fields for graded assignments must be numbers");
+            return;
+          }
+
+          graded.push({ptsReceived: pr, ptsOutOf: po);
         }
-        else{
-          if(this.state.assignmentsPtsOutOf[count][i] === null || this.state.assignmentsPtsOutOf[count][i] === ""){
+        else {
+          if(this.state.assignmentsPtsOutOf[count][i] === ""){
             alert("All projected assignments must have all Total Points fields filled out");
             return;
           }
-          if(this.state.assignmentsPtsReceived[count][i] === null || this.state.assignmentsPtsReceived[count][i] === ""){
+          
+          pr = parseFloat(this.state.assignmentsPtsReceived[count][i]);
+          po = parseFloat(this.state.assignmentsPtsOutOf[count][i]);
+          let toPredict = this.state.assignmentsPtsReceived[count][i] === "" || this.state.assignmentsPtsReceived[count][i] === "-"
+          if ((isNaN(pr) && !toPredict)  || isNaN(po)) {
+            alert("All points fields for projected assignments must be numbers, empty, or -");
+            return;
+          }
+
+          if(toPredict){
             projected.push({ptsReceived: "-", ptsOutOf: parseInt(this.state.assignmentsPtsOutOf[count][i])});
           }
           else{
