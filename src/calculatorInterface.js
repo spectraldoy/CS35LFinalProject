@@ -3,6 +3,26 @@ import React from 'react';
 import { calculate } from './calculator.js'
 import { InvertColorsOff, ThreeSixtySharp } from '@material-ui/icons';
 import {getScheme} from './globals.js'
+import { fade, makeStyles } from '@material-ui/core/styles';
+import { Button } from '@material-ui/core';
+
+const hc = getComputedStyle(document.documentElement).getPropertyValue('--highlight-color');
+
+function withMyHook(Component) {
+  return function WrappedComponent(props) {
+    const classes = useStyles();
+    return <Component {...props} myHookValue={classes} />;
+  }
+}
+const useStyles = makeStyles((theme) => ({
+  colorButton: {
+    fullWidth: true,
+    backgroundColor: fade(hc, 0.15),
+    '&:hover': {
+        backgroundColor: fade(hc, 0.55),
+    }
+  },
+}));
 
 class calculatorInterface extends React.Component {
   constructor(props) {
@@ -35,6 +55,7 @@ class calculatorInterface extends React.Component {
     this.addAssignment = this.addAssignment.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleAssignmentTypeChange = this.handleAssignmentTypeChange.bind(this);
+
   }
 
   
@@ -59,7 +80,7 @@ class calculatorInterface extends React.Component {
       assignmentsPtsOutOf: Array(this.count).fill(Array(0)),
       assignmentsType: Array(this.count).fill(Array(0)),
       gradeWanted: "",
-      result: ""
+      result: "",
     });
   }
 
@@ -146,7 +167,6 @@ class calculatorInterface extends React.Component {
     const grades = {
       categories: []
     };
-
     var count = 0;
     for (let category of this.state.scheme.categories) {
       let graded = [];
@@ -182,7 +202,7 @@ class calculatorInterface extends React.Component {
       count += 1;
     }
     grades.target = ((this.state.gradeWanted[count] === "") ? 0 : parseInt(this.state.gradeWanted));
-    console.log(grades);
+    console.log(this.state.scheme);
     const results = calculate(grades);
     let message = "";
     if (results.currentGrade === null) {
@@ -218,17 +238,48 @@ class calculatorInterface extends React.Component {
   }
 
   render() {
+    const classes = this.props.myHookValue;
     if (!this.state.animate)
       return <h1>Retrieving Scheme...</h1>;
 
     const items = []
+    items.push(
+      <h2 key = "Title">
+        <label>
+        Scheme Calculator
+        </label>
+      </h2>
+    );
+    items.push(
+      <h2 key ={"Owner"} className = "SchemeInfo">
+        <label>
+          Scheme Owner: {this.state.scheme.owner}
+        </label>
+        <br></br>
+        <label>
+          University: {this.state.scheme.university}
+        </label>
+        <br></br>
+        <label>
+          Professor: {this.state.scheme.professor}
+        </label>
+        <br></br>
+        <label>
+          Class: {this.state.scheme.class}
+        </label>
+      </h2>
+    );
+    console.log(classes);
+    console.log(this.state.colorButton);
     for (var i = 0; i < this.count; i++) {
       items.push(
         <h2 key={i + "-title"}>
           <form onClick={this.addAssignment(i)} className="inlineForm">
-            <input type="button" value="Add Assignment" />
+            <Button type="input" className = {classes.colorButton}>
+            Add assignment
+            </Button>
           </form>
-          <label>
+          <label className = "Category">
             {this.state.scheme.categories[i].name} Category ({this.state.scheme.categories[i].weight}% Weight)&nbsp;&nbsp;
           </label>
         </h2>);
@@ -263,7 +314,9 @@ class calculatorInterface extends React.Component {
               </label>
             </form>
             <form onClick={this.removeAssignment([i,j])}>
-              <input type="button" value="Remove Assignment" />
+            <Button type="input" className = {classes.colorButton}>
+            Remove assignment
+            </Button>
             </form>
           </h2>
         );
@@ -272,16 +325,19 @@ class calculatorInterface extends React.Component {
     items.push(
       <h2 key="target">
         <form>
-          <label>
-            Final Grade You Want (0-100%):&nbsp;&nbsp;
-          <input type="text" name="gradeWanted" onChange={this.handleChange(this.count)} value={this.state.gradeWanted} className="inputForm" />
+          <label className = "FinalGrade">
+            Final Grade You Want (0-100%):
           </label>
+          <label>&nbsp;&nbsp;</label>
+          <input type="text" name="gradeWanted" onChange={this.handleChange(this.count)} value={this.state.gradeWanted} className="inputForm" />
         </form>
       </h2>
     );
     items.push(
       <form onSubmit={this.submitGrades} key="submit">
-        <input type="submit" value="Calculate!" />
+        <Button type="input" className = {classes.colorButton}>
+            Calculate
+        </Button>
       </form>
     );
     return (
@@ -296,4 +352,4 @@ class calculatorInterface extends React.Component {
   
 }
 
-export default calculatorInterface;
+export default withMyHook(calculatorInterface);
