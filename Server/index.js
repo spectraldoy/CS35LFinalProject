@@ -123,6 +123,32 @@ app.get("/users", async (req, res) =>
     }
 });
 
+app.get("/update_user", async (req, res) => 
+{
+    try
+    {
+        var userAccount = await User.findOne({"username": req.query.username}, (err, userEvent) => {});
+        if(userAccount == null)
+            res.send("Account does not exist!");
+        else
+        {
+            // if(req.query.new_username != undefined)
+            //     userAccount.username = req.query.new_username;
+            if(req.query.new_university != undefined)                   // Let the user change their university
+                userAccount.university = req.query.new_university;
+            userAccount.save().then(newAccount => 
+                {
+                    res.send("Successfully saved user " + newAccount.username); 
+                    console.log("Successfully saved user " + newAccount.username);
+                });
+        }
+    }
+    catch(err)
+    {
+        res.send({message: err});
+    }
+});
+
 
 
 
