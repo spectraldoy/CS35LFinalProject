@@ -1,6 +1,2 @@
 # https://www.robotstxt.org/robotstxt.html
 User-agent: *
-Disallow: /src/
-Disallow: /Server/
-Disallow: /public/
-Disallow: /model/

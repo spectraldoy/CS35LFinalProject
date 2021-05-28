@@ -36,7 +36,7 @@ function App() {
 
   let startPage = "/login";
   if (user) // already logged in
-    startPage = "/dashboard";
+    startPage = "/dashboard#My Schemes?owner=spectraldoy";
 
   let app = (
     <div className="App">

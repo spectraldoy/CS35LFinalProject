@@ -1,4 +1,6 @@
 // various global items
+
+// logo credits to https://www.instagram.com/zuu_xzsf/
 import logo from './logo.png';
 
 export const Name = "Foxtrot";

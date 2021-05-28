@@ -96,6 +96,15 @@ function displayScheme(scheme, userSearch, changeUrl) {
 	);
 }
 
+function ProfileHeader(props) {
+	return (
+		<CardHeader
+			variant="h1"
+			title={props.header} 
+			style={{paddingTop: "5vh"}} 
+		/>
+	);
+}
 
 function SchemeViewer(props) {
 	if (props.schemes === undefined) {
@@ -108,7 +117,7 @@ function SchemeViewer(props) {
 	
 	if (redirectTo) {
 		// potential for view persistance here
-		history.push("/dashboard");
+		history.push(props.URL); // slightly problematic
 		return <Redirect to={redirectTo} />
 	}
 	
@@ -125,12 +134,13 @@ function SchemeViewer(props) {
 	else
 		return (
 			<div className="DashWin">
+				{ (props.header !== "Profile") ?
 				<CardHeader
 					action={ 
 						<Button 
 							className={classes.colorButton}
 							align="right"
-							aria-label="create new shceme"
+							aria-label="create new scheme"
 							onClick={ (e) => { changeUrl("/schemeInterface") } }
 							startIcon={<AddBoxSharpIcon className={classes.addicon}/>}
 						>
@@ -140,6 +150,8 @@ function SchemeViewer(props) {
 					title={props.header} 
 					style={{textAlign: "left", paddingRight: "3vw", paddingTop: "5vh", paddingBottom: "0", paddingLeft: "4.5vw"}} 
 				/>
+				: ProfileHeader({header: props.header})
+				}
 				<Grid className="SchemesView">
 					{renderedSchemes}
 				</Grid>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import clsx from 'clsx';
-import { Link, Redirect } from "react-router-dom";
+import { Link, Redirect, useHistory } from "react-router-dom";
 import { Button, Grid, InputBase } from '@material-ui/core';
 import { fade, makeStyles } from '@material-ui/core/styles';
 import SearchIcon from '@material-ui/icons/Search';
@@ -106,9 +106,10 @@ function SideMenu(props) {
   const classes = useStyles();
 
   // loads MySchemes first into the SchemeViewer, which doesn't happen automatically due to async rendering
-  if (props.mySchemesInfo[0] === 0) {
-    props.onClickMySchemes();
-    props.mySchemesInfo[1](1);
+  if (props.schemesInfo[0] === 0) {
+    props.loadInitialView();
+    //window.onpopstate = props.loadInitialView();
+    props.schemesInfo[1](1);
   }
 
   return (
@@ -139,20 +140,36 @@ function Dashboard(props) {
 
   const sess = props.sess.split(",");  // sess[0] = username, sess[1] = university
   const classes = useStyles();
+  const history = useHistory();
   const [searchQuery, updateSearchQuery] = useState("");
-  // schemequery necessary?
-  const [window, updateWindow] = useState("Memes");
+  const [header, updateHeader] = useState("Memes");
   const [schemes, setSchemes] = useState([]);
   const [animate, setAnimate] = useState(false);
   // to load MySchemes after the async getSchemes request
-  const [mySchemesLoaded, loadMySchemes] = useState(0);
+  const [schemesLoaded, loadSchemes] = useState(0);
+  const [initialView, updateInitialView] = useState(history.location.hash);
+  //console.log(history, initialView);
+  const parsedView = decodeURI(initialView).split("?");
 
+  // for moving between scheme views through the history
+  window.addEventListener("hashchange", function(event) {
+    const newParsedView = decodeURI(history.location.hash).split("?");
+    updateSchemeViewer(newParsedView[0].slice(1), newParsedView[1])();
+  }, false);
+
+  // if update scheme viewer, then hash change and if hash change, update scheme viewer
+  
   // for SideMenu Button functions / searching
-  function updateSchemeViewer(header, query, prefix="grading_schemes") {
-    if (header === window) {
+  function updateSchemeViewer(header_, query, prefix="grading_schemes") {
+    // TODO: history persistence
+    if (header_ === header) {
       return (e) => {};
     }
-    console.log(query);
+
+    // for initial automatic schemes load
+    if (!query && header_ === "Browse Schemes") {
+      prefix = "all_schemes";
+    }
     return (e) => {
       // this is where the search occurs for the scheme views
       getScheme(query, prefix)
@@ -163,7 +180,16 @@ function Dashboard(props) {
           setAnimate(true);
         }
       );
-      updateWindow(header);
+      updateHeader(header_);
+      updateSearchQuery(query);
+      updateInitialView(history.location.hash);
+      // history keeps getting pushed multiple times so this is necessary 
+      // also this has delayed rendering
+      // brute force it?
+      const parsedURL = decodeURI(history.location.hash).split("?");
+      if (parsedURL[0].slice(1) !== header_ && parsedURL[1] !== query)
+        console.log(history.push(history.location.pathname + "#" + header_ + "?" + query));
+
       setAnimate(false);
     };
   }
@@ -215,13 +241,21 @@ function Dashboard(props) {
       {Header({searchBar: searchBar})}
       <div className="App-bottom">
         {SideMenu({
-          mySchemesInfo: [mySchemesLoaded, loadMySchemes],
+          schemesInfo: [schemesLoaded, loadSchemes],
+          loadInitialView: updateSchemeViewer(parsedView[0].slice(1), parsedView[1]),
           onClickMySchemes: updateSchemeViewer("My Schemes", "owner=" + sess[0]),
           onClickBrowseSchemes: updateSchemeViewer("Browse Schemes", "", "all_schemes"),
           onClickMyUnivSchemes: updateSchemeViewer("My University's Schemes", "university=" + sess[1]),
+          onClickProfile: updateSchemeViewer("Profile"),
           onLogout: () => props.setUser(""),
         })}
-        <SchemeViewer header={window} schemes={schemes} animate={animate} userSearch={search}/>
+        <SchemeViewer 
+          header={header} 
+          schemes={schemes} 
+          animate={animate} 
+          userSearch={search}
+          URL={history.location.pathname + "#" + header + "?" + searchQuery}
+        />
       </div>
     </div>
   );
