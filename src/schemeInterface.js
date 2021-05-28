@@ -141,13 +141,16 @@ class schemeInterface extends React.Component {
 
 
         if (valid && notEmpty && hasCategories && sumTo100){
+            var temp = this.state.letterGrades.slice();
+            temp.sort((a, b) => {return b.cutoff - a.cutoff;});
+            
             const scheme = { 
                 owner: sessionStorage.getItem('user').split(',')[0],
                 university: this.state.university,
                 professor: this.state.professor,
                 class: this.state.course,
                 categories: this.state.categories,
-                letterGrades: this.state.letterGrades
+                letterGrades: temp,
             }
 
 

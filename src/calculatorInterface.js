@@ -245,31 +245,30 @@ class calculatorInterface extends React.Component {
     const results = calculate(grades);
     let message = "";
     if (results.currentGrade === null) {
-      message += "Current grade: 0%";
+      message += "Current grade: N/A\n";
     }
     else {
-      message += ("Current grade: " + results.currentGrade.toFixed(2) + "%");
+      message += ("Current grade: " + results.currentGrade + "% " + getLetterGrade(results.currentGrade, this.state.scheme.letterGrades) + "\n");
     }
-    message += "\n";
     if (results.projectedGrade === null) {
-      message += "Projected grade: 0%";
+      message += "Projected grade: N/A\n";
     }
     else {
-      message += ("Projected grade: " + results.projectedGrade.toFixed(2) + "%");
+      message += ("Projected grade: " + results.projectedGrade + "% " + getLetterGrade(results.projectedGrade, this.state.scheme.letterGrades) + "\n");
     }
-    message += "\n";
     if (results.gradedNeededScore === null) {
-      message += "Grade Needed: 0%";
+      message += "Average grade needed to reach target grade from current grade: N/A\n";
     }
     else {
-      message += ("Grade Needed: " + results.gradedNeededScore.toFixed(2) + "%");
+      message += ("Average grade needed to reach target grade from current grade: " + results.gradedNeededScore + 
+        "% " + getLetterGrade(results.gradedNeededScore, this.state.scheme.letterGrades) + "\n");
     }
-    message += "\n";
     if (results.projectedNeededScore === null) {
-      message += "Projected Grade Needed: 0%";
+      message += "Average grade needed to reach target grade from projected grade: N/A";
     }
     else {
-      message += ("Projected Grade Needed: " + results.projectedNeededScore.toFixed(2) + "%");
+      message += ("Average grade needed to reach target grade from projected grade: " + results.projectedNeededScore + 
+        "% " + getLetterGrade(results.projectedNeededScore, this.state.scheme.letterGrades) + "\n");
     }
     this.setState({
       result: message
@@ -402,6 +401,19 @@ class calculatorInterface extends React.Component {
     );
   }
   
+}
+
+// grade is a numerical value, letterGrades is an arry of {letter, cutoff} pairs sorted in descending order of cutoff.
+// F if lower than any specified grade cutoff
+function getLetterGrade(grade, letterGrades) {
+  if (!letterGrades)
+    return null;
+
+  for (const pair of letterGrades) {
+    if (grade >= pair.cutoff)
+      return pair.letter;
+  }
+  return "F";
 }
 
 export default withMyHook(calculatorInterface);
