@@ -1,17 +1,19 @@
 import './App.css';
 import React from 'react';
 import axios from 'axios';
+import {Link} from 'react-router-dom';
 
 class schemeInterface extends React.Component {
     //Used as a key for categories
     categoriesCreated = 0;
-    
+
     constructor(props) {
         super(props);
         this.state = {
             categories: [],
             ids: [],
-            university: '',
+            letterGrades: [],
+            university: sessionStorage.getItem('user').split(',')[1],
             course: '',
             professor: '',
         };
@@ -20,6 +22,7 @@ class schemeInterface extends React.Component {
     }
     
     handleChange(event) {
+        let i, newGrades, newCategories;
         switch (event.target.name)
         {
             case 'University':
@@ -32,32 +35,44 @@ class schemeInterface extends React.Component {
                 this.setState({professor: event.target.value});
                 break;
             case 'Name':
-                var i = 0;
+                i = 0;
                 while (i < this.state.ids.length)
                 {
                     if (this.state.ids[i] === parseInt(event.target.className))
                     {
                         break;
                     }
-                    i++
+                    i++;
                 }
-                var newCategories = this.state.categories.slice();
+                newCategories = this.state.categories.slice();
                 newCategories.splice(i, 1, {name:event.target.value, weight:this.state.categories[i]['weight']});
                 this.setState({categories:newCategories});
                 break;
             case 'Weight':
-                var i = 0;
+                i = 0;
                 while (i < this.state.ids.length)
                 {
                     if (this.state.ids[i] === parseInt(event.target.className))
                     {
                         break;
                     }
-                    i++
+                    i++;
                 }
-                var newCategories = this.state.categories.slice();
+                newCategories = this.state.categories.slice();
                 newCategories.splice(i, 1, {name:this.state.categories[i]['name'], weight:event.target.value});
                 this.setState({categories:newCategories});
+                break;
+            case 'Letter':
+                i = parseInt(event.target.className);
+                newGrades = this.state.letterGrades.slice();
+                newGrades[i].letter = event.target.value;
+                this.setState({letterGrades: newGrades});
+                break;
+            case 'Cutoff':
+                i = parseInt(event.target.className);
+                newGrades = this.state.letterGrades.slice();
+                newGrades[i].cutoff = event.target.value;
+                this.setState({letterGrades: newGrades});
                 break;
             default:
                 break;
@@ -84,6 +99,7 @@ class schemeInterface extends React.Component {
             }
             sum += parseInt(this.state.categories[i]['weight']);
         }
+
         if ((this.state.university === '' || this.state.course === '' || this.state.professor === '' || !notEmpty) && !error)
         {
             notEmpty = false;
@@ -107,22 +123,45 @@ class schemeInterface extends React.Component {
             error = true;
             alert('Weights must add up to 100!');
         }
-        if (valid && notEmpty && hasCategories && sumTo100){
-        const scheme = { 
-            owner:sessionStorage.getItem('user').split(',')[0],
-            university:this.state.university,
-            professor:this.state.professor,
-            class:this.state.course,
-            categories:this.state.categories
+
+        for (const pair of this.state.letterGrades) {
+            if (pair.letter === '') {
+                alert('One of the letter grades does not have a name!');
+                return;
+            }
+            else if (!isNaN(parseFloat(pair.letter))) {
+                alert('A letter grade cannot have a number');
+                return;
+            }
+            else if (isNaN(parseFloat(pair.cutoff))) {
+                alert("Cutoff entered for " + pair.letter + " is not a number");
+                return;
+            }
         }
-         //console.log(JSON.stringify(scheme));
-         axios.post('http://localhost:3001/grading_schemes', scheme)
-         .catch(error => {
-            this.setState({ errorMessage: error.message });
-            console.error('There was an error!', error);
-        });
-        alert('Submitted grading scheme!');
-    }
+
+
+        if (valid && notEmpty && hasCategories && sumTo100){
+            var temp = this.state.letterGrades.slice();
+            temp.sort((a, b) => {return b.cutoff - a.cutoff;});
+            
+            const scheme = { 
+                owner: sessionStorage.getItem('user').split(',')[0],
+                university: this.state.university,
+                professor: this.state.professor,
+                class: this.state.course,
+                categories: this.state.categories,
+                letterGrades: temp,
+            }
+
+
+            //console.log(JSON.stringify(scheme));
+            axios.post('http://localhost:3001/grading_schemes', scheme)
+            .catch(error => {
+                this.setState({ errorMessage: error.message });
+                console.error('There was an error!', error);
+            });
+            alert('Submitted grading scheme!');
+        }
     }
 
     addCategory() {
@@ -130,6 +169,12 @@ class schemeInterface extends React.Component {
         this.setState(() => ({
             categories: [...this.state.categories, {name:'', weight:0}],
             ids: [...this.state.ids, num]
+        }));
+    }
+
+    addLetterGrade() {
+        this.setState(() => ({
+            letterGrades: [...this.state.letterGrades, {letter:'', cutoff:0}],
         }));
     }
 
@@ -155,10 +200,25 @@ class schemeInterface extends React.Component {
         }));
     }
 
+    removeLetterGrade(i) {
+        var newGrades = this.state.letterGrades.slice();
+        newGrades.splice(i, 1);
+
+        this.setState(() => ({
+            letterGrades : newGrades, 
+        }));
+    }
+
     reset() {
         this.setState(() => ({
             categories: [],
             ids: []
+        })); 
+    }
+
+    resetLetterGrades() {
+        this.setState(() => ({
+            letterGrades: []
         })); 
     }
 
@@ -167,8 +227,8 @@ class schemeInterface extends React.Component {
             <div>
                 <h1>
                     Build Your Scheme:
-                    <div>
-                    </div>
+                </h1>
+                <h2>
                     <form>
                         <label htmlFor='University'>University</label><br></br>
                         <input type='text' value={this.state.university} id='University' name='University' onChange={this.handleChange}></input><br></br>
@@ -178,16 +238,18 @@ class schemeInterface extends React.Component {
                         <input type='text' value={this.state.professor} id='Professor' name='Professor' onChange={this.handleChange}></input><br></br>
                         Categories<br></br>
                         {this.state.categories.map((element, index) => {
-                        return(
-                        <>
-                        <Category onChange={this.handleChange} inputName={element['name']} inputWeight={element['weight']} key={'Category' + this.state.ids[index]} name={this.state.ids[index]}></Category>
-                         <button type='button' key={'Button' + this.state.ids[index]} name={'Button' + this.state.ids[index]} onClick={() => {this.removeCategory(this.state.ids[index])}}>
-                        Delete Category
-                        </button><br></br> </>
+                            return(
+                            <div key={'Category' + this.state.ids[index]}>
+                            <Category onChange={this.handleChange} inputName={element['name']} inputWeight={element['weight']} name={this.state.ids[index]}></Category>
+                            <button type='button' key={'Button' + this.state.ids[index]} name={'Button' + this.state.ids[index]} onClick={() => {this.removeCategory(this.state.ids[index])}}>
+                            Delete Category
+                            </button><br></br> 
+                            </div>
                         )
                         })}
                     </form>
-
+                </h2>
+                <div>
                     <button type='button' onClick={() => {this.addCategory()}}>
                     Add Category
                     </button>
@@ -197,17 +259,37 @@ class schemeInterface extends React.Component {
                     <button type='button' onClick={() => {this.postScheme()}}>
                     Upload Scheme
                     </button>
-                </h1>
+                </div>
+                <h2>
+                    Enter Grade Cutoffs:
+                    <form>
+                    {this.state.letterGrades.map((element, index) => {
+                            return(
+                            <div key={'Letter' + index}>
+                            <LetterGrade onChange={this.handleChange} inputName={element['letter']} inputWeight={element['cutoff']} name={index}></LetterGrade>
+                            <button type='button' key={'Button' + index} name={'Button' + index} onClick={() => {this.removeLetterGrade(index)}}>
+                            Delete Grade
+                            </button><br></br> 
+                            </div>
+                        )
+                    })}
+                    </form>
+                    <button type='button' onClick={() => {this.addLetterGrade()}}>
+                    Add
+                    </button>
+                    <button type='button' onClick={() => {this.resetLetterGrades()}}>
+                    Reset
+                    </button>
+                </h2>
+                <Link to="/dashboard">
+                    Return to dashboard
+                </Link>
             </div>
         );
     }
 }
 
 class Category extends React.Component {
-    constructor(props) {
-        super(props);        
-    }
-
     render() {
         return(
             <>
@@ -215,6 +297,19 @@ class Category extends React.Component {
             <input defaultValue={this.props.inputName} type='text' className={this.props.name} name='Name' onChange={this.props.onChange}></input><br></br>
             <label>Weight </label><br></br>
             <input defaultValue={this.props.inputValue} type='number' className={this.props.name} name='Weight' onChange={this.props.onChange}></input><br></br>
+            </>
+        );
+    }
+}
+
+class LetterGrade extends React.Component {
+    render() {
+        return(
+            <>
+            <label>Letter Grade </label><br></br>
+            <input defaultValue={this.props.inputName} type='text' className={this.props.name} name='Letter' onChange={this.props.onChange}></input><br></br>
+            <label>Score </label><br></br>
+            <input defaultValue={this.props.inputValue} type='number' className={this.props.name} name='Cutoff' onChange={this.props.onChange}></input><br></br>
             </>
         );
     }

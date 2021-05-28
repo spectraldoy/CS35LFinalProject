@@ -159,7 +159,6 @@ app.get("/update_user", async (req, res) =>
 
 
 
-
 app.post("/grading_schemes", async (req, res) =>
 {
     try
@@ -175,6 +174,7 @@ app.post("/grading_schemes", async (req, res) =>
         res.send({message: err});
     }
 });
+
 
 app.post("/users", async (req, res) =>
 {

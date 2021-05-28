@@ -13,7 +13,7 @@
 //			{ another category },
 //			...
 //		]
-// 		target: 00 (can be a falsy value to mean unspecified) Note: may want to change as to treat 0 as false
+// 		target: a number or null
 //	}
 //
 // Enforce: Weights should be in range [0, 100] and sum of weights should be 100
@@ -60,7 +60,7 @@ export function calculate(grades) {
 	if (summary.currProjectedWeights !== 0) {
 		projectedGrade = summary.currProjectedScore / summary.currProjectedWeights * 100;
 	}
-	if (grades.target) {
+	if (grades.target !== null) {
 		if (summary.finalGradedWeights !== 100) {
 			gradedNeededScore = (grades.target - summary.finalGradedScore) / (100 - summary.finalGradedWeights) * 100;
 		}
@@ -119,5 +119,7 @@ function calculateCategory(category, summary) {
 
 // Round the given num to two decimal points
 function roundToHundredths(num) {
-	return num; //Math.round((num + Number.EPSILON) * 100) / 100;
+	if (num === null)
+		return null;
+	return Math.round((num + Number.EPSILON) * 100) / 100;
 }

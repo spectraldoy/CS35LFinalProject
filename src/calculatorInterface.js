@@ -5,6 +5,7 @@ import { InvertColorsOff, ThreeSixtySharp } from '@material-ui/icons';
 import {getScheme} from './globals.js'
 import { fade, makeStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
+import {Link} from 'react-router-dom';
 
 const hc = getComputedStyle(document.documentElement).getPropertyValue('--highlight-color');
 
@@ -34,14 +35,14 @@ class calculatorInterface extends React.Component {
     this.query = url.substring(idLocation, url.length);
     
     // TODO: Remove when URL parameter is working
-    this.query = "id=60aae5db54867f1138747ff7";
+    this.query = "id=60afda146ef84d04bb6211f9";
 
     this.state = {
-      scheme: null,
+      scheme: null, // to be set in finishInit
       animate: false,
-      assignmentsPtsReceived: null, // to be set later
-      assignmentsPtsOutOf: null, // to be set later
-      assignmentsType: null, // to be set later
+      assignmentsPtsReceived: null, // to be set in finishInit
+      assignmentsPtsOutOf: null, // to be set in finishInit
+      assignmentsType: null, // to be set in finishInit
       gradeWanted: "",
       result: ""
     };
@@ -165,30 +166,48 @@ class calculatorInterface extends React.Component {
   submitGrades(event) {
     event.preventDefault();
     const grades = {
-      categories: []
+      categories: [],
+      target: null
     };
     var count = 0;
     for (let category of this.state.scheme.categories) {
       let graded = [];
       let projected = [];
+      let pr, po;
       for(var i = 0; i < this.state.assignmentsType[count].length; i++){
         if(this.state.assignmentsType[count][i] === "Graded"){
-          if(this.state.assignmentsPtsReceived[count][i] === null || this.state.assignmentsPtsReceived[count][i] === "" || this.state.assignmentsPtsOutOf[count][i] === null || this.state.assignmentsPtsOutOf[count][i] === ""){
+          if(this.state.assignmentsPtsReceived[count][i] === "" || this.state.assignmentsPtsOutOf[count][i] === ""){
             alert("All graded assignments must have all points fields filled out");
             return;
           }
-          graded.push({ptsReceived: parseInt(this.state.assignmentsPtsReceived[count][i]), ptsOutOf: parseInt(this.state.assignmentsPtsOutOf[count][i])});
+          pr = parseFloat(this.state.assignmentsPtsReceived[count][i]);
+          po = parseFloat(this.state.assignmentsPtsOutOf[count][i]);
+          if (isNaN(pr) || isNaN(po)) {
+            alert("All points fields for graded assignments must be numbers");
+            return;
+          }
+
+          graded.push({ptsReceived: pr, ptsOutOf: po});
         }
-        else{
-          if(this.state.assignmentsPtsOutOf[count][i] === null || this.state.assignmentsPtsOutOf[count][i] === ""){
+        else {
+          if(this.state.assignmentsPtsOutOf[count][i] === ""){
             alert("All projected assignments must have all Total Points fields filled out");
             return;
           }
-          if(this.state.assignmentsPtsReceived[count][i] === null || this.state.assignmentsPtsReceived[count][i] === ""){
-            projected.push({ptsReceived: "-", ptsOutOf: parseInt(this.state.assignmentsPtsOutOf[count][i])});
+          
+          pr = parseFloat(this.state.assignmentsPtsReceived[count][i]);
+          po = parseFloat(this.state.assignmentsPtsOutOf[count][i]);
+          let toPredict = this.state.assignmentsPtsReceived[count][i] === "" || this.state.assignmentsPtsReceived[count][i] === "-"
+          if ((isNaN(pr) && !toPredict)  || isNaN(po)) {
+            alert("All points fields for projected assignments must be numbers, empty, or -");
+            return;
+          }
+
+          if(toPredict){
+            projected.push({ptsReceived: "-", ptsOutOf: po});
           }
           else{
-            projected.push({ptsReceived: parseInt(this.state.assignmentsPtsReceived[count][i]), ptsOutOf: parseInt(this.state.assignmentsPtsOutOf[count][i])});
+            projected.push({ptsReceived: pr, ptsOutOf: po});
           }
         }
       }
@@ -201,36 +220,55 @@ class calculatorInterface extends React.Component {
       );
       count += 1;
     }
-    grades.target = ((this.state.gradeWanted[count] === "") ? 0 : parseInt(this.state.gradeWanted));
-    console.log(this.state.scheme);
+
+
+    let match = false;
+    for (const pair of this.state.scheme.letterGrades) {
+      if (pair.letter === this.state.gradeWanted) {
+        grades.target = pair.cutoff;
+        match = true;
+        break;
+      }
+    }
+    if (!match) {
+      if (!isNaN(parseFloat(this.state.gradeWanted))) {
+        grades.target = parseFloat(this.state.gradeWanted);
+      }
+      else if (this.state.gradeWanted === "" || this.state.gradeWanted === "-") {
+        grades.target = null;
+      }
+      else {
+        alert("Couldn't identify your target grade as a number or a letter grade.");
+      }
+    }
+
     const results = calculate(grades);
     let message = "";
     if (results.currentGrade === null) {
-      message += "Current grade: 0%";
+      message += "Current grade: N/A\n";
     }
     else {
-      message += ("Current grade: " + results.currentGrade.toFixed(2) + "%");
+      message += ("Current grade: " + results.currentGrade + "% " + getLetterGrade(results.currentGrade, this.state.scheme.letterGrades) + "\n");
     }
-    message += "\n";
     if (results.projectedGrade === null) {
-      message += "Projected grade: 0%";
+      message += "Projected grade: N/A\n";
     }
     else {
-      message += ("Projected grade: " + results.projectedGrade.toFixed(2) + "%");
+      message += ("Projected grade: " + results.projectedGrade + "% " + getLetterGrade(results.projectedGrade, this.state.scheme.letterGrades) + "\n");
     }
-    message += "\n";
     if (results.gradedNeededScore === null) {
-      message += "Grade Needed: 0%";
+      message += "Average grade needed to reach target grade from current grade: N/A\n";
     }
     else {
-      message += ("Grade Needed: " + results.gradedNeededScore.toFixed(2) + "%");
+      message += ("Average grade needed to reach target grade from current grade: " + results.gradedNeededScore + 
+        "% " + getLetterGrade(results.gradedNeededScore, this.state.scheme.letterGrades) + "\n");
     }
-    message += "\n";
     if (results.projectedNeededScore === null) {
-      message += "Projected Grade Needed: 0%";
+      message += "Average grade needed to reach target grade from projected grade: N/A";
     }
     else {
-      message += ("Projected Grade Needed: " + results.projectedNeededScore.toFixed(2) + "%");
+      message += ("Average grade needed to reach target grade from projected grade: " + results.projectedNeededScore + 
+        "% " + getLetterGrade(results.projectedNeededScore, this.state.scheme.letterGrades) + "\n");
     }
     this.setState({
       result: message
@@ -326,7 +364,7 @@ class calculatorInterface extends React.Component {
       <h2 key="target">
         <form>
           <label className = "FinalGrade">
-            Final Grade You Want (0-100%):
+            Final Grade You Want (0-100%, or a defined letter grade):
           </label>
           <label>&nbsp;&nbsp;</label>
           <input type="text" name="gradeWanted" onChange={this.handleChange(this.count)} value={this.state.gradeWanted} className="inputForm" />
@@ -340,16 +378,42 @@ class calculatorInterface extends React.Component {
         </Button>
       </form>
     );
+
     return (
       <div className="Assignment">
         {items}
+        <h2>
+        {this.state.scheme.letterGrades.map((element, index) => {
+          return(
+            <div key={'Letter' + index}>
+              {element.letter + ": " + element.cutoff} 
+            </div>
+          )
+        })}
+        </h2>
         <h2 className="Result">
           {this.state.result}
         </h2>
+        <Link to="/dashboard">
+          Return to dashboard
+        </Link>
       </div>
     );
   }
   
+}
+
+// grade is a numerical value, letterGrades is an arry of {letter, cutoff} pairs sorted in descending order of cutoff.
+// F if lower than any specified grade cutoff
+function getLetterGrade(grade, letterGrades) {
+  if (!letterGrades)
+    return null;
+
+  for (const pair of letterGrades) {
+    if (grade >= pair.cutoff)
+      return pair.letter;
+  }
+  return "F";
 }
 
 export default withMyHook(calculatorInterface);

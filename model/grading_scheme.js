@@ -13,6 +13,12 @@ const GradingScheme = new mongoose.Schema({        // NOTE: the names of the pro
     [{
         name: String,
         weight: Number
+    }],
+
+    letterGrades:
+    [{
+        letter: String,
+        cutoff: Number
     }]
 });
 

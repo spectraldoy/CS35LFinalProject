@@ -27,6 +27,9 @@ function HomePage() {
       <li>
         <Link to="/createAccount">Create Account</Link>
       </li>
+      <li>
+        <Link to="/schemeInterface">Scheme Interface</Link>
+      </li>
     </ul>
   );
 }
