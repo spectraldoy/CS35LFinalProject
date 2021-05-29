@@ -55,8 +55,6 @@ class calculatorInterface extends React.Component {
     this.submitGrades = this.submitGrades.bind(this);
     this.addAssignment = this.addAssignment.bind(this);
     this.handleChange = this.handleChange.bind(this);
-    this.handleAssignmentTypeChange = this.handleAssignmentTypeChange.bind(this);
-
   }
 
   
@@ -114,33 +112,31 @@ class calculatorInterface extends React.Component {
         assignmentsPtsOutOf: assignment
       });
     }
-  }
-
-  handleAssignmentTypeChange = arr => (event) => {
-    const assignment = this.state.assignmentsType.slice();
-    assignment[arr[0]][arr[1]] = event.target.value;
-    this.setState({
-      assignmentsType: assignment
-    });
-
+    else if(event.target.name === "assignmenttype"){
+      const assignment = this.state.assignmentsType.slice();
+      assignment[arr[0]][arr[1]] = event.target.value;
+      this.setState({
+        assignmentsType: assignment
+      });
+    }
   }
 
   addAssignment = i => (event) => {
     event.preventDefault();
     const names = this.state.assignmentsName.slice();
     names[i] = names[i].concat([""]);
-    const assignment = this.state.assignmentsPtsReceived.slice();
-    assignment[i] = assignment[i].concat([""]);
+    const assignment1 = this.state.assignmentsPtsReceived.slice();
+    assignment1[i] = assignment1[i].concat([""]);
     const assignment2 = this.state.assignmentsPtsOutOf.slice();
     assignment2[i] = assignment2[i].concat([""]);
-    const assignment4 = this.state.assignmentsType.slice();
-    assignment4[i] = assignment4[i].concat(["Graded"]);
+    const assignment3 = this.state.assignmentsType.slice();
+    assignment3[i] = assignment3[i].concat(["Graded"]);
 
     this.setState({
       assignmentsName: names,
-      assignmentsPtsReceived: assignment,
+      assignmentsPtsReceived: assignment1,
       assignmentsPtsOutOf: assignment2,
-      assignmentsType: assignment4
+      assignmentsType: assignment3
     });
   }
 
@@ -148,18 +144,18 @@ class calculatorInterface extends React.Component {
     event.preventDefault();
     const names = this.state.assignmentsName.slice();
     names[arr[0]].splice(arr[1],1);
-    const assignment = this.state.assignmentsPtsReceived.slice();
-    assignment[arr[0]].splice(arr[1],1);
+    const assignment1 = this.state.assignmentsPtsReceived.slice();
+    assignment1[arr[0]].splice(arr[1],1);
     const assignment2 = this.state.assignmentsPtsOutOf.slice();
     assignment2[arr[0]].splice(arr[1],1);
-    const assignment4 = this.state.assignmentsType.slice();
-    assignment4[arr[0]].splice(arr[1],1);
+    const assignment3 = this.state.assignmentsType.slice();
+    assignment3[arr[0]].splice(arr[1],1);
 
     this.setState({
       assignmentsName: names,
-      assignmentsPtsReceived: assignment,
+      assignmentsPtsReceived: assignment1,
       assignmentsPtsOutOf: assignment2,
-      assignmentsType: assignment4
+      assignmentsType: assignment3
     });
   }
 
@@ -307,8 +303,6 @@ class calculatorInterface extends React.Component {
         </label>
       </h2>
     );
-    console.log(classes);
-    console.log(this.state.colorButton);
     for (var i = 0; i < this.count; i++) {
       items.push(
         <h2 key={i + "-title"}>
@@ -345,9 +339,9 @@ class calculatorInterface extends React.Component {
             <form className = "inlineForm">
               <label className="Points">
               Grade Type: &nbsp;
-                <select value={this.state.assignmentsType[i][j]} onChange={this.handleAssignmentTypeChange([i, j])} className="Switch">
+                <select value={this.state.assignmentsType[i][j]} name = "assignmenttype" onChange={this.handleChange([i, j])} className="Switch">
                   <option value="Projected">Projected</option>
-                  <option selected value="Graded">Graded</option>
+                  <option defaultValue="Graded">Graded</option>
                 </select>
               </label>
             </form>
