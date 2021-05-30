@@ -2,10 +2,32 @@ import './App.css';
 import React from 'react';
 import axios from 'axios';
 import {Link} from 'react-router-dom';
+import { Button, Grid } from '@material-ui/core';
+import { fade, withStyles, createStyles } from '@material-ui/core/styles';
+import clsx from 'clsx';
+
+const hc = getComputedStyle(document.documentElement).getPropertyValue('--highlight-color');
+
+const styles = createStyles({
+    colorButton: {
+        fullWidth: true,
+        backgroundColor: fade(hc, 0.15),
+        '&:hover': {
+            backgroundColor: fade(hc, 0.55),
+        }
+      },
+      buttonGrid: {
+        justify:'center',
+        alignItems:'center',
+        spacing:2
+      }
+
+});
 
 class schemeInterface extends React.Component {
-    //Used as a key for categories
+    
     categoriesCreated = 0;
+    letterGradesCreated = 0;
 
     constructor(props) {
         super(props);
@@ -13,6 +35,7 @@ class schemeInterface extends React.Component {
             categories: [],
             ids: [],
             letterGrades: [],
+            letterGradeIds: [],
             university: sessionStorage.getItem('user').split(',')[1],
             course: '',
             professor: '',
@@ -36,28 +59,14 @@ class schemeInterface extends React.Component {
                 break;
             case 'Name':
                 i = 0;
-                while (i < this.state.ids.length)
-                {
-                    if (this.state.ids[i] === parseInt(event.target.className))
-                    {
-                        break;
-                    }
-                    i++;
-                }
+                i = parseInt(event.target.className);
                 newCategories = this.state.categories.slice();
                 newCategories.splice(i, 1, {name:event.target.value, weight:this.state.categories[i]['weight']});
                 this.setState({categories:newCategories});
                 break;
             case 'Weight':
                 i = 0;
-                while (i < this.state.ids.length)
-                {
-                    if (this.state.ids[i] === parseInt(event.target.className))
-                    {
-                        break;
-                    }
-                    i++;
-                }
+                i = parseInt(event.target.className);
                 newCategories = this.state.categories.slice();
                 newCategories.splice(i, 1, {name:this.state.categories[i]['name'], weight:event.target.value});
                 this.setState({categories:newCategories});
@@ -93,11 +102,11 @@ class schemeInterface extends React.Component {
             {
                 notEmpty = false;
             }
-            if (parseInt(this.state.categories[i]['weight']) <= 0)
+            if (parseFloat(this.state.categories[i]['weight']) <= 0)
             {
                 valid = false;
             }
-            sum += parseInt(this.state.categories[i]['weight']);
+            sum += parseFloat(this.state.categories[i]['weight']);
         }
 
         if ((this.state.university === '' || this.state.course === '' || this.state.professor === '' || !notEmpty) && !error)
@@ -173,14 +182,17 @@ class schemeInterface extends React.Component {
     }
 
     addLetterGrade() {
+        var num = this.letterGradesCreated++;
         this.setState(() => ({
             letterGrades: [...this.state.letterGrades, {letter:'', cutoff:0}],
+            letterGradeIds: [...this.state.letterGradeIds, num]
         }));
     }
 
     //Go through all ids and find the corresponding index that matches. Remove the Category and Id that matches.
-    removeCategory(id) {
-        var i = 0;
+    removeCategory(i) {
+        //var i = 0;
+        /*
         while ( i < this.state.ids.length)
         {
             if (this.state.ids[i] === id)
@@ -189,6 +201,7 @@ class schemeInterface extends React.Component {
             }
             i++
         }
+        */
         var newCategories = this.state.categories.slice();
         newCategories.splice(i, 1);
         var newIds = this.state.ids.slice();
@@ -201,11 +214,25 @@ class schemeInterface extends React.Component {
     }
 
     removeLetterGrade(i) {
+        /*
+        var j = 0;
+        while ( j < this.state.letterGradeIds.length)
+        {
+            if (this.state.letterGradeIds[j] === i)
+            {
+                break;
+            }
+            j++
+        }
+        */
         var newGrades = this.state.letterGrades.slice();
         newGrades.splice(i, 1);
+        var newIds = this.state.letterGradeIds.slice();
+        newIds.splice(i, 1);
 
         this.setState(() => ({
             letterGrades : newGrades, 
+            letterGradeIds: newIds
         }));
     }
 
@@ -223,6 +250,7 @@ class schemeInterface extends React.Component {
     }
 
     render() {
+        const { classes } = this.props;
         return(
             <div>
                 <h1>
@@ -230,56 +258,82 @@ class schemeInterface extends React.Component {
                 </h1>
                 <h2>
                     <form>
+                    <Grid container justify='center' alignItems='center' spacing={2} direction='column'>
+                        <Grid item>
                         <label htmlFor='University'>University</label><br></br>
                         <input type='text' value={this.state.university} id='University' name='University' onChange={this.handleChange}></input><br></br>
+                        </Grid>
+                        <Grid item>
                         <label htmlFor='Course'>Course</label><br></br>
                         <input type='text' value={this.state.course} id='Course' name='Course' onChange={this.handleChange}></input><br></br>
+                        </Grid>
+                        <Grid item>
                         <label htmlFor='Professor'>Professor</label><br></br>
                         <input type='text' value={this.state.professor} id='Professor' name='Professor' onChange={this.handleChange}></input><br></br>
+                        </Grid>
+                        <Grid item>
                         Categories<br></br>
+                        </Grid>
                         {this.state.categories.map((element, index) => {
                             return(
                             <div key={'Category' + this.state.ids[index]}>
-                            <Category onChange={this.handleChange} inputName={element['name']} inputWeight={element['weight']} name={this.state.ids[index]}></Category>
-                            <button type='button' key={'Button' + this.state.ids[index]} name={'Button' + this.state.ids[index]} onClick={() => {this.removeCategory(this.state.ids[index])}}>
+                            <Category onChange={this.handleChange} inputName={element['name']} inputWeight={element['weight']} name={index}></Category> 
+                            <Grid item>
+                            <Button className={clsx(classes.colorButton, classes.hc)} type='Button' key={'Button' + this.state.ids[index]} name={'Button' + this.state.ids[index]} onClick={() => {this.removeCategory(index)}}>
                             Delete Category
-                            </button><br></br> 
+                            </Button><br></br> 
+                            </Grid>
                             </div>
-                        )
+                        ) //name = this.state.ids[index]
                         })}
+                    </Grid>
                     </form>
                 </h2>
                 <div>
-                    <button type='button' onClick={() => {this.addCategory()}}>
-                    Add Category
-                    </button>
-                    <button type='button' onClick={() => {this.reset()}}>
-                    Reset
-                    </button>
-                    <button type='button' onClick={() => {this.postScheme()}}>
-                    Upload Scheme
-                    </button>
+                    <Grid container justify='center' alignItems='center' spacing={2}>
+                        <Grid item>
+                        <Button className={clsx(classes.colorButton, classes.hc)} type='Button' onClick={() => {this.addCategory()}}>
+                        Add Category
+                        </Button>
+                        </Grid>
+                        <Grid item>
+                        <Button className={clsx(classes.colorButton, classes.hc)} type='Button' onClick={() => {this.reset()}}>
+                        Reset
+                        </Button>
+                        </Grid>
+                        <Grid item>
+                        <Button className={clsx(classes.colorButton, classes.hc)} type='Button' onClick={() => {this.postScheme()}}>
+                        Upload Scheme
+                        </Button>
+                        </Grid>
+                    </Grid>
                 </div>
                 <h2>
                     Enter Grade Cutoffs:
                     <form>
                     {this.state.letterGrades.map((element, index) => {
                             return(
-                            <div key={'Letter' + index}>
+                            <div key={'Letter' + this.state.letterGradeIds[index]}>
                             <LetterGrade onChange={this.handleChange} inputName={element['letter']} inputWeight={element['cutoff']} name={index}></LetterGrade>
-                            <button type='button' key={'Button' + index} name={'Button' + index} onClick={() => {this.removeLetterGrade(index)}}>
+                            <Button className={clsx(classes.colorButton, classes.hc)} type='Button' key={'Button' + this.state.letterGradeIds[index]} name={'Button' + this.state.letterGradeIds[index]} onClick={() => {this.removeLetterGrade(index)}}>
                             Delete Grade
-                            </button><br></br> 
+                            </Button><br></br> 
                             </div>
                         )
                     })}
                     </form>
-                    <button type='button' onClick={() => {this.addLetterGrade()}}>
+                    <Grid container justify='center' alignItems='center' spacing={2}>
+                    <Grid item>
+                    <Button className={clsx(classes.colorButton, classes.hc)} type='Button' onClick={() => {this.addLetterGrade()}}>
                     Add
-                    </button>
-                    <button type='button' onClick={() => {this.resetLetterGrades()}}>
+                    </Button>
+                    </Grid>
+                    <Grid item>
+                    <Button className={clsx(classes.colorButton, classes.hc)} type='Button' onClick={() => {this.resetLetterGrades()}}>
                     Reset
-                    </button>
+                    </Button>
+                    </Grid>
+                    </Grid>
                 </h2>
                 <Link to="/dashboard">
                     Return to dashboard
@@ -293,10 +347,14 @@ class Category extends React.Component {
     render() {
         return(
             <>
+            <Grid item>
             <label>Name </label><br></br>
             <input defaultValue={this.props.inputName} type='text' className={this.props.name} name='Name' onChange={this.props.onChange}></input><br></br>
+            </Grid>
+            <Grid item>
             <label>Weight </label><br></br>
             <input defaultValue={this.props.inputValue} type='number' className={this.props.name} name='Weight' onChange={this.props.onChange}></input><br></br>
+            </Grid>
             </>
         );
     }
@@ -315,4 +373,4 @@ class LetterGrade extends React.Component {
     }
 }
 
-export default schemeInterface
+export default withStyles(styles)(schemeInterface);
