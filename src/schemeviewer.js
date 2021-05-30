@@ -10,7 +10,7 @@ const oc = getComputedStyle(document.documentElement).getPropertyValue('--opposi
 
 const useStyles = makeStyles((theme) => ({
     colorButton: {
-		marginRight: theme.spacing(0.75),
+		marginRight: theme.spacing(1),
 		width: `26.5ch`, /* 16vw */
 		// vertical padding + font size from searchIcon
         backgroundColor: fade(oc, 0.25),
@@ -107,7 +107,7 @@ function ProfileHeader(props) {
 }
 
 function SchemeViewer(props) {
-	if (props.schemes === undefined) {
+	if (!props.schemes) {
 		return null;
 	}
 	
@@ -116,19 +116,16 @@ function SchemeViewer(props) {
 	const [redirectTo, changeUrl] = useState("");
 	
 	if (redirectTo) {
-		// potential for view persistance here
-		history.push(props.URL); // slightly problematic
-		return <Redirect to={redirectTo} />
+		history.push(props.URL);
+		return <Redirect to={redirectTo} />;
 	}
 	
 	let renderedSchemes = []
 	for (const scheme of props.schemes) {
-		// need a key here?
 		renderedSchemes.push(displayScheme(scheme, props.userSearch, changeUrl));
 	}
 	//console.log(renderedSchemes);
 
-	// NOTE: WinHeader must have a New Scheme button always
 	if (!props.animate)
 		return <div className="DashWinLoading"></div>
 	else

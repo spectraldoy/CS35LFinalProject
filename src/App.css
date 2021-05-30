@@ -30,6 +30,7 @@
   height: calc(var(--header-height) * 0.8);
   padding: calc(var(--header-height) * 0.15);
   padding-bottom: calc(var(--header-height) * 0.10);
+  padding-left: calc(var(--header-height) * 0.18)
 }
 
 /*

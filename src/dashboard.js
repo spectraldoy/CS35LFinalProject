@@ -106,10 +106,10 @@ function SideMenu(props) {
   const classes = useStyles();
 
   // loads MySchemes first into the SchemeViewer, which doesn't happen automatically due to async rendering
-  if (props.schemesInfo[0] === 0) {
+  // TODO: change names here
+  if (props.schemesLoaded === 0) {
     props.loadInitialView();
-    //window.onpopstate = props.loadInitialView();
-    props.schemesInfo[1](1);
+    props.loadSchemes(1);
   }
 
   return (
@@ -138,26 +138,30 @@ function Dashboard(props) {
     return <Redirect to="/" />;
   }
 
-  const sess = props.sess.split(",");  // sess[0] = username, sess[1] = university
+  // sess[0] = username, sess[1] = university
+  const sess = props.sess.split(",");
   const classes = useStyles();
   const history = useHistory();
-  const [searchQuery, updateSearchQuery] = useState("");
+
+  // initially incorrect values to overwrite
   const [header, updateHeader] = useState("Memes");
+  const [searchQuery, updateSearchQuery] = useState("");
   const [schemes, setSchemes] = useState([]);
   const [animate, setAnimate] = useState(false);
+
   // to load MySchemes after the async getSchemes request
   const [schemesLoaded, loadSchemes] = useState(0);
-  const [initialView, updateInitialView] = useState(history.location.hash);
-  //console.log(history, initialView);
-  const parsedView = decodeURI(initialView).split("?");
 
-  // for moving between scheme views through the history
-  window.addEventListener("hashchange", function(event) {
-    const newParsedView = decodeURI(history.location.hash).split("?");
-    updateSchemeViewer(newParsedView[0].slice(1), newParsedView[1])();
-  }, false);
+  // to figure out which schemes view to load
+  let initialView = history.location.hash;
+  let parsedView = decodeURI(initialView).split("?");
 
-  // if update scheme viewer, then hash change and if hash change, update scheme viewer
+  // to move between different views and keep track of history
+  window.onhashchange = () => {
+    initialView = history.location.hash;
+    parsedView = decodeURI(initialView).split("?");
+    updateSchemeViewer(parsedView[0].slice(1), parsedView[1])();
+  }
   
   // for SideMenu Button functions / searching
   function updateSchemeViewer(header_, query, prefix="grading_schemes") {
@@ -165,11 +169,14 @@ function Dashboard(props) {
     if (header_ === header) {
       return (e) => {};
     }
-
     // for initial automatic schemes load
     if (!query && header_ === "Browse Schemes") {
       prefix = "all_schemes";
     }
+    else if (header_.includes("Schemes created by") || header_.includes("Scheme search")) {
+      prefix = "searchquery";
+    }
+    
     return (e) => {
       // this is where the search occurs for the scheme views
       getScheme(query, prefix)
@@ -180,17 +187,13 @@ function Dashboard(props) {
           setAnimate(true);
         }
       );
+      if (header_ !== header || query !== searchQuery) {
+		    // WHY DOES THIS PUSH TWICE WHO DESIGNED THIS
+        history.push(history.location.pathname + "#" + header_ + "?" + query);
+      }
+      setAnimate(false);
       updateHeader(header_);
       updateSearchQuery(query);
-      updateInitialView(history.location.hash);
-      // history keeps getting pushed multiple times so this is necessary 
-      // also this has delayed rendering
-      // brute force it?
-      const parsedURL = decodeURI(history.location.hash).split("?");
-      if (parsedURL[0].slice(1) !== header_ && parsedURL[1] !== query)
-        console.log(history.push(history.location.pathname + "#" + header_ + "?" + query));
-
-      setAnimate(false);
     };
   }
 
@@ -241,7 +244,8 @@ function Dashboard(props) {
       {Header({searchBar: searchBar})}
       <div className="App-bottom">
         {SideMenu({
-          schemesInfo: [schemesLoaded, loadSchemes],
+          schemesLoaded: schemesLoaded,
+          loadSchemes: loadSchemes,
           loadInitialView: updateSchemeViewer(parsedView[0].slice(1), parsedView[1]),
           onClickMySchemes: updateSchemeViewer("My Schemes", "owner=" + sess[0]),
           onClickBrowseSchemes: updateSchemeViewer("Browse Schemes", "", "all_schemes"),

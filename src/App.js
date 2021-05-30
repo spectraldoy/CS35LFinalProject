@@ -39,7 +39,7 @@ function App() {
 
   let startPage = "/login";
   if (user) // already logged in
-    startPage = "/dashboard#My Schemes?owner=spectraldoy";
+    startPage = "/dashboard#My Schemes?owner=" + user.split(',')[0];
 
   let app = (
     <div className="App">

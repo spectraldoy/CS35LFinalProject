@@ -394,7 +394,7 @@ class calculatorInterface extends React.Component {
         <h2 className="Result">
           {this.state.result}
         </h2>
-        <Link to="/dashboard">
+        <Link to="/">
           Return to dashboard
         </Link>
       </div>
