@@ -52,13 +52,16 @@ function CreateAccount(props) {
     async function handleSubmit(e) {
         e.preventDefault();
         if (username === "") {
-            alert.error("Please enter a username.");
+            alert.error("Please enter a username");
+        }
+        else if (!isAlphaNumeric(username)) {
+            alert.error("Username can only contain letters and numbers");
         }
         else if (university === "") {
             alert.error("Please enter a university");
         }
         else if (password === "") {
-            alert.error("Please enter a password.");
+            alert.error("Please enter a password");
         }
         else if (password !== confirmPassword) {
             alert.error("Passwords don't match");
@@ -177,6 +180,21 @@ async function createUser(user) {
     })
     return res.text(); // 0 if succeeded, 1 if username is already taken
 }
+
+// taken from Michael Martin-Smucker's answer at https://stackoverflow.com/questions/4434076/best-way-to-alphanumeric-check-in-javascript/25352300#25352300
+function isAlphaNumeric(str) {
+    var code, i, len;
+  
+    for (i = 0, len = str.length; i < len; i++) {
+      code = str.charCodeAt(i);
+      if (!(code > 47 && code < 58) && // numeric (0-9)
+          !(code > 64 && code < 91) && // upper alpha (A-Z)
+          !(code > 96 && code < 123)) { // lower alpha (a-z)
+        return false;
+      }
+    }
+    return true;
+  };
 
 export default CreateAccount;
 
