@@ -6,7 +6,7 @@ import { fade, makeStyles } from '@material-ui/core/styles';
 import SearchIcon from '@material-ui/icons/Search';
 
 import './dashboard.css';
-import { Logo, Name, getScheme } from './globals';
+import { Logo, Name, getItem } from './globals';
 import SchemeViewer from './schemeviewer';
 
 const fs = getComputedStyle(document.documentElement).getPropertyValue('--side-menu-font-size');
@@ -106,7 +106,6 @@ function SideMenu(props) {
   const classes = useStyles();
 
   // loads MySchemes first into the SchemeViewer, which doesn't happen automatically due to async rendering
-  // TODO: change names here
   if (props.schemesLoaded === 0) {
     props.loadInitialView();
     props.loadSchemes(1);
@@ -179,7 +178,7 @@ function Dashboard(props) {
     
     return (e) => {
       // this is where the search occurs for the scheme views
-      getScheme(query, prefix)
+      getItem(query, prefix)
       .then( data => data.json() ) 
       .then(
         data => {
@@ -187,28 +186,23 @@ function Dashboard(props) {
           setAnimate(true);
         }
       );
-      if (header_ !== header || query !== searchQuery) {
-		    // WHY DOES THIS PUSH TWICE WHO DESIGNED THIS
-        history.push(history.location.pathname + "#" + header_ + "?" + query);
-      }
       setAnimate(false);
       updateHeader(header_);
+      // causes problems with search bar
       updateSearchQuery(query);
+      if (header_ !== header || query !== searchQuery) {
+		    // WHY DOES THIS PUSH TWICE
+        // try this
+        history.replace(history.location.pathname + "#" + header_ + "?" + query);
+      }
     };
   }
 
-  function search(query, prefix="Scheme Search Results for") {
-    // parse search query
-    const delimiter = "`";
-    const punctuation = /[\u2000-\u206F\u2E00-\u2E7F\\'!"#$%&()*+,\-.\/:;<=>?@\[\]^_{|}~]/;
-    let withPunctuation = query.replace(delimiter, "");
-    let withoutPunctuation = query.replace(punctuation, "");
-    const finalQuery = "string=" + withoutPunctuation + delimiter + withPunctuation;
-
+  function search(query, header_="Scheme Search Results for") {
     // possible problems: case sensitive
     return updateSchemeViewer(
-      prefix + " \"" + query + "\"", 
-      finalQuery,
+      header_ + " \"" + query + "\"", 
+      "string=" + query,
       "searchquery",
     );
   }
@@ -238,6 +232,14 @@ function Dashboard(props) {
       </div>
     );
   }
+
+  function displayProfile(owner) {
+    // get user
+    return updateSchemeViewer(
+      "Profile",
+      "owner=" + owner,
+    );
+  }
   
   return (
     <div>
@@ -250,7 +252,7 @@ function Dashboard(props) {
           onClickMySchemes: updateSchemeViewer("My Schemes", "owner=" + sess[0]),
           onClickBrowseSchemes: updateSchemeViewer("Browse Schemes", "", "all_schemes"),
           onClickMyUnivSchemes: updateSchemeViewer("My University's Schemes", "university=" + sess[1]),
-          onClickProfile: updateSchemeViewer("Profile"),
+          onClickProfile: displayProfile(sess[0]),
           onLogout: () => props.setUser(""),
         })}
         <SchemeViewer 

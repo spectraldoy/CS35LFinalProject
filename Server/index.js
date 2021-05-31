@@ -68,23 +68,31 @@ app.get("/searchquery", async (req, res) => {
         res.send("");
         return;
     }
-    // the search string will be of the form withPunctuation + '`' + withoutPunctuation
-    // and is parsed accordingly by the following code
     let requestString = req.query.string; 
-    let searches = requestString.split("`");
-    let parsedSearches = [];
+    // parse request string
+
+    const punctuation = /[\u2000-\u206F\u2E00-\u2E7F\\'!"`#$%&()*+,\-.\/:;<=>?@\[\]^_{|}~]/;
+    let withoutPunctuation = requestString.replace(punctuation, "");
+    requestString = requestString + " " + withoutPunctuation;
+
+    let parsedSearches = requestString.split(" ");
     
-    for (const search of searches) {
-        parsedSearches.push(...search.split(" "));
-    }
-    // console.log(parsedSearches);
+    console.log(parsedSearches);
     // brute force search
     let requestedSchemes = await GradingScheme.find(
         { $or: [
-            { owner: { $in: parsedSearches } },
-            { university: { $in: parsedSearches } },
-            { professor: { $in: parsedSearches } },
-            { class: { $in: parsedSearches } },
+            { $or: [
+                { owner: { $in: parsedSearches } },
+                { university: { $in: parsedSearches } },
+                { professor: { $in: parsedSearches } },
+                { class: { $in: parsedSearches } },
+            ]},
+            { $and: [
+                { owner: { $in: parsedSearches } },
+                { university: { $in: parsedSearches } },
+                { professor: { $in: parsedSearches } },
+                { class: { $in: parsedSearches } },
+            ]},
         ]},
         (err, schemes) => {}
     );
@@ -117,6 +125,23 @@ app.get("/users", async (req, res) =>
                 res.send("2");    // Error code 2: Account does not exist
         }
     
+    }
+    catch(err)
+    {
+        res.send({message: err});
+    }
+});
+
+app.get("/user_univ", async(req, res) => {
+    try
+    {
+        var userAccount = await User.findOne({"username": req.query.username}, (err, userEvent) => {});
+        if(userAccount == null)
+            res.send("Account does not exist!");
+        else
+        {
+            res.send(userAccount.username + "," + userAccount.university);
+        }
     }
     catch(err)
     {

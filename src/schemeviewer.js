@@ -4,6 +4,7 @@ import { Box, Card, Grid, CardHeader, Typography, Paper, Button, ButtonBase } fr
 import { fade, makeStyles } from '@material-ui/core/styles';
 import AddBoxSharpIcon from '@material-ui/icons/AddBoxSharp';
 import { Redirect, useHistory } from 'react-router-dom';
+import { getItem } from './globals';
 
 const hc = getComputedStyle(document.documentElement).getPropertyValue('--highlight-color');
 const oc = getComputedStyle(document.documentElement).getPropertyValue('--opposite-color');
@@ -97,12 +98,29 @@ function displayScheme(scheme, userSearch, changeUrl) {
 }
 
 function ProfileHeader(props) {
+	// get user
+	let current_user = sessionStorage.getItem('user').split(',')[0]
+	let username = "";
+	let university = "";
+	
+	if (props.owner === current_user) {
+		username = current_user;
+		university = sessionStorage.getItem('user').split(',')[1];
+	}
+	else {
+		getItem("username=" + props.owner, "user_univ")
+		.then( res => res.text() )
+		.then( res => props.setUserString(res) );
+		let temp = props.userString.split(",");
+		username = temp[0];
+		university = temp[1];
+	}
+
 	return (
-		<CardHeader
-			variant="h1"
-			title={props.header} 
-			style={{paddingTop: "5vh"}} 
-		/>
+		<Box>
+			<Typography variant="h4" style={{paddingTop: "5vh"}}>{username}</Typography>
+
+		</Box>
 	);
 }
 
@@ -114,6 +132,8 @@ function SchemeViewer(props) {
 	const classes = useStyles();
 	const history = useHistory();
 	const [redirectTo, changeUrl] = useState("");
+	// for Profile pages
+	const [userString, setUserString] = useState("")
 	
 	if (redirectTo) {
 		history.push(props.URL);
@@ -145,9 +165,15 @@ function SchemeViewer(props) {
 						</Button>
 					}
 					title={props.header} 
-					style={{textAlign: "left", paddingRight: "3vw", paddingTop: "5vh", paddingBottom: "0", paddingLeft: "4.5vw"}} 
+					align="left"
+					style={{paddingRight: "3vw", paddingTop: "5vh", paddingBottom: "0", paddingLeft: "4.5vw"}} 
 				/>
-				: ProfileHeader({header: props.header})
+				: ProfileHeader({
+					header: props.header, 
+					owner: history.location.hash.split("=")[1],
+					userString: userString,
+					setUserString: setUserString,
+				})
 				}
 				<Grid className="SchemesView">
 					{renderedSchemes}
