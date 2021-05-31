@@ -85,7 +85,13 @@ On the "Setup connection security" step, you may want to specify 0.0.0.0/0 as a 
 
 Once on the "Choose a connection method" step, select the "Connect your application" option. From there, choose "Node.js" as the driver and "3.6 or later" as the version. Copy the provided connection string to your clipboard.
 
-Within the main folder of the project, create a file called ".env" and within it 
+Within the main folder of the project, create a file called ".env" and within it initialize a variable called DB_CONNECTION_STRING to be the string you copied from MongoDB. An example .env file would look like this (all on one line):
+
+DB_CONNECTION_STRING = "mongodb+srv://username:password@schemedata.zculb.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
+
+Make sure to substitute in your cluster username and password into the string.
+
+After this step, the database should be ready for use.
 
 
 ## Technology
