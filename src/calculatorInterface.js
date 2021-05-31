@@ -2,7 +2,7 @@ import './App.css';
 import React from 'react';
 import { calculate } from './calculator.js'
 import { InvertColorsOff, ThreeSixtySharp } from '@material-ui/icons';
-import {getScheme} from './globals.js'
+import { getItem } from './globals.js'
 import { fade, makeStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
 import {Link} from 'react-router-dom';
@@ -59,7 +59,7 @@ class calculatorInterface extends React.Component {
 
   
   componentDidMount() {
-    getScheme(this.query, "grading_schemes").then(data => data.json()).then(schemes => {
+    getItem(this.query, "grading_schemes").then(data => data.json()).then(schemes => {
       this.finishInit(schemes[0])
     });
   }
@@ -388,7 +388,7 @@ class calculatorInterface extends React.Component {
         <h2 className="Result">
           {this.state.result}
         </h2>
-        <Link to="/dashboard">
+        <Link to="/">
           Return to dashboard
         </Link>
       </div>

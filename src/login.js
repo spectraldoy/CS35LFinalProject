@@ -43,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
 function Login(props) {
 
     if (sessionStorage.getItem('user'))  // already logged in
-        return <Redirect to="/homePage" />;
+        return <Redirect to="/" />;
 
     const alert = useAlert();
     const classes = useStyles();
