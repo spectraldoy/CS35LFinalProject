@@ -6,7 +6,7 @@ import { fade, makeStyles } from '@material-ui/core/styles';
 import SearchIcon from '@material-ui/icons/Search';
 
 import './dashboard.css';
-import { Logo, Name, getItem } from './globals';
+import { Logo, Name, getItem } from '../../globals';
 import SchemeViewer from './schemeviewer';
 
 const fs = getComputedStyle(document.documentElement).getPropertyValue('--side-menu-font-size');
@@ -143,6 +143,7 @@ function Dashboard(props) {
   const history = useHistory();
 
   // initially incorrect values to overwrite
+  // TODO: implement schemeQuery for less buggy searching
   const [header, updateHeader] = useState("Memes");
   const [searchQuery, updateSearchQuery] = useState("");
   const [schemes, setSchemes] = useState([]);
@@ -191,7 +192,7 @@ function Dashboard(props) {
       // causes problems with search bar
       updateSearchQuery(query);
       if (header_ !== header || query !== searchQuery) {
-		    // WHY DOES THIS PUSH TWICE
+		    // WHY DOES history.push PUSH TWICE
         // try this
         history.replace(history.location.pathname + "#" + header_ + "?" + query);
       }
@@ -200,6 +201,10 @@ function Dashboard(props) {
 
   function search(query, header_="Scheme Search Results for") {
     // possible problems: case sensitive
+    let finalQuery = "";
+    if (query.slice(0, 7) == "string=") {
+      query = query.slice(7);
+    }
     return updateSchemeViewer(
       header_ + " \"" + query + "\"", 
       "string=" + query,

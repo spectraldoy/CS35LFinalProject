@@ -3,11 +3,11 @@ import { useState } from 'react';
 import { BrowserRouter, Route, Switch, Link, Redirect } from "react-router-dom"; // also import Link
 
 import './App.css';
-import Dashboard from './dashboard';
-import calculatorInterface from './calculatorInterface';
-import schemeInterface from './schemeInterface'
-import Login from './login'
-import CreateAccount from './CreateAccount'
+import Dashboard from './components/Dashboard/dashboard';
+import calculatorInterface from './components/Calculator/calculatorInterface';
+import schemeInterface from './components/SchemeInterface/schemeInterface'
+import Login from './components/Login/login'
+import CreateAccount from './components/CreateAccount/CreateAccount'
 
 function HomePage() {
   return (

@@ -4,7 +4,7 @@ import { Box, Card, Grid, CardHeader, Typography, Paper, Button, ButtonBase } fr
 import { fade, makeStyles } from '@material-ui/core/styles';
 import AddBoxSharpIcon from '@material-ui/icons/AddBoxSharp';
 import { Redirect, useHistory } from 'react-router-dom';
-import { getItem } from './globals';
+import { getItem } from '../../globals';
 
 const hc = getComputedStyle(document.documentElement).getPropertyValue('--highlight-color');
 const oc = getComputedStyle(document.documentElement).getPropertyValue('--opposite-color');

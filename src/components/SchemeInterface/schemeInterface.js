@@ -1,4 +1,4 @@
-import './App.css';
+import '../../App.css';
 import React from 'react';
 import axios from 'axios';
 import {Link} from 'react-router-dom';
@@ -335,7 +335,7 @@ class schemeInterface extends React.Component {
                     </Grid>
                     </Grid>
                 </h2>
-                <Link to="/dashboard">
+                <Link to="/">
                     Return to dashboard
                 </Link>
             </div>

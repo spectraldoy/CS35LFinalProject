@@ -7,7 +7,7 @@ import { Redirect } from "react-router-dom";
 import { useAlert } from 'react-alert'
 
 import './CreateAccount.css';
-import { Logo, Name } from './globals';
+import { Logo, Name } from '../../globals';
 
 const hc = getComputedStyle(document.documentElement).getPropertyValue('--highlight-color');
 
