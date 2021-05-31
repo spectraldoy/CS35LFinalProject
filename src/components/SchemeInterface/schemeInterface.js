@@ -139,20 +139,25 @@ class schemeInterface extends React.Component {
                 return;
             }
             else if (!isNaN(parseFloat(pair.letter))) {
-                alert('A letter grade cannot have a number');
+                alert('A letter grade cannot be a number');
                 return;
             }
-            else if (isNaN(parseFloat(pair.cutoff))) {
+            const cutoffNum = parseFloat(pair.cutoff);
+            if (isNaN(parseFloat(cutoffNum))) {
                 alert("Cutoff entered for " + pair.letter + " is not a number");
                 return;
             }
+            else if (cutoffNum < 0 || cutoffNum > 100) {
+                if (!window.confirm("Expected a cutoff from 0-100 but received " + cutoffNum + ". Would you like to proceed anyways?")) {
+                    return;
+                }
+            }
         }
-
 
         if (valid && notEmpty && hasCategories && sumTo100){
             var temp = this.state.letterGrades.slice();
-            temp.sort((a, b) => {return b.cutoff - a.cutoff;});
-            
+            temp.sort((a, b) => {return b.cutoff - a.cutoff;}); // performs subtraction as numbers
+
             const scheme = { 
                 owner: sessionStorage.getItem('user'),
                 university: this.state.university,

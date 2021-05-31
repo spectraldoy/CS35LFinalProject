@@ -33,9 +33,6 @@ class calculatorInterface extends React.Component {
     const url = window.location.href;
     const idLocation = url.search("id");
     this.query = url.substring(idLocation, url.length);
-    
-    // TODO: Remove when URL parameter is working
-    this.query = "id=60afda146ef84d04bb6211f9";
 
     this.state = {
       scheme: null, // to be set in finishInit
@@ -170,6 +167,7 @@ class calculatorInterface extends React.Component {
       let graded = [];
       let projected = [];
       let pr, po;
+      let negativePoints = false; // track if user entered a negative number and display a warning
       for(var i = 0; i < this.state.assignmentsType[count].length; i++){
         if(this.state.assignmentsType[count][i] === "Graded"){
           if(this.state.assignmentsPtsReceived[count][i] === "" || this.state.assignmentsPtsOutOf[count][i] === ""){
@@ -182,6 +180,9 @@ class calculatorInterface extends React.Component {
             alert("All points fields for graded assignments must be numbers");
             return;
           }
+          if (pr < 0 || po < 0) {
+            negativePoints = true;
+          }
 
           graded.push({ptsReceived: pr, ptsOutOf: po});
         }
@@ -193,10 +194,13 @@ class calculatorInterface extends React.Component {
           
           pr = parseFloat(this.state.assignmentsPtsReceived[count][i]);
           po = parseFloat(this.state.assignmentsPtsOutOf[count][i]);
-          let toPredict = this.state.assignmentsPtsReceived[count][i] === "" || this.state.assignmentsPtsReceived[count][i] === "-"
+          const toPredict = this.state.assignmentsPtsReceived[count][i] === "" || this.state.assignmentsPtsReceived[count][i] === "-";
           if ((isNaN(pr) && !toPredict)  || isNaN(po)) {
             alert("All points fields for projected assignments must be numbers, empty, or -");
             return;
+          }
+          if (pr < 0 || po < 0) {
+            negativePoints = true;
           }
 
           if(toPredict){
@@ -207,6 +211,13 @@ class calculatorInterface extends React.Component {
           }
         }
       }
+
+      if (negativePoints) {
+        if (!window.confirm("Warning! You entered a negative number. Would you like to proceed anyways? (You may get unexpected results)")) {
+          return;
+        }
+      }
+
       grades.categories.push(
         {
           weight: category.weight,
@@ -227,7 +238,13 @@ class calculatorInterface extends React.Component {
       }
     }
     if (!match) {
-      if (!isNaN(parseFloat(this.state.gradeWanted))) {
+      const targetGrade = parseFloat(this.state.gradeWanted);
+      if (!isNaN(targetGrade)) {
+        if (targetGrade < 0 || targetGrade > 105) {
+          if (!window.confirm("Warning! The number you entered as a target grade was unexpected. Would you like to proceed anyways?")) {
+            return;
+          }
+        }
         grades.target = parseFloat(this.state.gradeWanted);
       }
       else if (this.state.gradeWanted === "" || this.state.gradeWanted === "-") {
