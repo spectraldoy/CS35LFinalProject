@@ -68,3 +68,26 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+
+
+
+
+## Setting Up the Database
+
+If you do not already have a MongoDB Atlas account, create one at https://www.mongodb.com/.
+
+Create a new project and navigate to the Clusters tab under DATA STORAGE. Click the "Create a New Cluster" button and choose a provider for your database (currently, the app has only been tested with AWS) and create your cluster.
+
+Return to the Clusters page and click on the CONNECT button for your newly created cluster. 
+
+On the "Setup connection security" step, you may want to specify 0.0.0.0/0 as a connection address to simplify access through various networks. Additionally, remember to save your username and passwrod for the cluster.
+
+Once on the "Choose a connection method" step, select the "Connect your application" option. From there, choose "Node.js" as the driver and "3.6 or later" as the version. Copy the provided connection string to your clipboard.
+
+Within the main folder of the project, create a file called ".env" and within it 
+
+
+## Technology
+
+Our app uses MongoDB as a backend and consequently uses the Mongoose API to interact with the database.
