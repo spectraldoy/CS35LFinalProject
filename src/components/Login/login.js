@@ -58,7 +58,7 @@ function Login(props) {
         switch (res[0]) {
             case "0":
                 // stores university is session storage as well
-                props.setUser(username + "," + res.slice(1));
+                props.setUserInfo([username, res.slice(1)]);
                 break;
             case "1":
                 alert.error('Incorrect password');

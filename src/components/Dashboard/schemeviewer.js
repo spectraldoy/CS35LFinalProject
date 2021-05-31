@@ -99,13 +99,13 @@ function displayScheme(scheme, userSearch, changeUrl) {
 
 function ProfileHeader(props) {
 	// get user
-	let current_user = sessionStorage.getItem('user').split(',')[0]
+	let current_user = sessionStorage.getItem('user');
 	let username = "";
 	let university = "";
 	
 	if (props.owner === current_user) {
 		username = current_user;
-		university = sessionStorage.getItem('user').split(',')[1];
+		university = sessionStorage.getItem('university');
 	}
 	else {
 		getItem("username=" + props.owner, "user_univ")

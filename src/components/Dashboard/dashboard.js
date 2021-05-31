@@ -138,7 +138,7 @@ function Dashboard(props) {
   }
 
   // sess[0] = username, sess[1] = university
-  const sess = props.sess.split(",");
+  const sess = props.sess;
   const classes = useStyles();
   const history = useHistory();
 
@@ -258,7 +258,7 @@ function Dashboard(props) {
           onClickBrowseSchemes: updateSchemeViewer("Browse Schemes", "", "all_schemes"),
           onClickMyUnivSchemes: updateSchemeViewer("My University's Schemes", "university=" + sess[1]),
           onClickProfile: displayProfile(sess[0]),
-          onLogout: () => props.setUser(""),
+          onLogout: () => props.setUserInfo(["", ""]),
         })}
         <SchemeViewer 
           header={header} 

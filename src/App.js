@@ -35,11 +35,11 @@ function HomePage() {
 }
 
 function App() {
-  const [user, setUser] = UserState();
+  const [userInfo, setUserInfo] = UserState();
 
   let startPage = "/login";
-  if (user) // already logged in
-    startPage = "/dashboard#My Schemes?owner=" + user.split(',')[0];
+  if (userInfo[0]) // already logged in
+    startPage = "/dashboard#My Schemes?owner=" + userInfo[0];
 
   let app = (
     <div className="App">
@@ -49,10 +49,10 @@ function App() {
               <Redirect to={startPage}/>
             </Route>
             <Route path="/homePage" component={HomePage} /> 
-            <Route path="/login"><Login setUser={setUser} /></Route>
-            <Route path="/dashboard"><Dashboard sess={user} setUser={setUser} /></Route>
+            <Route path="/login"><Login setUserInfo={setUserInfo} /></Route>
+            <Route path="/dashboard"><Dashboard sess={userInfo} setUserInfo={setUserInfo} /></Route>
             <Route path="/calculatorInterface" component={calculatorInterface} />
-            <Route path="/createAccount"><CreateAccount setUser={setUser} /></Route>
+            <Route path="/createAccount"><CreateAccount setUserInfo={setUserInfo} /></Route>
             <Route path="/schemeInterface" component={schemeInterface} />
         </Switch>
       </BrowserRouter>
@@ -66,20 +66,22 @@ function App() {
 // Custom hook. Essentially, when you submit login info, this will change its state, 
 // causing a re-render.
 function UserState() {
-  const getUser = () => {
+  const getUserInfo = () => {
     const user = sessionStorage.getItem('user');
-    return user;
+    const university = sessionStorage.getItem('university');
+    return [user, university];
   };
   
-  const saveUser = username => {
-    // got rid of JSON.stringify - messes up Dashboard
-    sessionStorage.setItem('user', username);
-    setUser(username);
+  // newInfo[0] = username, newInfo[1] = university
+  const saveUserInfo = newInfo => {
+    sessionStorage.setItem('user', newInfo[0]);
+    sessionStorage.setItem('university', newInfo[1]);
+    setUserInfo(newInfo);
   };
 
-  const [user, setUser] = useState(getUser());
+  const [userInfo, setUserInfo] = useState(getUserInfo());
 
-  return [user, saveUser];
+  return [userInfo, saveUserInfo];
 }
 
 

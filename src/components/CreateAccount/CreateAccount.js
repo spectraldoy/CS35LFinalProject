@@ -3,7 +3,6 @@ import clsx from 'clsx';
 import { fade, makeStyles } from '@material-ui/core/styles';
 import { Box, FormControl, InputAdornment, InputLabel, Input, IconButton, Button, Typography } from '@material-ui/core';
 import { Visibility, VisibilityOff } from '@material-ui/icons';
-import { Redirect } from "react-router-dom";
 import { useAlert } from 'react-alert'
 
 import './CreateAccount.css';
@@ -78,11 +77,7 @@ function CreateAccount(props) {
                 case "0":
                     alert.success("Account created");
                     // including university makes my university's schemes view simpler
-                    props.setUser(username + ',' + university);
-        
-                    // successful create account
-                    if (sessionStorage.getItem('user'))
-                        return <Redirect to="/" />;
+                    props.setUserInfo([username, university]);
                     break;
                 case "1":
                     alert.error("Username already taken");

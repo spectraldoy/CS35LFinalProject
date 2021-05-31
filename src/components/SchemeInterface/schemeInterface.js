@@ -36,7 +36,7 @@ class schemeInterface extends React.Component {
             ids: [],
             letterGrades: [],
             letterGradeIds: [],
-            university: sessionStorage.getItem('user').split(',')[1],
+            university: sessionStorage.getItem('university'),
             course: '',
             professor: '',
         };
@@ -154,7 +154,7 @@ class schemeInterface extends React.Component {
             temp.sort((a, b) => {return b.cutoff - a.cutoff;});
             
             const scheme = { 
-                owner: sessionStorage.getItem('user').split(',')[0],
+                owner: sessionStorage.getItem('user'),
                 university: this.state.university,
                 professor: this.state.professor,
                 class: this.state.course,
