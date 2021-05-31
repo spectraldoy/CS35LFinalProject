@@ -1,6 +1,5 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const Scheme = require("../model/scheme");      // OLD GRADING SCHEME -- USE GradingScheme instead
 
 const User = require("../model/user");
 const GradingScheme = require("../model/grading_scheme");   // NEW GRADING SCHEME
@@ -43,53 +42,68 @@ app.get("/api", (req, res) =>
 // would simply have to append the query parameters to the API endpoint (URL) in order to make this get request
 
 
-// OUTDATED!  \/\/\/\/  
-app.get("/get_scheme", async (req, res) =>
-{
-    professor = req.query.professsor;
-    var requestedSchemes = await Scheme.find({ "prof": req.query.professor }, (err, schemes) => {});
-
-    res.send(requestedSchemes);
-});
-// OUTDATED!  /\/\/\/\
-
 
 
 
 app.get("/grading_schemes", async (req, res) =>
 {
-    var requestedSchemes;
-    search_username = req.query.username;
 
-    if (search_username != undefined) {
-        // CODE TO GET ID FROM USERNAME
-        var matchingUserAccount = await User.findOne({ "username": search_username }, (err, grading_schemse) => {});
-
-        if(matchingUserAccount == null)
-            search_creatorID = null;
-        else
-        {
-            search_creatorID = matchingUserAccount.userID;
-            console.log("CreatorID found: " + search_creatorID);
-        }
-
-        requestedSchemes = await GradingScheme.find({ "creatorID": search_creatorID }, (err, grading_schemes) => {});
-    } 
-    else {
-        // otherwise just use search query
-        requestedSchemes = await GradingScheme.find(
-            { $or: [
-                { university: req.query.university },
-                { professor: req.query.professor },
-                { class: req.query.class },
-                { schemeID: req.query.schemeID },
-                { creatorID: req.query.creatorID },
-            ]}, 
-            (err, schemes) => {}
-        );
-    }
+    // otherwise just use search query
+    let requestedSchemes = await GradingScheme.find(
+        { $or: [
+            { owner: req.query.owner },
+            { university: req.query.university },
+            { professor: req.query.professor },
+            { class: req.query.class },
+            { _id: req.query.id}
+        ]}, 
+        (err, schemes) => {}
+    );
     
     res.send(requestedSchemes);
+});
+
+app.get("/searchquery", async (req, res) => {
+    if (!req.query.string) {
+        res.send("");
+        return;
+    }
+    let requestString = req.query.string; 
+    // parse request string
+
+    const punctuation = /[\u2000-\u206F\u2E00-\u2E7F\\'!"`#$%&()*+,\-.\/:;<=>?@\[\]^_{|}~]/;
+    let withoutPunctuation = requestString.replace(punctuation, "");
+    requestString = requestString + " " + withoutPunctuation;
+
+    let parsedSearches = requestString.split(" ");
+    
+    console.log(parsedSearches);
+    // brute force search
+    let requestedSchemes = await GradingScheme.find(
+        { $or: [
+            { $or: [
+                { owner: { $in: parsedSearches } },
+                { university: { $in: parsedSearches } },
+                { professor: { $in: parsedSearches } },
+                { class: { $in: parsedSearches } },
+            ]},
+            { $and: [
+                { owner: { $in: parsedSearches } },
+                { university: { $in: parsedSearches } },
+                { professor: { $in: parsedSearches } },
+                { class: { $in: parsedSearches } },
+            ]},
+        ]},
+        (err, schemes) => {}
+    );
+
+    res.send(requestedSchemes);
+})
+
+app.get("/all_schemes", async (req, res) => 
+{
+    var allSchemes = await GradingScheme.find({}, (err, grading_schemes) => {});
+    res.send(allSchemes);
 });
 
 app.get("/users", async (req, res) => 
@@ -99,9 +113,9 @@ app.get("/users", async (req, res) =>
 
         var userAccount = await User.findOne({ "username": req.query.username, "password": req.query.password}, 
             (err, userEvent) => {});
-        
         if(userAccount != null)
-            res.send("0");        // Credentials are correct; account exists          
+            // for easier my univ's schemes view
+            res.send("0" + userAccount.university);        // Credentials are correct; account exists          
         else
         {
             userAccount = await User.findOne({ "username": req.query.username}, (err, userEvent) => {});
@@ -118,42 +132,55 @@ app.get("/users", async (req, res) =>
     }
 });
 
+app.get("/user_univ", async(req, res) => {
+    try
+    {
+        var userAccount = await User.findOne({"username": req.query.username}, (err, userEvent) => {});
+        if(userAccount == null)
+            res.send("Account does not exist!");
+        else
+        {
+            res.send(userAccount.username + "," + userAccount.university);
+        }
+    }
+    catch(err)
+    {
+        res.send({message: err});
+    }
+});
+
+app.get("/update_user", async (req, res) => 
+{
+    try
+    {
+        var userAccount = await User.findOne({"username": req.query.username}, (err, userEvent) => {});
+        if(userAccount == null)
+            res.send("Account does not exist!");
+        else
+        {
+            // if(req.query.new_username != undefined)
+            //     userAccount.username = req.query.new_username;
+            if(req.query.new_university != undefined)                   // Let the user change their university
+                userAccount.university = req.query.new_university;
+            userAccount.save().then(newAccount => 
+                {
+                    res.send("Successfully saved user " + newAccount.username); 
+                    console.log("Successfully saved user " + newAccount.username);
+                });
+        }
+    }
+    catch(err)
+    {
+        res.send({message: err});
+    }
+});
+
 
 
 
 
 // NOTE: As of now, there is no front-end for scheme saving, so in order to test out the database, 
 // you may want to use Postman or REST and send over a JSON object in the same format as the Scheme model in scheme.js
-
-
-// OUTDATED!  \/\/\/\/  Use app.post("/grading_schemes"...) !!!
-app.post("/create_scheme", async (req, res) =>
-{
-    try
-    {
-        const newScheme = new Scheme(req.body);     // Here we attempt to construct a Scheme object from the JSON the server receives
-        await newScheme.save();                     // Attempts to save the newly constructed Scheme object in database
-
-
-        console.log("Received scheme for course \"" + req.body.course + "\"");   // This is a message for the server
-
-        let cat_names = "";
-        for(var i = 0; i < req.body.categories.length; i++)     // We combine all the category names into a comma-sep string
-        {
-            cat_names += req.body.categories[i].name;
-            if(i != req.body.categories.length - 1)
-                cat_names += ", ";
-        }
-        res.send(`Successfully saved scheme for course "${req.body.course}" with categories: ${cat_names}`); // This is a message for the client
-    }
-    catch (err)
-    {
-        res.send({ message: err });     // Send back an object containing the error we found
-    }
-    
-});
-// OUTDATED!  /\/\/\/\
-
 
 
 
@@ -164,8 +191,8 @@ app.post("/grading_schemes", async (req, res) =>
         const newGradingScheme = new GradingScheme(req.body);
         await newGradingScheme.save();
 
-        console.log("Saved new grading scheme for class \"" + req.body.class + "\" by userID \"" + req.body.creatorID + "\"");
-        res.send("Saved new grading scheme for class \"" + req.body.class + "\" by userID \"" + req.body.creatorID + "\"");
+        console.log("Saved new grading scheme for class \"" + req.body.class + "\" by user \"" + req.body.owner + "\"");
+        res.send("Saved new grading scheme for class \"" + req.body.class + "\" by user \"" + req.body.owner + "\"");
     }
     catch (err)
     {
@@ -173,15 +200,27 @@ app.post("/grading_schemes", async (req, res) =>
     }
 });
 
+
 app.post("/users", async (req, res) =>
 {
     try
     {
+
+        // TODO: We need a way of automatically assigning a new unique userID when a new user is created
+        // There may be a way to store this data on the database (like find the last user to be added
+        // and then add 1 to that user's ID)
+        const existingUser = await User.findOne({ "username": req.body.username }, (err, grading_schemse) => {});
+        if(existingUser != null)
+        {
+            res.send("1");   // We may want to send over a number as a way of specifying the error?
+            console.log("User already exists!");
+            return;
+        }
         const newUser = new User(req.body);
         await newUser.save();
 
         console.log("Saved new user \"" + req.body.username + "\"");
-        res.send("Saved new user \"" + req.body.username + "\"");
+        res.send("0");
     }
     catch(err)
     {

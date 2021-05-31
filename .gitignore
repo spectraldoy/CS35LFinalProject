@@ -106,5 +106,7 @@ dist
 # MacOS
 .DS_Store/
 .DS_Store
-public/logoorig.png
+
+# test logos
 src/1532074323_Foxtrot-logo_mid.png
+public/logoorig.png
