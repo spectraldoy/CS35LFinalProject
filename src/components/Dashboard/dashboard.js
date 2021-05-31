@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import clsx from 'clsx';
-import { Link, Redirect } from "react-router-dom";
+import { Link, Redirect, useHistory } from "react-router-dom";
 import { Button, Grid, InputBase } from '@material-ui/core';
 import { fade, makeStyles } from '@material-ui/core/styles';
 import SearchIcon from '@material-ui/icons/Search';
 
 import './dashboard.css';
-import { Logo, Name, getScheme } from './globals';
+import { Logo, Name, getItem } from '../../globals';
 import SchemeViewer from './schemeviewer';
 
 const fs = getComputedStyle(document.documentElement).getPropertyValue('--side-menu-font-size');
@@ -106,9 +106,9 @@ function SideMenu(props) {
   const classes = useStyles();
 
   // loads MySchemes first into the SchemeViewer, which doesn't happen automatically due to async rendering
-  if (props.mySchemesInfo[0] === 0) {
-    props.onClickMySchemes();
-    props.mySchemesInfo[1](1);
+  if (props.schemesLoaded === 0) {
+    props.loadInitialView();
+    props.loadSchemes(1);
   }
 
   return (
@@ -137,25 +137,49 @@ function Dashboard(props) {
     return <Redirect to="/" />;
   }
 
-  const sess = props.sess.split(",");  // sess[0] = username, sess[1] = university
+  // sess[0] = username, sess[1] = university
+  const sess = props.sess.split(",");
   const classes = useStyles();
+  const history = useHistory();
+
+  // initially incorrect values to overwrite
+  // TODO: implement schemeQuery for less buggy searching
+  const [header, updateHeader] = useState("Memes");
   const [searchQuery, updateSearchQuery] = useState("");
-  // schemequery necessary?
-  const [window, updateWindow] = useState("Memes");
   const [schemes, setSchemes] = useState([]);
   const [animate, setAnimate] = useState(false);
-  // to load MySchemes after the async getSchemes request
-  const [mySchemesLoaded, loadMySchemes] = useState(0);
 
+  // to load MySchemes after the async getSchemes request
+  const [schemesLoaded, loadSchemes] = useState(0);
+
+  // to figure out which schemes view to load
+  let initialView = history.location.hash;
+  let parsedView = decodeURI(initialView).split("?");
+
+  // to move between different views and keep track of history
+  window.onhashchange = () => {
+    initialView = history.location.hash;
+    parsedView = decodeURI(initialView).split("?");
+    updateSchemeViewer(parsedView[0].slice(1), parsedView[1])();
+  }
+  
   // for SideMenu Button functions / searching
-  function updateSchemeViewer(header, query, prefix="grading_schemes") {
-    if (header === window) {
+  function updateSchemeViewer(header_, query, prefix="grading_schemes") {
+    // TODO: history persistence
+    if (header_ === header) {
       return (e) => {};
     }
-    console.log(query);
+    // for initial automatic schemes load
+    if (!query && header_ === "Browse Schemes") {
+      prefix = "all_schemes";
+    }
+    else if (header_.includes("Schemes created by") || header_.includes("Scheme search")) {
+      prefix = "searchquery";
+    }
+    
     return (e) => {
       // this is where the search occurs for the scheme views
-      getScheme(query, prefix)
+      getItem(query, prefix)
       .then( data => data.json() ) 
       .then(
         data => {
@@ -163,23 +187,27 @@ function Dashboard(props) {
           setAnimate(true);
         }
       );
-      updateWindow(header);
       setAnimate(false);
+      updateHeader(header_);
+      // causes problems with search bar
+      updateSearchQuery(query);
+      if (header_ !== header || query !== searchQuery) {
+		    // WHY DOES history.push PUSH TWICE
+        // try this
+        history.replace(history.location.pathname + "#" + header_ + "?" + query);
+      }
     };
   }
 
-  function search(query) {
-    // parse search query
-    const delimiter = "`";
-    const punctuation = /[\u2000-\u206F\u2E00-\u2E7F\\'!"#$%&()*+,\-.\/:;<=>?@\[\]^_{|}~]/;
-    let withPunctuation = query.replace(delimiter, "");
-    let withoutPunctuation = query.replace(punctuation, "");
-    const finalQuery = "string=" + withoutPunctuation + delimiter + withPunctuation;
-
+  function search(query, header_="Scheme Search Results for") {
     // possible problems: case sensitive
+    let finalQuery = "";
+    if (query.slice(0, 7) == "string=") {
+      query = query.slice(7);
+    }
     return updateSchemeViewer(
-      "Scheme Search Results for \"" + query + "\"", 
-      finalQuery,
+      header_ + " \"" + query + "\"", 
+      "string=" + query,
       "searchquery",
     );
   }
@@ -209,19 +237,36 @@ function Dashboard(props) {
       </div>
     );
   }
+
+  function displayProfile(owner) {
+    // get user
+    return updateSchemeViewer(
+      "Profile",
+      "owner=" + owner,
+    );
+  }
   
   return (
     <div>
       {Header({searchBar: searchBar})}
       <div className="App-bottom">
         {SideMenu({
-          mySchemesInfo: [mySchemesLoaded, loadMySchemes],
+          schemesLoaded: schemesLoaded,
+          loadSchemes: loadSchemes,
+          loadInitialView: updateSchemeViewer(parsedView[0].slice(1), parsedView[1]),
           onClickMySchemes: updateSchemeViewer("My Schemes", "owner=" + sess[0]),
           onClickBrowseSchemes: updateSchemeViewer("Browse Schemes", "", "all_schemes"),
           onClickMyUnivSchemes: updateSchemeViewer("My University's Schemes", "university=" + sess[1]),
+          onClickProfile: displayProfile(sess[0]),
           onLogout: () => props.setUser(""),
         })}
-        <SchemeViewer header={window} schemes={schemes} animate={animate} userSearch={search}/>
+        <SchemeViewer 
+          header={header} 
+          schemes={schemes} 
+          animate={animate} 
+          userSearch={search}
+          URL={history.location.pathname + "#" + header + "?" + searchQuery}
+        />
       </div>
     </div>
   );

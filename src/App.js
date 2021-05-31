@@ -3,11 +3,11 @@ import { useState } from 'react';
 import { BrowserRouter, Route, Switch, Link, Redirect } from "react-router-dom"; // also import Link
 
 import './App.css';
-import Dashboard from './dashboard';
-import calculatorInterface from './calculatorInterface';
-import schemeInterface from './schemeInterface'
-import Login from './login'
-import CreateAccount from './CreateAccount'
+import Dashboard from './components/Dashboard/dashboard';
+import calculatorInterface from './components/Calculator/calculatorInterface';
+import schemeInterface from './components/SchemeInterface/schemeInterface'
+import Login from './components/Login/login'
+import CreateAccount from './components/CreateAccount/CreateAccount'
 
 function HomePage() {
   return (
@@ -20,6 +20,9 @@ function HomePage() {
       </li>
       <li>
         <Link to="/calculatorInterface">Calculator Interface</Link>
+      </li>
+      <li>
+        <Link to="/schemeInterface">Scheme Creator Interface</Link>
       </li>
       <li>
         <Link to="/createAccount">Create Account</Link>
@@ -36,7 +39,7 @@ function App() {
 
   let startPage = "/login";
   if (user) // already logged in
-    startPage = "/homePage";
+    startPage = "/dashboard#My Schemes?owner=" + user.split(',')[0];
 
   let app = (
     <div className="App">
@@ -47,7 +50,7 @@ function App() {
             </Route>
             <Route path="/homePage" component={HomePage} /> 
             <Route path="/login"><Login setUser={setUser} /></Route>
-            <Route path="/dashboard"><Dashboard sess={user} setUser={setUser}/></Route>
+            <Route path="/dashboard"><Dashboard sess={user} setUser={setUser} /></Route>
             <Route path="/calculatorInterface" component={calculatorInterface} />
             <Route path="/createAccount"><CreateAccount setUser={setUser} /></Route>
             <Route path="/schemeInterface" component={schemeInterface} />
