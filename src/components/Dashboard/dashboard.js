@@ -317,7 +317,7 @@ function Dashboard(props) {
           profile={profile}
           updateProfile={handleUpdateProfile}
           getProfile={profileView}
-          setUser={props.setUser}
+          setUserInfo={props.setUserInfo}
           sess={sess}
           URL={history.location.pathname + "#" + header + "?" + searchQuery}
         />

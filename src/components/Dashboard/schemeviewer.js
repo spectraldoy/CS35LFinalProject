@@ -158,7 +158,7 @@ function displayProfile(props) {
 				props.alert.error("Account does not exist!")
 			}
 		}); 
-		props.setUser(props.profile.username + "," + newUniversity);
+		props.setUserInfo([props.profile.username, newUniversity]);
 	}
 
 	return (
@@ -274,7 +274,7 @@ function SchemeViewer(props) {
 						classes: classes,
 						profile: props.profile,
 						updateProfile: props.updateProfile,
-						setUser: props.setUser,
+						setUserInfo: props.setUserInfo,
 						alert: alert,
 						sess: props.sess,
 					})
