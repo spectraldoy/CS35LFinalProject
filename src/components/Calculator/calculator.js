@@ -35,12 +35,16 @@
 // Returned numbers are unrounded, so may have a lot of decimal places
 export function calculate(grades) {
 	var summary = {
+		// used for calculating current grade
 		currGradedScore: 0, 
 		currGradedWeights: 0, 
+		// used for calculating projected grade
 		currProjectedScore: 0, 
 		currProjectedWeights: 0, 
+		// used for calculating gradedNeededScore
 		finalGradedScore: 0,
 		finalGradedWeights: 0,
+		// used for calculating projectedNeededScore
 		finalProjectedScore: 0,
 		finalProjectedWeights : 0,
 	}
@@ -54,6 +58,8 @@ export function calculate(grades) {
 	var projectedGrade = null;
 	var gradedNeededScore = null;
 	var projectedNeededScore = null;
+
+	// check to make sure we don't divide by zero
 	if (summary.currGradedWeights !== 0) {
 		currentGrade = summary.currGradedScore / summary.currGradedWeights * 100;
 	}
@@ -99,6 +105,7 @@ function calculateCategory(category, summary) {
 		}
 	}
 
+	// check to make sure that we don't divide by zero
 	if (gradedPtsTotal !== 0) {
 		summary.currGradedScore += category.weight * gradedPtsReceived / gradedPtsTotal;
 		summary.currGradedWeights += category.weight;

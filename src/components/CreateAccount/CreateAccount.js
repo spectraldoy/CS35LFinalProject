@@ -3,7 +3,6 @@ import clsx from 'clsx';
 import { fade, makeStyles } from '@material-ui/core/styles';
 import { Box, FormControl, InputAdornment, InputLabel, Input, IconButton, Button, Typography } from '@material-ui/core';
 import { Visibility, VisibilityOff } from '@material-ui/icons';
-import { Redirect } from "react-router-dom";
 import { useAlert } from 'react-alert'
 
 import './CreateAccount.css';
@@ -53,13 +52,19 @@ function CreateAccount(props) {
     async function handleSubmit(e) {
         e.preventDefault();
         if (username === "") {
-            alert.error("Please enter a username.");
+            alert.error("Please enter a username");
+        }
+        else if (!isAlphaNumeric(username)) {
+            alert.error("Username can only contain letters and numbers");
         }
         else if (university === "") {
             alert.error("Please enter a university");
         }
+        else if (!isAlphaNumeric(university)) {
+            alert.error("University can only contain letters and numbers");
+        }
         else if (password === "") {
-            alert.error("Please enter a password.");
+            alert.error("Please enter a password");
         }
         else if (password !== confirmPassword) {
             alert.error("Passwords don't match");
@@ -78,11 +83,7 @@ function CreateAccount(props) {
                 case "0":
                     alert.success("Account created");
                     // including university makes my university's schemes view simpler
-                    props.setUser(username + ',' + university);
-        
-                    // successful create account
-                    if (sessionStorage.getItem('user'))
-                        return <Redirect to="/" />;
+                    props.setUserInfo([username, university]);
                     break;
                 case "1":
                     alert.error("Username already taken");
@@ -182,6 +183,21 @@ async function createUser(user) {
     })
     return res.text(); // 0 if succeeded, 1 if username is already taken
 }
+
+// taken from Michael Martin-Smucker's answer at https://stackoverflow.com/questions/4434076/best-way-to-alphanumeric-check-in-javascript/25352300#25352300
+function isAlphaNumeric(str) {
+    var code, i, len;
+  
+    for (i = 0, len = str.length; i < len; i++) {
+      code = str.charCodeAt(i);
+      if (!(code > 47 && code < 58) && // numeric (0-9)
+          !(code > 64 && code < 91) && // upper alpha (A-Z)
+          !(code > 96 && code < 123)) { // lower alpha (a-z)
+        return false;
+      }
+    }
+    return true;
+  };
 
 export default CreateAccount;
 
