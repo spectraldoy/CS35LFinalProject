@@ -59,7 +59,6 @@ function App() {
     </div>
   );
 
-  // TODO: put these links in the header?
   return app;
 }
 

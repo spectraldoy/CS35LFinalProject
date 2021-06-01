@@ -1,10 +1,15 @@
 import './dashboard.css';
 import React, { useState } from 'react';
-import { Box, Card, Grid, CardHeader, Typography, Paper, Button, ButtonBase } from '@material-ui/core';
+import { 
+	Box, Card, Grid, CardHeader, Typography, Paper, Button, ButtonBase, 
+	IconButton, InputAdornment, TextField,
+} from '@material-ui/core';
 import { fade, makeStyles } from '@material-ui/core/styles';
 import AddBoxSharpIcon from '@material-ui/icons/AddBoxSharp';
+import EditIcon from '@material-ui/icons/Edit';
 import { Redirect, useHistory } from 'react-router-dom';
-import { getItem } from '../../globals';
+import { useAlert } from 'react-alert'
+import { getItem } from "../globals";
 
 const hc = getComputedStyle(document.documentElement).getPropertyValue('--highlight-color');
 const oc = getComputedStyle(document.documentElement).getPropertyValue('--opposite-color');
@@ -19,11 +24,46 @@ const useStyles = makeStyles((theme) => ({
             backgroundColor: fade(oc, 0.55),
         }
     },
+	saveButton: {
+		width: 'inherit',
+		marginLeft: theme.spacing(-2),
+		backgroundColor: fade(oc, 0.25),
+        '&:hover': {
+            backgroundColor: fade(oc, 0.55),
+        }
+	},
     cardHeader: {
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'center'
     },
+	profile: {
+		display: 'flex',
+		flexDirection: 'column',
+		alignItems: 'flex-start',
+		justifyContent: 'center',
+		paddingTop: "5vh",
+		paddingLeft: "4.5vw",
+	},
+	profileForm: {
+		display: 'flex',
+		flexDirection: 'column',
+		width: "25ch",
+		justifyContent: 'center',
+		alignItems: 'flex-start',
+	},
+	headerText: {
+		paddingRight: "3vw",
+		paddingTop: "5vh", 
+		paddingBottom: "0", 
+		paddingLeft: "4.5vw",
+	},
+	textField: {
+		margin: theme.spacing(1),
+		marginLeft: theme.spacing(-2),
+		marginTop: theme.spacing(3),
+		width: "25ch",
+	},
 }));
 
 
@@ -36,7 +76,7 @@ function formatCategory(name, weight) {
 	return weight + "% " + name;
 }
 
-function displayScheme(scheme, userSearch, changeUrl) {
+function displayScheme(scheme, changeUrl, getProfile) {
 	// const classes = useStyles();
 
 	return (
@@ -75,7 +115,11 @@ function displayScheme(scheme, userSearch, changeUrl) {
 						>
 							<ButtonBase 
 								style={{padding: "0.25em", paddingLeft: "0.5em", paddingRight: "0.5em"}} 
-								onClick={ (e) => { e.stopPropagation(); userSearch(scheme.owner, "Schemes created by")(); }}
+								onClick={ (e) => { 
+									e.stopPropagation(); 
+									//userSearch(scheme.owner, "Schemes created by")(); 
+									getProfile(scheme.owner)();
+								}}
 							>
 								<Typography variant="caption">{scheme.owner}</Typography>
 							</ButtonBase>
@@ -97,30 +141,86 @@ function displayScheme(scheme, userSearch, changeUrl) {
 	);
 }
 
-function ProfileHeader(props) {
-	// get user
-	let current_user = sessionStorage.getItem('user').split(',')[0]
-	let username = "";
-	let university = "";
-	
-	if (props.owner === current_user) {
-		username = current_user;
-		university = sessionStorage.getItem('user').split(',')[1];
-	}
-	else {
-		getItem("username=" + props.owner, "user_univ")
+function displayProfile(props) {
+	// {props.profile.username} 
+	let newUniversity = "";
+
+	function handleSubmit(e) {
+		e.preventDefault();
+		getItem("username=" + props.profile.username + "&new_university=" + newUniversity, "update_user")
 		.then( res => res.text() )
-		.then( res => props.setUserString(res) );
-		let temp = props.userString.split(",");
-		username = temp[0];
-		university = temp[1];
+		.then( res => {
+			if (res !== "Account does not exist!") {
+				props.updateProfile({university: newUniversity});
+				props.alert.success("Saved new university");
+			}
+			else {
+				props.alert.error("Account does not exist!")
+			}
+		}); 
+		props.setUser(props.profile.username + "," + newUniversity);
 	}
 
 	return (
-		<Box>
-			<Typography variant="h4" style={{paddingTop: "5vh"}}>{username}</Typography>
-
-		</Box>
+		<Grid className={props.classes.profile}>
+			<CardHeader
+				title={props.profile.username + "'s Profile"}
+				align="left"
+				className={props.classes.headerText}
+				style={{paddingLeft: 0, paddingTop: 0, paddingBottom: "1vh"}}
+			/>
+			<form className={props.classes.profileForm} onSubmit={handleSubmit}>
+				<TextField 
+					label="Username"
+					id="username"
+					disabled={true}
+					className={props.classes.textField}
+					variant="outlined"
+					defaultValue={props.profile.username}
+				/>
+				<TextField
+					label="University"
+					id="university"
+					disabled={!props.profile.editing}
+					className={props.classes.textField}
+					variant="outlined"
+					defaultValue={props.profile.university}
+					onChange={ (e) => { newUniversity = e.target.value } }
+					InputProps={{
+						endAdornment: (props.profile.username === props.sess[0]) ?
+							<InputAdornment position="end">
+								<IconButton
+									aria-label="toggle edit univ"
+									disabled={props.profile.username !== props.sess[0]}
+									onClick={ (e) => props.updateProfile( {"editing": !props.profile.editing} ) }
+									onMouseDown={ (e) => e.preventDefault() }
+									edge="end"
+								>
+									<EditIcon />
+								</IconButton> 
+							</InputAdornment>
+							: null
+					}}
+				/>
+				{ props.profile.editing ? 
+					<Button 
+						className={props.classes.saveButton}
+						align="left"
+						type="submit"
+						aria-label="save edits"
+					>
+						Save
+					</Button>
+				: null}
+			</form>
+			<CardHeader
+				title={props.profile.username + "'s Schemes"}
+				align="left"
+				className={props.classes.headerText}
+				style={{paddingLeft: 0}}
+			/>
+		</Grid> 
+		
 	);
 }
 
@@ -131,10 +231,9 @@ function SchemeViewer(props) {
 	
 	const classes = useStyles();
 	const history = useHistory();
+	const alert = useAlert();
 	const [redirectTo, changeUrl] = useState("");
-	// for Profile pages
-	const [userString, setUserString] = useState("")
-	
+
 	if (redirectTo) {
 		history.push(props.URL);
 		return <Redirect to={redirectTo} />;
@@ -142,7 +241,9 @@ function SchemeViewer(props) {
 	
 	let renderedSchemes = []
 	for (const scheme of props.schemes) {
-		renderedSchemes.push(displayScheme(scheme, props.userSearch, changeUrl));
+		renderedSchemes.push(displayScheme(
+			scheme, changeUrl, props.getProfile
+		));
 	}
 	//console.log(renderedSchemes);
 
@@ -151,29 +252,32 @@ function SchemeViewer(props) {
 	else
 		return (
 			<div className="DashWin">
-				{ (props.header !== "Profile") ?
-				<CardHeader
-					action={ 
-						<Button 
-							className={classes.colorButton}
-							align="right"
-							aria-label="create new scheme"
-							onClick={ (e) => { changeUrl("/schemeInterface") } }
-							startIcon={<AddBoxSharpIcon className={classes.addicon}/>}
-						>
-							Create Scheme
-						</Button>
-					}
-					title={props.header} 
-					align="left"
-					style={{paddingRight: "3vw", paddingTop: "5vh", paddingBottom: "0", paddingLeft: "4.5vw"}} 
-				/>
-				: ProfileHeader({
-					header: props.header, 
-					owner: history.location.hash.split("=")[1],
-					userString: userString,
-					setUserString: setUserString,
-				})
+				{ props.header !== "Profile" ?
+					<CardHeader
+						action={ 
+							<Button 
+								className={classes.colorButton}
+								align="right"
+								aria-label="create new scheme"
+								onClick={ (e) => { changeUrl("/schemeInterface") } }
+								startIcon={<AddBoxSharpIcon className={classes.addicon}/>}
+							>
+								Create Scheme
+							</Button>
+						}
+						title={props.header} 
+						align="left"
+						className={classes.headerText}
+					/>
+				:
+					displayProfile({
+						classes: classes,
+						profile: props.profile,
+						updateProfile: props.updateProfile,
+						setUser: props.setUser,
+						alert: alert,
+						sess: props.sess,
+					})
 				}
 				<Grid className="SchemesView">
 					{renderedSchemes}

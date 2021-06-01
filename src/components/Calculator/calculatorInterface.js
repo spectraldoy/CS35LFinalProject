@@ -2,7 +2,7 @@ import '../../App.css';
 import React from 'react';
 import { calculate } from './calculator.js'
 import { InvertColorsOff, ThreeSixtySharp } from '@material-ui/icons';
-import { getItem } from '../../globals.js'
+import { getItem } from '../globals.js'
 import { fade, makeStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
 import {Link} from 'react-router-dom';

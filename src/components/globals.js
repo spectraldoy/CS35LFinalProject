@@ -1,7 +1,7 @@
 // various global items
 
 // logo credits to https://www.instagram.com/zuu_xzsf/
-import logo from './images/logo.png';
+import logo from '../images/logo.png';
 
 export const Name = "Foxtrot";
 export const Logo = logo; // just so it's in one file

@@ -10,7 +10,7 @@ import AlertTemplate from 'react-alert-template-snackbar-material-ui'
 const options = {
   position: positions.TOP_CENTER,
   timeout: 5000,
-  offset: '30px',
+  offset: '10vh',
   transition: transitions.FADE
 }
 
