@@ -211,7 +211,6 @@ function Dashboard(props) {
       );
       setAnimate(false);
       if (header_ !== header || query_ !== searchQuery) {
-        console.log(splitQuery)
         history.replace(history.location.pathname + "#" + encodeURIComponent(header_) + "?" + splitQuery);
         updateHeader(header_);
         // causes problems with search bar
