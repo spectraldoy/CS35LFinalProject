@@ -2,7 +2,7 @@
 
 <img src="./public/logo.png" width=278 height=256>
 
-Foxtrot is an app for university students, a platform for us to create and share grading schemes for calculating and predicting the grades we need on exams, assignments and courses. Never again will you or your peers have to waste time and risk error calculating by hand what you need on your final to score that A+.
+Foxtrot is an app for university students, a platform for us to create and share grading schemes for exams, assignments and courses. Never again will you or your peers have to waste time and risk error calculating by hand what you need on your final to score that A+.
 
 ## How to run Foxtrot on your machine
 
