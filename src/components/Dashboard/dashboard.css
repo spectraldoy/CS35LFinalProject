@@ -94,7 +94,6 @@
 	  -o-animation: fadein;
 		 animation: fadein;
 	animation-duration: 1s;
-	/* animation-timing-function: ease; */
 }
 
 .DashWinLoading {
@@ -122,16 +121,16 @@
 
 .Scheme {
 	position: relative;
-	/* background-color:#61dafb; */
 	display: flex;
 	flex-direction: column-reverse;
 	align-items: flex-start;
 	justify-content: flex-start;
-	width: 16vw;
-	height: 30vh;
+	width: var(--scheme-width);
+	height: calc(var(--scheme-width) * 217 / 230);
 	margin: 1.5vmax;
 	cursor: pointer;
 	flex-shrink: 0;
+	flex-grow: 0;
 	box-shadow: none;
 	transition-duration: 0.3s;
 }
@@ -154,8 +153,8 @@
 }
 
 .Scheme-preview ul {
-	list-style-type: none; /* "\2610" */
-	padding: 2vmin;
+	list-style-type: none;
+	padding: 15px;
 	padding-top: 0;
 	padding-bottom: 0;
 	display: flex;

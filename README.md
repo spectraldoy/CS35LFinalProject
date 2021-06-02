@@ -2,7 +2,7 @@
 
 <img src="./public/logo.png" width=278 height=256>
 
-Foxtrot is an app for university students, a platform for us to create and share grading schemes for exams, assignments and courses. Never again will you or your peers have to waste time and risk error calculating by hand what you need on your final to score that A+.
+Foxtrot is a client/server app for university students, a platform for us to create and share grading schemes for exams, assignments and courses. Never again will you or your peers have to waste time and risk error calculating by hand what you need on your final to score that A+.
 
 ## How to run Foxtrot on your machine
 
@@ -27,7 +27,7 @@ On the "Setup connection security" step, you may want to specify 0.0.0.0/0 as a 
 
 Once on the "Choose a connection method" step, select the "Connect your application" option. From there, choose "Node.js" as the driver and "3.6 or later" as the version. Copy the provided connection string to your clipboard.
 
-Now, within the root directory of the cloned repository, create a file called ".env". Within it, define the variable `DB_CONNECTION_STRING` to be the string you copied from MongoDB. An example .env file would look like this (all on one line):
+Now, within the root directory of the cloned repository, create a file called ".env". Within it, define the variable `DB_CONNECTION_STRING` to be the string you copied from MongoDB. An example .env file would look like this:
 ```
 DB_CONNECTION_STRING = "mongodb+srv://username:password@schemedata.zculb.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
 ```
@@ -41,10 +41,12 @@ In the root directory, simply run:
 ```bash
 npm run dev
 ```
-and you should be good to go (you may need to create an account). Note that it make take some time for npm start the server.
+and you should be good to go (you may need to create a Foxtrot account). Note that it make take some time for npm start the server.
 
-## Technology Stack
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app), using [Express](https://expressjs.com/) to route GET and POST requests to our [MongoDB](https://www.mongodb.com/) collections. Our user interface was made possible by [Material UI](https://material-ui.com/), and special thanks to [a friend](https://www.instagram.com/zuu_xzsf/) for designing our logo.
+## Technology Stack and Acknowledgements
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app), using [Express](https://expressjs.com/) to route GET and POST requests to our [MongoDB](https://www.mongodb.com/) collections. 
+
+Our user interface is made possible by [Material UI](https://material-ui.com/), and special thanks to [a friend](https://www.instagram.com/zuu_xzsf/) for designing our logo.
 
 ## Creators
 This CS35L Spring 2021 Final Project is brought to you by:

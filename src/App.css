@@ -7,6 +7,7 @@
 
 :root {
   --header-height: 10vh;
+  --scheme-width: 16vw;
   --side-menu-width: 18vw;
   --side-menu-font-size: 14px;
   --background-color: white;
@@ -32,14 +33,6 @@
   padding-bottom: calc(var(--header-height) * 0.10);
   padding-left: calc(var(--header-height) * 0.2)
 }
-
-/*
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-*/
 
 .App-router {
   list-style: none;
@@ -81,14 +74,6 @@
 }
 .Category{
   background-color: #ffefd5;
-}
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
 }
 
 @keyframes fadein {

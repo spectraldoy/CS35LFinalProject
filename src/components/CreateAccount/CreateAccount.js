@@ -60,7 +60,7 @@ function CreateAccount(props) {
         else if (university === "") {
             alert.error("Please enter a university");
         }
-        else if (!isAlphaNumeric(university)) {
+        else if (!isAlphaNumeric(university, true)) {
             alert.error("University can only contain letters and numbers");
         }
         else if (password === "") {

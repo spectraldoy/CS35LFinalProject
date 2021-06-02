@@ -14,15 +14,21 @@ export async function getItem(query, prefix="grading_schemes") {
 }
 
 // taken from Michael Martin-Smucker's answer at https://stackoverflow.com/questions/4434076/best-way-to-alphanumeric-check-in-javascript/25352300#25352300
-export function isAlphaNumeric(str) {
+export function isAlphaNumeric(str, allowCommonSpecial=false) {
     var code, i, len;
-
+    // allow commas, dashes, and spaces
     for (i = 0, len = str.length; i < len; i++) {
         code = str.charCodeAt(i);
         if (!(code > 47 && code < 58) && // numeric (0-9)
             !(code > 64 && code < 91) && // upper alpha (A-Z)
             !(code > 96 && code < 123)) { // lower alpha (a-z)
-        return false;
+            if (allowCommonSpecial && !(code === 32) && !(code === 34) &&
+                !(code === 39) && !(code === 44)) {
+                return false;
+            }
+            else  {
+                return false
+            }
         }
     }
     return true;
