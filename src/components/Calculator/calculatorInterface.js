@@ -4,7 +4,7 @@ import { calculate } from './calculator.js'
 import { InvertColorsOff, ThreeSixtySharp } from '@material-ui/icons';
 import { getItem } from '../globals.js'
 import { fade, makeStyles } from '@material-ui/core/styles';
-import { Button } from '@material-ui/core';
+import { Button, Typography, FormControl, Input, Select } from '@material-ui/core';
 import {Link} from 'react-router-dom';
 
 const hc = getComputedStyle(document.documentElement).getPropertyValue('--highlight-color');
@@ -296,98 +296,101 @@ class calculatorInterface extends React.Component {
     const items = []
     items.push(
       <h2 key = "Title">
-        <label>
+        <Typography variant="caption" style = {{fontSize: "2.0rem"}}>
         Scheme Calculator
-        </label>
+        </Typography>
       </h2>
     );
     items.push(
-      <h2 key ={"Owner"} className = "SchemeInfo">
+      <Typography variant="caption" style = {{fontSize: "1.5rem", lineHeight: "2"}}>
         <label>
           Scheme Owner: {this.state.scheme.owner}
-        </label>
-        <br></br>
-        <label>
+        <br/>
           University: {this.state.scheme.university}
-        </label>
-        <br></br>
-        <label>
+        <br/>
           Professor: {this.state.scheme.professor}
-        </label>
-        <br></br>
-        <label>
+        <br/>
           Class: {this.state.scheme.class}
         </label>
-      </h2>
+        </Typography>
     );
     for (var i = 0; i < this.count; i++) {
       items.push(
         <h2 key={i + "-title"}>
-          <form onClick={this.addAssignment(i)} className="inlineForm">
+          <FormControl onClick={this.addAssignment(i)}>
             <Button type="input" className = {classes.colorButton}>
             Add assignment
             </Button>
-          </form>
-          <label className = "Category">
-            {this.state.scheme.categories[i].name} Category ({this.state.scheme.categories[i].weight}% Weight)&nbsp;&nbsp;
-          </label>
+          </FormControl>
+          &nbsp;&nbsp;&nbsp;
+          <Typography variant="caption" style = {{fontSize: "1.5rem", backgroundColor: "#ffefd5"}}>
+            &nbsp;{this.state.scheme.categories[i].name} Category ({this.state.scheme.categories[i].weight}% Weight)&nbsp;&nbsp;
+          </Typography>
         </h2>);
       for (var j = 0; j < this.state.assignmentsPtsReceived[i].length; j++) {
         items.push(
           <h2 key={i + "-"+ j + "-body"}>
-            <form className="inlineForm">
-              <label className="Points">
-                Name:&nbsp;
-              <input type="text" name="assignmentname" onChange={this.handleChange([i, j])} value={this.state.assignmentsName[i][j]} className="inputForm" />
-              </label>
-            </form>
-            <form className="inlineForm">
-              <label className="Points">
-                Points Received:&nbsp;
-              <input type="text" name="ptsreceived" onChange={this.handleChange([i, j])} value={this.state.assignmentsPtsReceived[i][j]} className="inputForm" />
-              </label>
-            </form>
-            <form className = "inlineForm">
-              <label className="Points">
-                Total Points: &nbsp;
-              <input type="text" name="ptsoutof" onChange={this.handleChange([i, j])} value={this.state.assignmentsPtsOutOf[i][j]} className="inputForm" />
-              </label>
-            </form>
-            <form className = "inlineForm">
-              <label className="Points">
-              Grade Type: &nbsp;
-                <select value={this.state.assignmentsType[i][j]} name = "assignmenttype" onChange={this.handleChange([i, j])} className="Switch">
+            <FormControl style = {{float: "left", paddingRight: "10px"}}>
+              <Typography variant="caption" style = {{fontSize: "1.25rem"}}>
+                Name:&nbsp;&nbsp;
+              <Input type="text" name="assignmentname" onChange={this.handleChange([i, j])} value={this.state.assignmentsName[i][j]} style = {{width: "150px"}} />
+              </Typography>
+            </FormControl>
+            <FormControl style = {{float: "left", paddingRight: "10px"}}>
+              <Typography variant="caption" style = {{fontSize: "1.25rem"}}>
+                &nbsp;&nbsp;Points Received:&nbsp;&nbsp;
+              <Input type="text" name="ptsreceived" onChange={this.handleChange([i, j])} value={this.state.assignmentsPtsReceived[i][j]} style = {{width: "40px"}} />
+              </Typography>
+            </FormControl>
+            <FormControl style = {{float: "left", paddingRight: "10px"}}>
+              <Typography variant="caption" style = {{fontSize: "1.25rem"}}>
+                &nbsp;&nbsp;Total Points: &nbsp;&nbsp;
+              <Input type="text" name="ptsoutof" onChange={this.handleChange([i, j])} value={this.state.assignmentsPtsOutOf[i][j]} style = {{width: "40px"}} />
+              </Typography>
+            </FormControl>
+            <FormControl style = {{float: "left", paddingRight: "10px"}}>
+              <Typography variant="caption" style = {{fontSize: "1.25rem"}}>
+                &nbsp;&nbsp;Grade Type: &nbsp;
+                <Select id = "select" value={this.state.assignmentsType[i][j]} name = "assignmenttype" onChange={this.handleChange([i, j])}>
                   <option value="Projected">Projected</option>
-                  <option defaultValue="Graded">Graded</option>
-                </select>
-              </label>
-            </form>
-            <form onClick={this.removeAssignment([i,j])}>
+                  <option value="Graded">Graded</option>
+                </Select>
+              </Typography>
+            </FormControl>
+            <br></br>
+            <br></br>
+            <FormControl onClick={this.removeAssignment([i,j])} style = {{float: "left"}}>
             <Button type="input" className = {classes.colorButton}>
             Remove assignment
             </Button>
-            </form>
+            </FormControl>
+            <br></br>
           </h2>
         );
+      }
+      if(j!=0){
+        items.push(
+          <br></br>
+          );
       }
     }
     items.push(
       <h2 key="target">
-        <form>
-          <label className = "FinalGrade">
-            Final Grade You Want (0-100%, or a defined letter grade):
-          </label>
-          <label>&nbsp;&nbsp;</label>
-          <input type="text" name="gradeWanted" onChange={this.handleChange(this.count)} value={this.state.gradeWanted} className="inputForm" />
-        </form>
+        <FormControl style = {{float: "left", paddingRight: "10px"}}>
+              <Typography variant="caption" style = {{fontSize: "1.5rem"}}>
+              Final Grade You Want (0-100%, or a defined letter grade): &nbsp;
+              <Input type="text" name="gradeWanted" onChange={this.handleChange(this.count)} value={this.state.gradeWanted} style = {{width: "40px"}} />
+              </Typography>
+        </FormControl>
+        <br></br>
       </h2>
     );
     items.push(
-      <form onSubmit={this.submitGrades} key="submit">
+      <FormControl onClick={this.submitGrades} key="submit">
         <Button type="input" className = {classes.colorButton}>
             Calculate
         </Button>
-      </form>
+      </FormControl>
     );
 
     return (
@@ -402,8 +405,10 @@ class calculatorInterface extends React.Component {
           )
         })}
         </h2>
-        <h2 className="Result">
+        <h2>
+          <Typography variant="caption" style = {{fontSize: "1.5rem", whiteSpace: "pre-wrap", lineHeight: "200%"}}>
           {this.state.result}
+          </Typography>
         </h2>
         <Link to="/">
           Return to dashboard
