@@ -15,7 +15,7 @@ cd ./CS35LFinalProject
 npm install
 ```
 
-### Set up the Database
+### Connect to the Database
 
 If you do not already have a MongoDB Atlas account, create one [here](https://www.mongodb.com/).
 
