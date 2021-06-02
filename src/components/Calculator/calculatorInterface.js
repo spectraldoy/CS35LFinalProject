@@ -339,13 +339,13 @@ class calculatorInterface extends React.Component {
             <FormControl style = {{float: "left", paddingRight: "10px"}}>
               <Typography variant="caption" style = {{fontSize: "1.25rem"}}>
                 &nbsp;&nbsp;Points Received:&nbsp;&nbsp;
-              <Input type="text" name="ptsreceived" onChange={this.handleChange([i, j])} value={this.state.assignmentsPtsReceived[i][j]} style = {{width: "40px"}} />
+              <Input type="number" name="ptsreceived" onChange={this.handleChange([i, j])} value={this.state.assignmentsPtsReceived[i][j]} style = {{width: "40px"}} />
               </Typography>
             </FormControl>
             <FormControl style = {{float: "left", paddingRight: "10px"}}>
               <Typography variant="caption" style = {{fontSize: "1.25rem"}}>
                 &nbsp;&nbsp;Total Points: &nbsp;&nbsp;
-              <Input type="text" name="ptsoutof" onChange={this.handleChange([i, j])} value={this.state.assignmentsPtsOutOf[i][j]} style = {{width: "40px"}} />
+              <Input type="number" name="ptsoutof" onChange={this.handleChange([i, j])} value={this.state.assignmentsPtsOutOf[i][j]} style = {{width: "40px"}} />
               </Typography>
             </FormControl>
             <FormControl style = {{float: "left", paddingRight: "10px"}}>
@@ -379,7 +379,7 @@ class calculatorInterface extends React.Component {
         <FormControl style = {{float: "left", paddingRight: "10px"}}>
               <Typography variant="caption" style = {{fontSize: "1.5rem"}}>
               Final Grade You Want (0-100%, or a defined letter grade): &nbsp;
-              <Input type="text" name="gradeWanted" onChange={this.handleChange(this.count)} value={this.state.gradeWanted} style = {{width: "40px"}} />
+              <Input type="number" name="gradeWanted" onChange={this.handleChange(this.count)} value={this.state.gradeWanted} style = {{width: "40px"}} />
               </Typography>
         </FormControl>
         <br></br>
