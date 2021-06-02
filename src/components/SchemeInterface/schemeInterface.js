@@ -126,7 +126,7 @@ class schemeInterface extends React.Component {
             error = true;
             alert('Invalid inputs!');
         }
-        if (sum !== 100 & !error)
+        if (Math.abs(sum - 100) > 1e-6 && !error)
         {
             sumTo100 = false;
             error = true;
