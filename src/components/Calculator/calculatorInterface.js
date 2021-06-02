@@ -417,8 +417,9 @@ class calculatorInterface extends React.Component {
 // grade is a numerical value, letterGrades is an arry of {letter, cutoff} pairs sorted in descending order of cutoff.
 // F if lower than any specified grade cutoff
 function getLetterGrade(grade, letterGrades) {
-  if (!letterGrades)
-    return null;
+  alert(letterGrades);
+  if (!letterGrades || letterGrades.length === 0)
+    return "";
 
   for (const pair of letterGrades) {
     if (grade >= pair.cutoff)
