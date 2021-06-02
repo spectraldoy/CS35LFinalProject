@@ -51,37 +51,6 @@
   padding-left: 20px;
 }
 
-.inlineForm{
-  float: left;
-  padding-right: 10px;
-}
-
-.inputForm{
-  width: 50px;
-}
-.Points{
-  font-size: 16px;
-  line-height: 200%;
-}
-.SchemeInfo{
-  font: 'Roboto';
-  white-space:pre-wrap;
-  line-height: 200%;
-  background-color: #ADD8E6;
-  width: 800px;
-}
-.Result{
-  font: 'Roboto';
-  white-space:pre-wrap;
-  line-height: 200%;
-  width: 800px;
-}
-.Switch{
-  bottom:-5px;
-}
-.Category{
-  background-color: #ffefd5;
-}
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
