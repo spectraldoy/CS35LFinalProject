@@ -2,7 +2,7 @@ import '../../App.css';
 import React from 'react';
 import axios from 'axios';
 import {Link} from 'react-router-dom';
-import { Button, Grid } from '@material-ui/core';
+import { Button, Grid, Input, InputLabel } from '@material-ui/core';
 import { fade, withStyles, createStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 
@@ -21,7 +21,6 @@ const styles = createStyles({
         alignItems:'center',
         spacing:2
       }
-
 });
 
 class schemeInterface extends React.Component {
@@ -46,7 +45,7 @@ class schemeInterface extends React.Component {
     
     handleChange(event) {
         let i, newGrades, newCategories;
-        switch (event.target.name)
+        switch (event.target.name.split(',')[0])
         {
             case 'University':
                 this.setState({university: event.target.value});
@@ -58,27 +57,25 @@ class schemeInterface extends React.Component {
                 this.setState({professor: event.target.value});
                 break;
             case 'Name':
-                i = 0;
-                i = parseInt(event.target.className);
+                i = parseInt(event.target.name.split(',')[1]);
                 newCategories = this.state.categories.slice();
                 newCategories.splice(i, 1, {name:event.target.value, weight:this.state.categories[i]['weight']});
                 this.setState({categories:newCategories});
                 break;
             case 'Weight':
-                i = 0;
-                i = parseInt(event.target.className);
+                i = parseInt(event.target.name.split(',')[1]);
                 newCategories = this.state.categories.slice();
                 newCategories.splice(i, 1, {name:this.state.categories[i]['name'], weight:event.target.value});
                 this.setState({categories:newCategories});
                 break;
             case 'Letter':
-                i = parseInt(event.target.className);
+                i = parseInt(event.target.name.split(',')[1]);
                 newGrades = this.state.letterGrades.slice();
                 newGrades[i].letter = event.target.value;
                 this.setState({letterGrades: newGrades});
                 break;
             case 'Cutoff':
-                i = parseInt(event.target.className);
+                i = parseInt(event.target.name.split(',')[1]);
                 newGrades = this.state.letterGrades.slice();
                 newGrades[i].cutoff = event.target.value;
                 this.setState({letterGrades: newGrades});
@@ -167,8 +164,6 @@ class schemeInterface extends React.Component {
                 letterGrades: temp,
             }
 
-
-            //console.log(JSON.stringify(scheme));
             axios.post('http://localhost:3001/grading_schemes', scheme)
             .catch(error => {
                 this.setState({ errorMessage: error.message });
@@ -194,19 +189,7 @@ class schemeInterface extends React.Component {
         }));
     }
 
-    //Go through all ids and find the corresponding index that matches. Remove the Category and Id that matches.
     removeCategory(i) {
-        //var i = 0;
-        /*
-        while ( i < this.state.ids.length)
-        {
-            if (this.state.ids[i] === id)
-            {
-                break;
-            }
-            i++
-        }
-        */
         var newCategories = this.state.categories.slice();
         newCategories.splice(i, 1);
         var newIds = this.state.ids.slice();
@@ -219,17 +202,6 @@ class schemeInterface extends React.Component {
     }
 
     removeLetterGrade(i) {
-        /*
-        var j = 0;
-        while ( j < this.state.letterGradeIds.length)
-        {
-            if (this.state.letterGradeIds[j] === i)
-            {
-                break;
-            }
-            j++
-        }
-        */
         var newGrades = this.state.letterGrades.slice();
         newGrades.splice(i, 1);
         var newIds = this.state.letterGradeIds.slice();
@@ -263,85 +235,119 @@ class schemeInterface extends React.Component {
                 </h1>
                 <h2>
                     <form>
-                    <Grid container justify='center' alignItems='center' spacing={2} direction='column'>
+                    <Grid container justify='center' alignItems='center' spacing={4} direction='column'>
                         <Grid item>
-                        <label htmlFor='University'>University</label><br></br>
-                        <input type='text' value={this.state.university} id='University' name='University' onChange={this.handleChange}></input><br></br>
+                            <InputLabel htmlFor='University'>University</InputLabel><br></br>
+                            <Input type='text' value={this.state.university} id='University' name='University' onChange={this.handleChange}></Input><br></br>
                         </Grid>
                         <Grid item>
-                        <label htmlFor='Course'>Course</label><br></br>
-                        <input type='text' value={this.state.course} id='Course' name='Course' onChange={this.handleChange}></input><br></br>
+                            <InputLabel htmlFor='Course'>Course</InputLabel><br></br>
+                            <Input type='text' value={this.state.course} id='Course' name='Course' onChange={this.handleChange}></Input><br></br>
                         </Grid>
                         <Grid item>
-                        <label htmlFor='Professor'>Professor</label><br></br>
-                        <input type='text' value={this.state.professor} id='Professor' name='Professor' onChange={this.handleChange}></input><br></br>
+                            <InputLabel htmlFor='Professor'>Professor</InputLabel><br></br>
+                            <Input type='text' value={this.state.professor} id='Professor' name='Professor' onChange={this.handleChange}></Input><br></br>
                         </Grid>
                         <Grid item>
-                        Categories<br></br>
+                            Categories<br></br>
                         </Grid>
-                        {this.state.categories.map((element, index) => {
-                            return(
-                            <div key={'Category' + this.state.ids[index]}>
-                            <Category onChange={this.handleChange} inputName={element['name']} inputWeight={element['weight']} name={index}></Category> 
-                            <Grid item>
-                            <Button className={clsx(classes.colorButton, classes.hc)} type='Button' key={'Button' + this.state.ids[index]} name={'Button' + this.state.ids[index]} onClick={() => {this.removeCategory(index)}}>
-                            Delete Category
-                            </Button><br></br> 
+                        <Grid item>
+                            <Grid container justify='center' alignItems='center' spacing={4} direction='column'>
+                            {this.state.categories.map((element, index) => {
+                                return(
+                                <Grid item>
+                                    <div key={'Category' + this.state.ids[index]}>
+                                <Grid container justify='center' alignItems='center' spacing={4} direction='column'>
+                                    <Grid item>
+                                        <Category onChange={this.handleChange} inputName={element['name']} inputWeight={element['weight']} name={"" + index}></Category> 
+                                    </Grid>
+                                    <Grid item>
+                                        <Button className={clsx(classes.colorButton, classes.hc)} type='Button' key={'Button' + this.state.ids[index]} name={'Button' + this.state.ids[index]} onClick={() => {this.removeCategory(index)}}>
+                                        Delete Category
+                                        </Button><br></br> 
+                                    </Grid>
+                                </Grid>
+                                </div>
+                                </Grid>
+                            ) 
+                            })}
                             </Grid>
-                            </div>
-                        ) //name = this.state.ids[index]
-                        })}
-                    </Grid>
+                        </Grid>
+                        </Grid>
                     </form>
                 </h2>
                 <div>
                     <Grid container justify='center' alignItems='center' spacing={2}>
                         <Grid item>
-                        <Button className={clsx(classes.colorButton, classes.hc)} type='Button' onClick={() => {this.addCategory()}}>
-                        Add Category
-                        </Button>
+                            <Button className={clsx(classes.colorButton, classes.hc)} type='Button' onClick={() => {this.addCategory()}}>
+                            Add Category
+                            </Button>
                         </Grid>
                         <Grid item>
-                        <Button className={clsx(classes.colorButton, classes.hc)} type='Button' onClick={() => {this.reset()}}>
-                        Reset
-                        </Button>
+                            <Button className={clsx(classes.colorButton, classes.hc)} type='Button' onClick={() => {this.reset()}}>
+                            Reset
+                            </Button>
                         </Grid>
                         <Grid item>
-                        <Button className={clsx(classes.colorButton, classes.hc)} type='Button' onClick={() => {this.postScheme()}}>
-                        Upload Scheme
-                        </Button>
+                            <Button className={clsx(classes.colorButton, classes.hc)} type='Button' onClick={() => {this.postScheme()}}>
+                            Upload Scheme
+                            </Button>
                         </Grid>
                     </Grid>
                 </div>
                 <h2>
-                    Enter Grade Cutoffs:
+                <Grid container justify='center' alignItems='center' spacing={4} direction='column'>
+                    <Grid item>
                     <form>
-                    {this.state.letterGrades.map((element, index) => {
-                            return(
-                            <div key={'Letter' + this.state.letterGradeIds[index]}>
-                            <LetterGrade onChange={this.handleChange} inputName={element['letter']} inputWeight={element['cutoff']} name={index}></LetterGrade>
-                            <Button className={clsx(classes.colorButton, classes.hc)} type='Button' key={'Button' + this.state.letterGradeIds[index]} name={'Button' + this.state.letterGradeIds[index]} onClick={() => {this.removeLetterGrade(index)}}>
-                            Delete Grade
-                            </Button><br></br> 
-                            </div>
-                        )
-                    })}
+                    <Grid container justify='center' alignItems='center' spacing={4} direction='column'>
+                    <Grid item>
+                        Enter Grade Cutoffs:<br></br>
+                    </Grid>
+                    <Grid item>
+                        <Grid container justify='center' alignItems='center' spacing={4} direction='column'>
+                            {this.state.letterGrades.map((element, index) => {
+                                    return(
+                                    <Grid item>
+                                        <div key={'Letter' + this.state.letterGradeIds[index]}>
+                                        <Grid container justify='center' alignItems='center' spacing={4} direction='column'>
+                                        <Grid item>
+                                            <LetterGrade onChange={this.handleChange} inputName={element['letter']} inputWeight={element['cutoff']} name={index}></LetterGrade>
+                                        </Grid>
+                                        <Grid item>
+                                        <Button className={clsx(classes.colorButton, classes.hc)} type='Button' key={'Button' + this.state.letterGradeIds[index]} name={'Button' + this.state.letterGradeIds[index]} onClick={() => {this.removeLetterGrade(index)}}>
+                                        Delete Grade
+                                        </Button><br></br> 
+                                        </Grid>
+                                        </Grid>
+                                    </div>   
+                                    </Grid>
+                                )
+                            })}
+                        </Grid>
+                    </Grid>
+                    </Grid>
                     </form>
-                    <Grid container justify='center' alignItems='center' spacing={2}>
-                    <Grid item>
-                    <Button className={clsx(classes.colorButton, classes.hc)} type='Button' onClick={() => {this.addLetterGrade()}}>
-                    Add
-                    </Button>
                     </Grid>
                     <Grid item>
-                    <Button className={clsx(classes.colorButton, classes.hc)} type='Button' onClick={() => {this.resetLetterGrades()}}>
-                    Reset
-                    </Button>
+                        <Grid container justify='center' alignItems='center' spacing={2}>
+                            <Grid item>
+                                <Button className={clsx(classes.colorButton, classes.hc)} type='Button' onClick={() => {this.addLetterGrade()}}>
+                                Add
+                                </Button>
+                            </Grid>
+                            <Grid item>
+                                <Button className={clsx(classes.colorButton, classes.hc)} type='Button' onClick={() => {this.resetLetterGrades()}}>
+                                Reset
+                                </Button>
+                            </Grid>
+                        </Grid>
                     </Grid>
-                    </Grid>
+                </Grid>
                 </h2>
                 <Link to="/">
+                <Button className={clsx(classes.colorButton, classes.hc)} type='Button'>
                     Return to dashboard
+                </Button>
                 </Link>
             </div>
         );
@@ -352,13 +358,15 @@ class Category extends React.Component {
     render() {
         return(
             <>
+            <Grid container justify='center' alignItems='center' spacing={2}>
             <Grid item>
-            <label>Name </label><br></br>
-            <input defaultValue={this.props.inputName} type='text' className={this.props.name} name='Name' onChange={this.props.onChange}></input><br></br>
+            <InputLabel>Name </InputLabel><br></br>
+            <Input defaultValue={this.props.inputName} type='text' name={'Name,' + this.props.name} onChange={this.props.onChange}></Input><br></br>
             </Grid>
             <Grid item>
-            <label>Weight </label><br></br>
-            <input defaultValue={this.props.inputValue} type='number' className={this.props.name} name='Weight' onChange={this.props.onChange}></input><br></br>
+            <InputLabel>Weight </InputLabel><br></br>
+            <Input defaultValue={this.props.inputValue} type='number' name={'Weight,' + this.props.name} onChange={this.props.onChange}></Input><br></br>
+            </Grid>
             </Grid>
             </>
         );
@@ -369,10 +377,16 @@ class LetterGrade extends React.Component {
     render() {
         return(
             <>
-            <label>Letter Grade </label><br></br>
-            <input defaultValue={this.props.inputName} type='text' className={this.props.name} name='Letter' onChange={this.props.onChange}></input><br></br>
-            <label>Score </label><br></br>
-            <input defaultValue={this.props.inputValue} type='number' className={this.props.name} name='Cutoff' onChange={this.props.onChange}></input><br></br>
+            <Grid container justify='center' alignItems='center' spacing={2}>
+            <Grid item>
+            <InputLabel>Letter Grade </InputLabel><br></br>
+            <Input defaultValue={this.props.inputName} type='text' name={'Letter,' + this.props.name} onChange={this.props.onChange}></Input><br></br>
+            </Grid>
+            <Grid item>
+            <InputLabel>Score </InputLabel><br></br>
+            <Input defaultValue={this.props.inputValue} type='number' name={'Cutoff,' + this.props.name} onChange={this.props.onChange}></Input><br></br>
+            </Grid>
+            </Grid>
             </>
         );
     }
