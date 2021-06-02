@@ -6,7 +6,7 @@ import { Visibility, VisibilityOff } from '@material-ui/icons';
 import { useAlert } from 'react-alert'
 
 import './CreateAccount.css';
-import { Logo, Name } from '../globals';
+import { Logo, Name, isAlphaNumeric } from '../globals';
 
 const hc = getComputedStyle(document.documentElement).getPropertyValue('--highlight-color');
 
@@ -183,21 +183,6 @@ async function createUser(user) {
     })
     return res.text(); // 0 if succeeded, 1 if username is already taken
 }
-
-// taken from Michael Martin-Smucker's answer at https://stackoverflow.com/questions/4434076/best-way-to-alphanumeric-check-in-javascript/25352300#25352300
-function isAlphaNumeric(str) {
-    var code, i, len;
-  
-    for (i = 0, len = str.length; i < len; i++) {
-      code = str.charCodeAt(i);
-      if (!(code > 47 && code < 58) && // numeric (0-9)
-          !(code > 64 && code < 91) && // upper alpha (A-Z)
-          !(code > 96 && code < 123)) { // lower alpha (a-z)
-        return false;
-      }
-    }
-    return true;
-  };
 
 export default CreateAccount;
 

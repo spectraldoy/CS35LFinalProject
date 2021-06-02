@@ -16,7 +16,7 @@ function HomePage() {
         <Link to="/">Home</Link>
       </li>
       <li>
-        <Link to="/dashboard">Dashboard</Link>
+        <Link to="/">Dashboard</Link>
       </li>
       <li>
         <Link to="/calculatorInterface">Calculator Interface</Link>

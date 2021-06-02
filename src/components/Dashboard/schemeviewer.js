@@ -9,7 +9,7 @@ import AddBoxSharpIcon from '@material-ui/icons/AddBoxSharp';
 import EditIcon from '@material-ui/icons/Edit';
 import { Redirect, useHistory } from 'react-router-dom';
 import { useAlert } from 'react-alert'
-import { getItem } from "../globals";
+import { getItem, isAlphaNumeric } from "../globals";
 
 const hc = getComputedStyle(document.documentElement).getPropertyValue('--highlight-color');
 const oc = getComputedStyle(document.documentElement).getPropertyValue('--opposite-color');
@@ -145,8 +145,17 @@ function displayProfile(props) {
 	// {props.profile.username} 
 	let newUniversity = "";
 
-	function handleSubmit(e) {
+	function handleSubmitNewUniversity(e) {
 		e.preventDefault();
+		if (!isAlphaNumeric(newUniversity)) {
+			props.alert.error("Failed to save: New University can only contain letters and numbers")
+			return;
+		}
+		if (props.profile.username === "Account does not exist") {
+			props.alert.error("Failed to save: Account does not exist")
+			return;
+		}
+
 		getItem("username=" + props.profile.username + "&new_university=" + newUniversity, "update_user")
 		.then( res => res.text() )
 		.then( res => {
@@ -155,7 +164,7 @@ function displayProfile(props) {
 				props.alert.success("Saved new university");
 			}
 			else {
-				props.alert.error("Account does not exist!")
+				props.alert.error("Failed to save: Account does not exist")
 			}
 		}); 
 		props.setUserInfo([props.profile.username, newUniversity]);
@@ -164,14 +173,16 @@ function displayProfile(props) {
 	return (
 		<Grid className={props.classes.profile}>
 			<CardHeader
-				title={props.profile.username + "'s Profile"}
+				title={(props.profile.username === "Account does not exist") ? props.profile.username 
+						: props.profile.username + "'s Profile"}
 				align="left"
 				className={props.classes.headerText}
 				style={{paddingLeft: 0, paddingTop: 0, paddingBottom: "1vh"}}
 			/>
-			<form className={props.classes.profileForm} onSubmit={handleSubmit}>
+			<form className={props.classes.profileForm} onSubmit={handleSubmitNewUniversity}>
 				<TextField 
-					label="Username"
+					error={props.profile.username === "Account does not exist"}
+					label={props.profile.username === "Account does not exist" ? "Error" : "Username"} 
 					id="username"
 					disabled={true}
 					className={props.classes.textField}
@@ -179,7 +190,8 @@ function displayProfile(props) {
 					defaultValue={props.profile.username}
 				/>
 				<TextField
-					label="University"
+					error={props.profile.username === "Account does not exist"}
+					label={props.profile.username === "Account does not exist" ? "Error" : "University"} 
 					id="university"
 					disabled={!props.profile.editing}
 					className={props.classes.textField}
@@ -214,7 +226,8 @@ function displayProfile(props) {
 				: null}
 			</form>
 			<CardHeader
-				title={props.profile.username + "'s Schemes"}
+				title={(props.profile.username === "Account does not exist") ? ""
+						: props.profile.username + "'s Schemes"}
 				align="left"
 				className={props.classes.headerText}
 				style={{paddingLeft: 0}}

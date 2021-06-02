@@ -138,12 +138,11 @@ function Dashboard(props) {
   }
 
   // sess[0] = username, sess[1] = university
-  const sess = props.sess;
+  const sess = [decodeURIComponent(props.sess[0]), decodeURIComponent(props.sess[1])];
   const classes = useStyles();
   const history = useHistory();
 
   // initially incorrect values to overwrite
-  // TODO: implement schemeQuery for less buggy searching
   const [header, updateHeader] = useState("Memes");
   const [searchQuery, updateSearchQuery] = useState("");
   const [schemes, setSchemes] = useState([]);
@@ -174,7 +173,20 @@ function Dashboard(props) {
   // for SideMenu Button functions / searching
   function updateSchemeViewer(header_, query_, prefix="grading_schemes") {
     return (e) => {
-      let query = query_;
+      query_ = decodeURIComponent(query_)
+      let splitQuery = query_.split("=")
+      if (splitQuery[0] === "") {
+        splitQuery = "";
+      }
+      else if (splitQuery[1] === "") {
+        splitQuery = encodeURIComponent(splitQuery[0]) + "=" + encodeURIComponent(" ");
+      }
+      else {
+        splitQuery = encodeURIComponent(splitQuery[0]) + "=" + encodeURIComponent(splitQuery[1]);
+      }
+      let query = splitQuery
+
+      header_ = decodeURIComponent(header_)
       if (header_ === header && query === searchQuery) {
         return (e) => {};
       }
@@ -182,7 +194,7 @@ function Dashboard(props) {
       if (!query && header_ === "Browse Schemes") {
         prefix = "all_schemes";
       }
-      else if (header_.includes("Schemes created by") || header_.includes("Scheme search")) {
+      else if (header_.includes("Schemes created by") || header_.includes("Scheme Search")) {
         prefix = "searchquery";
       }
       else if (header_ === "Profile") {
@@ -199,8 +211,8 @@ function Dashboard(props) {
       );
       setAnimate(false);
       if (header_ !== header || query_ !== searchQuery) {
-		    // WHY DOES history.push PUSH TWICE
-        history.replace(history.location.pathname + "#" + header_ + "?" + query_);
+        console.log(splitQuery)
+        history.replace(history.location.pathname + "#" + encodeURIComponent(header_) + "?" + splitQuery);
         updateHeader(header_);
         // causes problems with search bar
         updateSearchQuery(query_);
@@ -227,10 +239,13 @@ function Dashboard(props) {
           <SearchIcon />
         </div>
         
-        <form onSubmit={(e) => {
+        <form 
+          onSubmit={(e) => {
             e.preventDefault();
             search(searchQuery)();
-        }}>
+          }}
+          onClick={ (e) => updateSearchQuery(e.target.value) }
+        >
           <InputBase
             placeholder="Search schemes..."
             classes={{
@@ -266,7 +281,7 @@ function Dashboard(props) {
         .then( res => res.text() )
         .then( res => {
           if (res === "Account does not exist!") {
-            updated_username = "Account \"" + owner + "\" does not exist";
+            updated_username = "Account does not exist";
           }
           
           else {
@@ -319,7 +334,7 @@ function Dashboard(props) {
           getProfile={profileView}
           setUserInfo={props.setUserInfo}
           sess={sess}
-          URL={history.location.pathname + "#" + header + "?" + searchQuery}
+          URL={history.location.pathname + "#" + encodeURIComponent(header) + "?" + encodeURIComponent(searchQuery)}
         />
       </div>
     </div>
