@@ -112,15 +112,15 @@ function SideMenu(props) {
     }
 
     return (
-            <Grid className="SideMenu">
-                <h className="SideMenu-h">SCHEMING</h>
-                <Button className={clsx(classes.colorButton, classes.hc)} onClick={ (e) => props.onClickMySchemes() }>My Schemes</Button>
-                <Button className={clsx(classes.colorButton, classes.hc)} onClick={props.onClickBrowseSchemes}>Browse Schemes</Button>
-                <Button className={clsx(classes.colorButton, classes.hc)} onClick={props.onClickMyUnivSchemes}>My Univ's Schemes</Button>
-                <h className="SideMenu-h">ACCOUNT</h>
-                <Button className={clsx(classes.colorButton, classes.oc)} onClick={ (e) => props.onClickProfile() }>Profile</Button>
-                <Button className={clsx(classes.colorButton, classes.oc)} onClick={props.onLogout}>Logout</Button>
-            </Grid> 
+		<Grid className="SideMenu">
+			<h className="SideMenu-h">SCHEMING</h>
+			<Button className={clsx(classes.colorButton, classes.hc)} onClick={ (e) => props.onClickMySchemes() }>My Schemes</Button>
+			<Button className={clsx(classes.colorButton, classes.hc)} onClick={props.onClickBrowseSchemes}>Browse Schemes</Button>
+			<Button className={clsx(classes.colorButton, classes.hc)} onClick={props.onClickMyUnivSchemes}>My Univ's Schemes</Button>
+			<h className="SideMenu-h">ACCOUNT</h>
+			<Button className={clsx(classes.colorButton, classes.oc)} onClick={ (e) => props.onClickProfile() }>Profile</Button>
+			<Button className={clsx(classes.colorButton, classes.oc)} onClick={props.onLogout}>Logout</Button>
+		</Grid> 
     );
 }
 

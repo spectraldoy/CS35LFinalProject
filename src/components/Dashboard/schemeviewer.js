@@ -85,6 +85,7 @@ function displayScheme(scheme, changeUrl, getProfile) {
 				<Paper
 					className="Scheme-preview"
 					square={true}
+					style={{flexGrow: 0, flexShrink: 0}}
 				>
 					<CardHeader
 						title={scheme.class}
