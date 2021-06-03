@@ -379,7 +379,7 @@ class calculatorInterface extends React.Component {
         <FormControl style = {{float: "left", paddingRight: "10px"}}>
               <Typography variant="caption" style = {{fontSize: "1.5rem"}}>
               Final Grade You Want (0-100%, or a defined letter grade): &nbsp;
-              <Input type="number" name="gradeWanted" onChange={this.handleChange(this.count)} value={this.state.gradeWanted} style = {{width: "40px"}} />
+              <Input type="text" name="gradeWanted" onChange={this.handleChange(this.count)} value={this.state.gradeWanted} style = {{width: "40px"}} />
               </Typography>
         </FormControl>
         <br></br>
