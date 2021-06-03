@@ -1,3 +1,4 @@
+import { withAlert } from 'react-alert'
 import '../../App.css';
 import React from 'react';
 import { calculate } from './calculator.js'
@@ -171,13 +172,13 @@ class calculatorInterface extends React.Component {
       for(var i = 0; i < this.state.assignmentsType[count].length; i++){
         if(this.state.assignmentsType[count][i] === "Graded"){
           if(this.state.assignmentsPtsReceived[count][i] === "" || this.state.assignmentsPtsOutOf[count][i] === ""){
-            alert("All graded assignments must have all points fields filled out");
+            this.props.alert.error("All graded assignments must have all points fields filled out");
             return;
           }
           pr = parseFloat(this.state.assignmentsPtsReceived[count][i]);
           po = parseFloat(this.state.assignmentsPtsOutOf[count][i]);
           if (isNaN(pr) || isNaN(po)) {
-            alert("All points fields for graded assignments must be numbers");
+            this.props.alert.error("All points fields for graded assignments must be numbers");
             return;
           }
           if (pr < 0 || po < 0) {
@@ -188,7 +189,7 @@ class calculatorInterface extends React.Component {
         }
         else {
           if(this.state.assignmentsPtsOutOf[count][i] === ""){
-            alert("All projected assignments must have all Total Points fields filled out");
+            this.props.alert.error("All projected assignments must have all Total Points fields filled out");
             return;
           }
           
@@ -196,7 +197,7 @@ class calculatorInterface extends React.Component {
           po = parseFloat(this.state.assignmentsPtsOutOf[count][i]);
           const toPredict = this.state.assignmentsPtsReceived[count][i] === "" || this.state.assignmentsPtsReceived[count][i] === "-";
           if ((isNaN(pr) && !toPredict)  || isNaN(po)) {
-            alert("All points fields for projected assignments must be numbers, empty, or -");
+            this.props.alert.error("All points fields for projected assignments must be numbers, empty, or -");
             return;
           }
           if (pr < 0 || po < 0) {
@@ -251,7 +252,7 @@ class calculatorInterface extends React.Component {
         grades.target = null;
       }
       else {
-        alert("Couldn't identify your target grade as a number or a letter grade.");
+        this.props.alert.error("Couldn't identify your target grade as a number or a letter grade.");
       }
     }
 
@@ -432,4 +433,4 @@ function getLetterGrade(grade, letterGrades) {
   return "F";
 }
 
-export default withMyHook(calculatorInterface);
+export default withAlert()(withMyHook(calculatorInterface));
