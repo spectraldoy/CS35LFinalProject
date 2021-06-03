@@ -5,6 +5,7 @@ import {Link} from 'react-router-dom';
 import { Button, Grid, Input, InputLabel } from '@material-ui/core';
 import { fade, withStyles, createStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
+import { withAlert } from 'react-alert';
 
 const hc = getComputedStyle(document.documentElement).getPropertyValue('--highlight-color');
 
@@ -106,42 +107,44 @@ class schemeInterface extends React.Component {
             sum += parseFloat(this.state.categories[i]['weight']);
         }
 
+        const alert = this.props.alert;
+
         if ((this.state.university === '' || this.state.course === '' || this.state.professor === '' || !notEmpty) && !error)
         {
             notEmpty = false;
             error = true;
-            alert('Please fill out all fields before submitting!');
+            alert.error('Please fill out all fields before submitting!');
         }
         if (this.state.categories.length === 0 && !error)
         {
             hasCategories = false;
             error = true;
-            alert('Must have at least one category!');
+            alert.error('Must have at least one category!');
         }
         if (!valid && !error)
         {
             error = true;
-            alert('Invalid inputs!');
+            alert.error('Invalid inputs!');
         }
         if (Math.abs(sum - 100) > 1e-6 && !error)
         {
             sumTo100 = false;
             error = true;
-            alert('Weights must add up to 100!');
+            alert.error('Weights must add up to 100!');
         }
 
         for (const pair of this.state.letterGrades) {
             if (pair.letter === '') {
-                alert('One of the letter grades does not have a name!');
+                alert.error('One of the letter grades does not have a name!');
                 return;
             }
             else if (!isNaN(parseFloat(pair.letter))) {
-                alert('A letter grade cannot be a number');
+                alert.error('A letter grade cannot be a number');
                 return;
             }
             const cutoffNum = parseFloat(pair.cutoff);
             if (isNaN(parseFloat(cutoffNum))) {
-                alert("Cutoff entered for " + pair.letter + " is not a number");
+                alert.error("Cutoff entered for " + pair.letter + " is not a number");
                 return;
             }
             else if (cutoffNum < 0 || cutoffNum > 100) {
@@ -169,7 +172,7 @@ class schemeInterface extends React.Component {
                 this.setState({ errorMessage: error.message });
                 console.error('There was an error!', error);
             });
-            alert('Submitted grading scheme!');
+            alert.success('Submitted grading scheme!');
         }
     }
 
@@ -392,4 +395,4 @@ class LetterGrade extends React.Component {
     }
 }
 
-export default withStyles(styles)(schemeInterface);
+export default withAlert()(withStyles(styles)(schemeInterface));
