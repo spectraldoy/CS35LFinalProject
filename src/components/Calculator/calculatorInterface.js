@@ -312,6 +312,9 @@ class calculatorInterface extends React.Component {
           Professor: {this.state.scheme.professor}
         <br/>
           Class: {this.state.scheme.class}
+        <br/>
+          For already graded assignments, put grade type as Graded and fill out both Points Received and Total Points. For ungraded assignments, put grade type as Projected and fill out Total
+          Points with how many points the assignment is worth. You can also optionally put in the projected amount of points you think you'll receive.
         </label>
         </Typography>
     );
