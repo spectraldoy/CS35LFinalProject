@@ -2,7 +2,6 @@ import { withAlert } from 'react-alert'
 import '../../App.css';
 import React from 'react';
 import { calculate } from './calculator.js'
-import { InvertColorsOff, ThreeSixtySharp } from '@material-ui/icons';
 import { getItem } from '../globals.js'
 import { fade, makeStyles } from '@material-ui/core/styles';
 import { Button, Typography, FormControl, Input, Select } from '@material-ui/core';
@@ -62,6 +61,7 @@ class calculatorInterface extends React.Component {
     });
   }
 
+  // finish intializing state when grading scheme is retrieved from the database
   finishInit = (myScheme) => {
     for (let category of myScheme.categories) {
       this.weights.push(category.weight);
@@ -229,7 +229,7 @@ class calculatorInterface extends React.Component {
       count += 1;
     }
 
-
+    // check if gradeWanted is a letter grade
     let match = false;
     for (const pair of this.state.scheme.letterGrades) {
       if (pair.letter === this.state.gradeWanted) {
@@ -259,29 +259,31 @@ class calculatorInterface extends React.Component {
     const results = calculate(grades);
     let message = "";
     if (results.currentGrade === null) {
-      message += "Current grade: N/A\n";
+      message += "Current grade: N/A";
     }
     else {
-      message += ("Current grade: " + results.currentGrade + "% " + getLetterGrade(results.currentGrade, this.state.scheme.letterGrades) + "\n");
+      message += ("Current grade: " + results.currentGrade + "% " + getLetterGrade(results.currentGrade, this.state.scheme.letterGrades));
     }
+    message += " (Your grade based on currently graded assignments)\n";
     if (results.projectedGrade === null) {
-      message += "Projected grade: N/A\n";
+      message += "Projected grade: N/A";
     }
     else {
-      message += ("Projected grade: " + results.projectedGrade + "% " + getLetterGrade(results.projectedGrade, this.state.scheme.letterGrades) + "\n");
+      message += ("Projected grade: " + results.projectedGrade + "% " + getLetterGrade(results.projectedGrade, this.state.scheme.letterGrades));
     }
+    message += " (Your grade based on currently graded assignments and projected assignments for which you provided a projected score)\n";
     if (results.gradedNeededScore === null) {
-      message += "Average grade needed to reach target grade from current grade: N/A\n";
+      message += "Average grade needed on remaining assignments to reach target grade from current grade: N/A\n";
     }
     else {
-      message += ("Average grade needed to reach target grade from current grade: " + results.gradedNeededScore + 
+      message += ("Average grade needed on remaining assignments to reach target grade from current grade: " + results.gradedNeededScore + 
         "% " + getLetterGrade(results.gradedNeededScore, this.state.scheme.letterGrades) + "\n");
     }
     if (results.projectedNeededScore === null) {
-      message += "Average grade needed to reach target grade from projected grade: N/A";
+      message += "Average grade needed on remaining assignments to reach target grade from projected grade: N/A";
     }
     else {
-      message += ("Average grade needed to reach target grade from projected grade: " + results.projectedNeededScore + 
+      message += ("Average grade needed on remaining assignments to reach target grade from projected grade: " + results.projectedNeededScore + 
         "% " + getLetterGrade(results.projectedNeededScore, this.state.scheme.letterGrades) + "\n");
     }
     this.setState({
@@ -313,8 +315,11 @@ class calculatorInterface extends React.Component {
         <br/>
           Class: {this.state.scheme.class}
         <br/>
-          For already graded assignments, put grade type as Graded and fill out both Points Received and Total Points. For ungraded assignments, put grade type as Projected and fill out Total
-          Points with how many points the assignment is worth. You can also optionally put in the projected amount of points you think you'll receive.
+          For already graded assignments, put grade type as Graded and fill out both Points Received and Total Points. 
+          For ungraded assignments, put grade type as Projected and fill out Total Points with how many points the assignment is worth. 
+          You can also optionally put in the projected amount of points you think you'll receive. Or you can leave the box empty and
+          the calculator will predict what score you need on that assignment to attain your target grade. If you place no assignments
+          in a category, the entire category will be treated as projected.
         </label>
         </Typography>
     );
@@ -372,7 +377,7 @@ class calculatorInterface extends React.Component {
           </h2>
         );
       }
-      if(j!=0){
+      if(j!==0){
         items.push(
           <br></br>
           );
