@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const User = require("../model/user");
 const GradingScheme = require("../model/grading_scheme");   // NEW GRADING SCHEME
 const { default: userEvent } = require("@testing-library/user-event");
+const { CollectionsBookmarkOutlined } = require("@material-ui/icons");
 
 require("dotenv/config");               // Allow us to use a .env file containing our credentials for the database
 
@@ -73,21 +74,17 @@ app.get("/searchquery", async (req, res) => {
 
     const punctuation = /[\u2000-\u206F\u2E00-\u2E7F\\'!"`#$%&()*+,\-.\/:;<=>?@\[\]^_{|}~]/;
     let withoutPunctuation = requestString.replace(punctuation, "");
-    requestString = requestString + " " + withoutPunctuation;
+    requestString_ = requestString + " " + withoutPunctuation;
 
-    let parsedSearches = requestString.split(" ");
+    let parsedSearches = requestString_.split(" ");
+    // to search between spaces
+    parsedSearches.push(withoutPunctuation);
+    parsedSearches.push(requestString);
     
-    // console.log(parsedSearches);
     // brute force search
     let requestedSchemes = await GradingScheme.find(
         { $or: [
             { $or: [
-                { owner: { $in: parsedSearches } },
-                { university: { $in: parsedSearches } },
-                { professor: { $in: parsedSearches } },
-                { class: { $in: parsedSearches } },
-            ]},
-            { $and: [
                 { owner: { $in: parsedSearches } },
                 { university: { $in: parsedSearches } },
                 { professor: { $in: parsedSearches } },
