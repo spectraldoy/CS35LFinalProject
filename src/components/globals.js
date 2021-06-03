@@ -22,14 +22,17 @@ export function isAlphaNumeric(str, allowCommonSpecial=false) {
         if (!(code > 47 && code < 58) && // numeric (0-9)
             !(code > 64 && code < 91) && // upper alpha (A-Z)
             !(code > 96 && code < 123)) { // lower alpha (a-z)
-            if (allowCommonSpecial && !(code === 32) && !(code === 34) &&
-                !(code === 39) && !(code === 44)) {
+            if (allowCommonSpecial) {
+                if (code !== 32 && code !== 34 &&
+                    code !== 39 && code !== 44) {
+                    return false;
+                }
+            }
+            else {
                 return false;
             }
-            else  {
-                return false
-            }
         }
+
     }
     return true;
 };

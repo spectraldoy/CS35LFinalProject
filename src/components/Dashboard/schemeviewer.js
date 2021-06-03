@@ -147,7 +147,7 @@ function displayProfile(props) {
 
 	function handleSubmitNewUniversity(e) {
 		e.preventDefault();
-		if (!isAlphaNumeric(newUniversity)) {
+		if (!isAlphaNumeric(newUniversity, true)) {
 			props.alert.error("Failed to save: New University can only contain letters and numbers")
 			return;
 		}

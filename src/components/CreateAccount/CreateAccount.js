@@ -54,7 +54,7 @@ function CreateAccount(props) {
         if (username === "") {
             alert.error("Please enter a username");
         }
-        else if (!isAlphaNumeric(username)) {
+        else if (!isAlphaNumeric(username, false)) {
             alert.error("Username can only contain letters and numbers");
         }
         else if (university === "") {
