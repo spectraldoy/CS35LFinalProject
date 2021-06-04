@@ -15,11 +15,11 @@ const hc = getComputedStyle(document.documentElement).getPropertyValue('--highli
 const oc = getComputedStyle(document.documentElement).getPropertyValue('--opposite-color');
 const sw = getComputedStyle(document.documentElement).getPropertyValue('--side-menu-width');
 
-/* mostly copied from https://material-ui.com/components/app-bar/ */
+// reference: https://material-ui.com/components/app-bar/ 
 const useStyles = makeStyles((theme) => ({
     search: {
         position: 'relative',
-        marginRight: theme.spacing(6), // "3.25em"
+        marginRight: theme.spacing(6),
         borderRadius: theme.shape.borderRadius,
         backgroundColor: fade(hc, 0.15),
         transitionDuration: "0.3s",
@@ -84,7 +84,8 @@ const useStyles = makeStyles((theme) => ({
 
 
 function Header(props) {
-    function brand() {
+    function Brand() {
+		// displays the App's Logo and Name 
         return (
             <Link to="/" style={{textDecoration: 'none', color: 'black'}}>
                 <div className="App-brand">
@@ -95,8 +96,9 @@ function Header(props) {
         );
     }
     return (
+		// displays Brand() to right and searchBar (in Dashboard to use state) to left
         <header className="App-header">
-            {brand()}
+            <Brand />
             {props.searchBar()}
         </header>
     );
@@ -105,13 +107,16 @@ function Header(props) {
 function SideMenu(props) {
     const classes = useStyles();
 
-    // loads MySchemes first into the SchemeViewer, which doesn't happen automatically due to async rendering
-    if (props.schemesLoaded === 0) {
+	// put this in schemeviewer?
+    // load the initial schemes view into the scheme viewer (doesn't happen automatically)
+	// input props schemesLoaded and loadSchemes use state in Dashboard to handle history pushe
+    if (!props.schemesLoaded) {
         props.loadInitialView();
-        props.loadSchemes(1);
+        props.loadSchemes(true);
     }
 
     return (
+		// fix the button inconsistencies
 		<Grid className="SideMenu">
 			<h className="SideMenu-h">SCHEMING</h>
 			<Button className={clsx(classes.colorButton, classes.hc)} onClick={ (e) => props.onClickMySchemes() }>My Schemes</Button>
@@ -131,6 +136,7 @@ function Dashboard(props) {
      * Such as Scheme Creator, My Schemes, Home, Search Schemes, etc.
      * If a link is clicked in the side panel, the page / url will not change,
      * it will just load that specific window into the Scheme viewer
+	 * TODO: reorganize files
      */
 
     if (!sessionStorage.getItem('user')) {
@@ -146,10 +152,12 @@ function Dashboard(props) {
     const [header, updateHeader] = useState("Memes");
     const [searchQuery, updateSearchQuery] = useState("");
     const [schemes, setSchemes] = useState([]);
+	// use animate 1 to load initial view, 2 to display view?
+	// call the loadSchemes stuff like load initial view or something
     const [animate, setAnimate] = useState(false);
 
     // to load MySchemes after the async getSchemes request
-    const [schemesLoaded, loadSchemes] = useState(0);
+    const [schemesLoaded, loadSchemes] = useState(false);
     // to figure out which schemes view to load
     let initialView = history.location.hash;
     let parsedView = decodeURI(initialView).split("?");
@@ -158,8 +166,8 @@ function Dashboard(props) {
     const [profile, updateProfile] = useState({
 		username: parsedView.slice(6),
 		university: "",
-		editing: false,
-        animate: false,
+		editing: false,		// to handle changes to university
+        animate: false,		// to figure out when to display SchemeViewer due to async get of profile
 	});
 
 	function handleUpdateProfile(newprops) {
@@ -168,13 +176,13 @@ function Dashboard(props) {
 			...newprops,
 		});
 	}
-    
-    // TODO: re-reorg folder structure; API keys?
-    // for SideMenu Button functions / searching
+
     function updateSchemeViewer(header_, query_, prefix="grading_schemes") {
         return (e) => {
-            query_ = decodeURIComponent(query_)
-            let splitQuery = query_.split("=")
+			// % messes up the search
+			// console.log(query_.replace("%", ""))
+            query_ = decodeURIComponent(query_);
+            let splitQuery = query_.split("=");
             if (splitQuery[0] === "") {
                 splitQuery = "";
             }
@@ -307,23 +315,23 @@ function Dashboard(props) {
     }
 
     function profileView(owner) {
-        return updateSchemeViewer("Profile", "owner=" + owner)
+        return updateSchemeViewer("Profile", "owner=" + owner);
     }
     
     return (
         <div>
-            {Header({searchBar: searchBar})}
+			<Header searchBar={searchbar}/>
             <div className="App-bottom">
-                {SideMenu({
-                    schemesLoaded: schemesLoaded,
-                    loadSchemes: loadSchemes,
-                    loadInitialView: updateSchemeViewer(parsedView[0].slice(1), parsedView[1]),
-                    onClickMySchemes: updateSchemeViewer("My Schemes", "owner=" + sess[0]),
-                    onClickBrowseSchemes: updateSchemeViewer("Browse Schemes", "", "all_schemes"),
-                    onClickMyUnivSchemes: updateSchemeViewer("My University's Schemes", "university=" + sess[1]),
-                    onClickProfile: profileView(sess[0]),
-                    onLogout: () => props.setUserInfo(["", ""]),
-                })}
+				<SideMenu 
+					schemesLoaded={schemesLoaded}
+					loadSchemes={loadSchemes}
+					loadInitialView={updateSchemeViewer(parsedView[0].slice(1), parsedView[1])}
+					onClickMySchemes={updateSchemeViewer("My Schemes", "owner=" + sess[0])}
+					onClickBrowseSchemes={updateSchemeViewer("Browse Schemes", "", "all_schemes")}
+					onClickMyUnivSchemes={updateSchemeViewer("My University's Schemes", "university=" + sess[1])}
+					onClickProfile={profileView(sess[0])}
+					onLogout={ () => props.setUserInfo(["", ""]) }
+				/>
                 <SchemeViewer 
                     header={header} 
                     schemes={schemes} 
