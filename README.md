@@ -2,7 +2,9 @@
 
 <img src="./public/logo.png" width=278 height=256>
 
-Foxtrot is a client/server app for university students, a platform for us to create and share grading schemes for exams, assignments and courses. Never again will you or your peers have to waste time and risk error calculating by hand what you need on your final to score that A+.
+Foxtrot is a client/server app for university students, a platform for us to create and share grading schemes for exams, assignments and courses. Never again will you or your peers have to waste time and risk error calculating by hand what you need on your final to score that A+. 
+
+You can check out our project demo [here](https://drive.google.com/file/d/1YGmZ9kHd3ThYW9xh495ZFk8eRI1fFA-X/view?usp=sharing).
 
 ## How to run Foxtrot on your machine
 
@@ -41,7 +43,7 @@ In the root directory, simply run:
 ```bash
 npm run dev
 ```
-The app should open in your browser (currently, the app has been tested on Chrome and Safari). Note that it make take some time for npm to start the server. If not, enter http://localhost:3000/ into your browser and you should be good to go. Once the app has opened, you may need to create a Foxtrot account. 
+The app should open in your browser (currently, the app has been tested on Chrome and Safari). Note that it may take some time for npm to start the server. If it does not, enter http://localhost:3000/ into your browser and you should be good to go. Once the app has opened, you may need to create a Foxtrot account. 
 
 ## Technology Stack and Acknowledgements
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app), using [Express](https://expressjs.com/) to route GET and POST requests to our [MongoDB](https://www.mongodb.com/) collections. 
