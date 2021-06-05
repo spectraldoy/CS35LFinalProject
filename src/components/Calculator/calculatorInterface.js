@@ -15,6 +15,8 @@ function withMyHook(Component) {
     return <Component {...props} myHookValue={classes} />;
   }
 }
+
+//asthetics from MaterialUI
 const useStyles = makeStyles((theme) => ({
   colorButton: {
     fullWidth: true,
@@ -84,6 +86,8 @@ class calculatorInterface extends React.Component {
 
   handleChange = arr => (event) => {
     event.preventDefault();
+
+    //updates the state based on which type of event occurred
     if (event.target.name === "gradeWanted") {
       this.setState({
         gradeWanted: event.target.value
@@ -120,6 +124,7 @@ class calculatorInterface extends React.Component {
   }
 
   addAssignment = i => (event) => {
+    //adds a row with fields name, points received, total points, grade type for new assignment
     event.preventDefault();
     const names = this.state.assignmentsName.slice();
     names[i] = names[i].concat([""]);
@@ -139,6 +144,7 @@ class calculatorInterface extends React.Component {
   }
 
   removeAssignment = arr => (event) => {
+    //function called when remove assignment button is pressed, udpates the state
     event.preventDefault();
     const names = this.state.assignmentsName.slice();
     names[arr[0]].splice(arr[1],1);
@@ -258,6 +264,7 @@ class calculatorInterface extends React.Component {
 
     const results = calculate(grades);
     let message = "";
+    //the below if statements are for if the calculate function returns improper values, representing something wrong with the grades entered
     if (results.currentGrade === null) {
       message += "Current grade: N/A";
     }
@@ -292,7 +299,9 @@ class calculatorInterface extends React.Component {
   }
 
   render() {
+    //this function contains all the buttons, forms, etc, that are displayed and dynamic in the calculatorInterface web page
     const classes = this.props.myHookValue;
+    //animate is only false if the scheme has not been retrieved from the database yet
     if (!this.state.animate)
       return <h1>Retrieving Scheme...</h1>;
 
