@@ -17,8 +17,7 @@ const oc = getComputedStyle(document.documentElement).getPropertyValue('--opposi
 const useStyles = makeStyles((theme) => ({
     colorButton: {
 		marginRight: theme.spacing(1),
-		width: `26.5ch`, /* 16vw */
-		// vertical padding + font size from searchIcon
+		width: `26.5ch`, 
         backgroundColor: fade(oc, 0.25),
         '&:hover': {
             backgroundColor: fade(oc, 0.55),
@@ -68,6 +67,7 @@ const useStyles = makeStyles((theme) => ({
 
 
 function formatCategory(name, weight) {
+	// properly format a grading category to display in scheme preview
 	if (weight != null) {
 		while (weight.length < 3) {
 			weight = " " + weight;
@@ -77,7 +77,9 @@ function formatCategory(name, weight) {
 }
 
 function displayScheme(scheme, changeUrl, getProfile) {
-	// const classes = useStyles();
+	// display scheme as a button that on clicking redirects to the calculator interface
+	// furthermore, has a tag to the top right showing the scheme creator's username
+	// that when clicked redirects to the scheme creator's profile page
 
 	return (
 		<ButtonBase onClick={(e) => changeUrl("/calculatorInterface?id=" + scheme._id)}>
@@ -143,7 +145,8 @@ function displayScheme(scheme, changeUrl, getProfile) {
 }
 
 function displayProfile(props) {
-	// {props.profile.username} 
+	// display profile if Dashboard currently is supposed to display a user's profile
+
 	let newUniversity = "";
 
 	function handleSubmitNewUniversity(e) {
@@ -239,6 +242,9 @@ function displayProfile(props) {
 }
 
 function SchemeViewer(props) {
+	// Loads schemes for viewing, browsing, moving onto the calculator interface
+	// and also displays button for creating a scheme
+
 	if (!props.schemes) {
 		return null;
 	}
@@ -248,21 +254,44 @@ function SchemeViewer(props) {
 	const alert = useAlert();
 	const [redirectTo, changeUrl] = useState("");
 
+	// to be able to use the browser back button to return to the most recent SchemeView 
+	// in the dashboard, where the just clicked scheme was found
 	if (redirectTo) {
-		history.push(props.URL);
+		let URL = history.location.pathname + "#" + props.header + "?";
+		let splitQuery = props.query.split("=");
+		if (splitQuery[0] === "") {
+			splitQuery = "";
+		}
+		else if (splitQuery[1] === "") {
+			splitQuery = encodeURIComponent(splitQuery[0]) + "=" + encodeURIComponent(" ");
+		}
+		else {
+			splitQuery = encodeURIComponent(splitQuery[0]) + "=" + encodeURIComponent(splitQuery[1]);
+		}
+		history.push(URL + splitQuery);
+		// redirect to calculatorInterface or schemeBuilder
 		return <Redirect to={redirectTo} />;
 	}
+
+    // load the initial schemes view into the scheme viewer (doesn't happen automatically)
+	// input props schemesLoaded and loadSchemes use state in Dashboard to handle history pushe
+    if (!props.schemesLoaded) {
+        props.loadInitialView();
+        props.loadSchemes(true);
+    }
 	
+	// render the fetched schemes
 	let renderedSchemes = []
 	for (const scheme of props.schemes) {
 		renderedSchemes.push(displayScheme(
 			scheme, changeUrl, props.getProfile
 		));
 	}
-	//console.log(renderedSchemes);
 
+	// if we haven't yet fetched the schemes / profile from the database, i.e., 
+	// we haven't yet got the stuff we need to display, return nothing
 	if (!props.animate)
-		return <div className="DashWinLoading"></div>
+		return null;
 	else
 		return (
 			<div className="DashWin">

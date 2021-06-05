@@ -105,25 +105,17 @@ function Header(props) {
 }
 
 function SideMenu(props) {
+    // SideMenu of buttons to change dashboard scheme view / view profile / logout
     const classes = useStyles();
 
-	// put this in schemeviewer?
-    // load the initial schemes view into the scheme viewer (doesn't happen automatically)
-	// input props schemesLoaded and loadSchemes use state in Dashboard to handle history pushe
-    if (!props.schemesLoaded) {
-        props.loadInitialView();
-        props.loadSchemes(true);
-    }
-
     return (
-		// fix the button inconsistencies
 		<Grid className="SideMenu">
 			<h className="SideMenu-h">SCHEMING</h>
-			<Button className={clsx(classes.colorButton, classes.hc)} onClick={ (e) => props.onClickMySchemes() }>My Schemes</Button>
+			<Button className={clsx(classes.colorButton, classes.hc)} onClick={props.onClickMySchemes}>My Schemes</Button>
 			<Button className={clsx(classes.colorButton, classes.hc)} onClick={props.onClickBrowseSchemes}>Browse Schemes</Button>
 			<Button className={clsx(classes.colorButton, classes.hc)} onClick={props.onClickMyUnivSchemes}>My Univ's Schemes</Button>
 			<h className="SideMenu-h">ACCOUNT</h>
-			<Button className={clsx(classes.colorButton, classes.oc)} onClick={ (e) => props.onClickProfile() }>Profile</Button>
+			<Button className={clsx(classes.colorButton, classes.oc)} onClick={props.onClickProfile}>Profile</Button>
 			<Button className={clsx(classes.colorButton, classes.oc)} onClick={props.onLogout}>Logout</Button>
 		</Grid> 
     );
@@ -132,8 +124,9 @@ function SideMenu(props) {
 
 function Dashboard(props) {
     /*
-     * Header and side panel to display links to various pages / functionality
+     * Header and side menu to display links to various pages / functionality
      * Such as Scheme Creator, My Schemes, Home, Search Schemes, etc.
+     * Along with SchemeViewer to view schemes received after querying database
      */
 
     if (!sessionStorage.getItem('user')) {
@@ -149,22 +142,23 @@ function Dashboard(props) {
     const [header, updateHeader] = useState("Memes");
     const [searchQuery, updateSearchQuery] = useState("");
     const [schemes, setSchemes] = useState([]);
-	// use animate 1 to load initial view, 2 to display view?
-	// call the loadSchemes stuff like load initial view or something
+
+    // to properly / smoothly display MySchemes after the async getSchemes request
     const [animate, setAnimate] = useState(false);
 
-    // to load MySchemes after the async getSchemes request
+    // to load the initial Schemes View into the dashboard after decoding URL
     const [schemesLoaded, loadSchemes] = useState(false);
+
     // to figure out which schemes view to load
     let initialView = history.location.hash;
     let parsedView = decodeURI(initialView).split("?");
 
     // to display profile on click the profile button
     const [profile, updateProfile] = useState({
-		username: parsedView.slice(6),
+		username: parsedView.slice(6),  // not sess[0] to handle viewing other users' profiles
 		university: "",
-		editing: false,		// to handle changes to university
-        animate: false,		// to figure out when to display SchemeViewer due to async get of profile
+		editing: false,		            // to handle changes to university
+        animateProfile: false,		    // to handle smoothness of animation
 	});
 
 	function handleUpdateProfile(newprops) {
@@ -176,35 +170,33 @@ function Dashboard(props) {
 
     function updateSchemeViewer(header_, query_, prefix="grading_schemes") {
         return (e) => {
-			// % messes up the search
-            header_ = decodeURIComponent(header_.replace("%", ""))
-            query_ = decodeURIComponent(query_.replace("%", ""));
+			// % messes up the URL, so we have to remove it from header and query in order to get schemes
+            header_ = header_.replace("%", "")
+            query_ = query_.replace("%", "");
+
+            // avoid encoding "=" and "?" in URL
             let splitQuery = query_.split("=");
-            if (splitQuery[0] === "") {
+            if (splitQuery[0] === "")
                 splitQuery = "";
-            }
-            else if (splitQuery[1] === "") {
+            else if (splitQuery[1] === "")
                 splitQuery = encodeURIComponent(splitQuery[0]) + "=" + encodeURIComponent(" ");
-            }
-            else {
+            else
                 splitQuery = encodeURIComponent(splitQuery[0]) + "=" + encodeURIComponent(splitQuery[1]);
-            }
             let query = splitQuery
 
-            if (header_ === header && query === searchQuery) {
+            // if requested scheme view hasn't changed, don't load anything - extra work
+            if (header_ === header && query === searchQuery)
                 return (e) => {};
-            }
-            // for initial automatic schemes load
-            if (!query && header_ === "Browse Schemes") {
+
+            // this allows for initial automatic schemes load
+            if (!query && header_ === "Browse Schemes")
                 prefix = "all_schemes";
-            }
-            else if (header_.includes("Schemes created by") || header_.includes("Scheme Search")) {
+            else if (header_.includes("Schemes created by") || header_.includes("Scheme Search"))
                 prefix = "searchquery";
-            }
-            else if (header_ === "Profile") {
+            else if (header_ === "Profile") 
                 getProfile(query_.split("=")[1])();
-            }
-            // this is where the search occurs for the scheme views
+
+            // get the schemes
             getItem(query, prefix)
             .then( data => data.json() ) 
             .then(
@@ -213,21 +205,26 @@ function Dashboard(props) {
                     setAnimate(true);
                 }
             );
+            // schemes retrieved, so set animate false again in preparation for change of schemeView
             setAnimate(false);
+
+            // update URL
             if (header_ !== header || query_ !== searchQuery) {
                 history.replace(history.location.pathname + "#" + encodeURIComponent(header_) + "?" + splitQuery);
                 updateHeader(header_);
-                // causes problems with search bar
                 updateSearchQuery(query_);
             }
         };
     }
 
     function search(query, header_="Scheme Search Results for") {
-        // possible problems: case sensitive
-        if (query.slice(0, 7) === "string=") {
+        // Sarch the database for each word in input query (see Server/index.js for details on parsing search)
+
+        // this helps with initial view, where query is taken from URL
+        if (query.slice(0, 7) === "string=")
             query = query.slice(7);
-        }
+        
+        
         return updateSchemeViewer(
             header_ + " \"" + query + "\"", 
             "string=" + query,
@@ -265,6 +262,7 @@ function Dashboard(props) {
     }
 
     function getProfile(owner) {
+        // handles correct retrieval of profile to view in dashboard and timing of fadein animation
         let updated_username = "";
         let updated_university = "";
 
@@ -273,7 +271,7 @@ function Dashboard(props) {
                 handleUpdateProfile({
                     username: sess[0],
                     university: sess[1],
-                    animate: true,
+                    animateProfile: true,
                     editing: false,
                 });
                 return null;
@@ -297,7 +295,7 @@ function Dashboard(props) {
                         handleUpdateProfile({
                             username: updated_username,
                             university: updated_university,
-                            animate: true,
+                            animateProfile: true,
                             editing: false
                         });
                     }
@@ -305,7 +303,7 @@ function Dashboard(props) {
             }
 
             handleUpdateProfile({
-                animate: false,
+                animateProfile: false,
             });
         }
     }
@@ -319,9 +317,6 @@ function Dashboard(props) {
 			<Header searchBar={searchBar}/>
             <div className="App-bottom">
 				<SideMenu 
-					schemesLoaded={schemesLoaded}
-					loadSchemes={loadSchemes}
-					loadInitialView={updateSchemeViewer(parsedView[0].slice(1), parsedView[1])}
 					onClickMySchemes={updateSchemeViewer("My Schemes", "owner=" + sess[0])}
 					onClickBrowseSchemes={updateSchemeViewer("Browse Schemes", "", "all_schemes")}
 					onClickMyUnivSchemes={updateSchemeViewer("My University's Schemes", "university=" + sess[1])}
@@ -329,15 +324,18 @@ function Dashboard(props) {
 					onLogout={ () => props.setUserInfo(["", ""]) }
 				/>
                 <SchemeViewer 
+					loadInitialView={updateSchemeViewer(parsedView[0].slice(1), parsedView[1])}
+					schemesLoaded={schemesLoaded}
+					loadSchemes={loadSchemes}
                     header={header} 
+                    query={searchQuery}
                     schemes={schemes} 
-                    animate={(header === "Profile") ? (animate && profile.animate) : animate} 
+                    animate={(header === "Profile") ? (animate && profile.animateProfile) : animate} 
                     profile={profile}
                     updateProfile={handleUpdateProfile}
                     getProfile={profileView}
                     setUserInfo={props.setUserInfo}
                     sess={sess}
-                    URL={history.location.pathname + "#" + encodeURIComponent(header) + "?" + encodeURIComponent(searchQuery)}
                 />
             </div>
         </div>

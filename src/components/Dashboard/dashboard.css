@@ -61,24 +61,6 @@
 	margin-bottom: 1vh;
 }
 
-.SideMenu-nava {
-	flex-shrink: 1;
-	font-size: var(--side-menu-font-size);
-	text-align: left;
-	padding: 1em;
-	padding-left: 0.5em;
-	cursor: pointer;
-	transition-duration: 0.3s;
-	background: none;
-	border-color: var(--background-color);
-	border-style: solid;
-	border-radius: 1vmin;
-}
-
-.SideMenu-nava:hover {
-	background-color: var(--highlight-color);
-}
-
 .DashWin {
 	display: flex;
 	z-index: 10;
@@ -94,14 +76,6 @@
 	  -o-animation: fadein;
 		 animation: fadein;
 	animation-duration: 1s;
-}
-
-.DashWinLoading {
-	display: flex;
-	z-index: 10;
-	flex-direction: column;
-	margin-left: var(--side-menu-width);
-	margin-top: var(--header-height);
 }
 
 .SchemesView {

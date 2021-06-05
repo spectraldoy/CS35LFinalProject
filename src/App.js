@@ -1,6 +1,6 @@
 import React from "react";
 import { useState } from 'react';
-import { BrowserRouter, Route, Switch, Link, Redirect } from "react-router-dom"; // also import Link
+import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom"; // also import Link
 
 import './App.css';
 import Dashboard from './components/Dashboard/dashboard';

@@ -353,7 +353,7 @@ class schemeInterface extends React.Component {
                 </Grid>
                 </h2>
                 
-                <Link to="/">
+                <Link to="/" style={{textDecoration: "none"}}>
                 <Button className={clsx(classes.colorButton, classes.hc)} type='Button'>
                     Return to dashboard
                 </Button>
