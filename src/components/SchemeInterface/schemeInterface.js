@@ -16,37 +16,32 @@ const styles = createStyles({
         '&:hover': {
             backgroundColor: fade(hc, 0.55),
         }
-      },
-      buttonGrid: {
-        justify:'center',
-        alignItems:'center',
-        spacing:2
       }
 });
 
 class schemeInterface extends React.Component {
-    
+    //Used as keys since the categories are dynamic, so array index will have unintended behavior
     categoriesCreated = 0;
     letterGradesCreated = 0;
 
     constructor(props) {
         super(props);
         this.state = {
-            categories: [],
-            ids: [],
-            letterGrades: [],
-            letterGradeIds: [],
+            categories: [],     //JSON objects w/ name and weight
+            ids: [],            //Keys for categories
+            letterGrades: [],   //Similar to categories
+            letterGradeIds: [], //Similar to ids
             university: sessionStorage.getItem('university'),
             course: '',
             professor: '',
         };
 
-        this.handleChange = this.handleChange.bind(this);
+        this.handleChange = this.handleChange.bind(this); //Inputs are controlled components
     }
     
     handleChange(event) {
         let i, newGrades, newCategories;
-        switch (event.target.name.split(',')[0])
+        switch (event.target.name.split(',')[0]) //We use the name of the input to tell us which input was modified
         {
             case 'University':
                 this.setState({university: event.target.value});
@@ -87,13 +82,14 @@ class schemeInterface extends React.Component {
     }
     
 
-    postScheme() {      
-        var sum = 0;
-        var valid = true;
-        var notEmpty = true;
-        var hasCategories = true;
-        var sumTo100 = true;
-        var error = false;
+    postScheme() {    
+        //Checks for valid scheme format:  
+        var sum = 0; 
+        var valid = true;           //Valid inputs
+        var notEmpty = true;        //Not empty categories
+        var hasCategories = true;   //At least 1 category
+        var sumTo100 = true;        //Weights must sum to 100
+        var error = false;          //At least one category
         for (var i = 0; i < this.state.categories.length; i++)
         {
             if (this.state.categories[i]['weight'] === '' || this.state.categories[i]['name'] === '')
@@ -176,6 +172,8 @@ class schemeInterface extends React.Component {
         }
     }
 
+    //Functions for modifying scheme
+
     addCategory() {
         var num = this.categoriesCreated++;
         this.setState(() => ({
@@ -225,9 +223,14 @@ class schemeInterface extends React.Component {
 
     resetLetterGrades() {
         this.setState(() => ({
-            letterGrades: []
+            letterGrades: [],
+            letterGradeIds: []
         })); 
     }
+
+//MUI Grids are used for spacing
+//Maps the state into actual elements with the proper keys, attributes, and functions     
+//Buttons call the earlier functions used to modify state
 
     render() {
         const { classes } = this.props;
@@ -279,6 +282,7 @@ class schemeInterface extends React.Component {
                         </Grid>
                     </form>
                 </h2>
+
                 <div>
                     <Grid container justify='center' alignItems='center' spacing={2}>
                         <Grid item>
@@ -298,6 +302,7 @@ class schemeInterface extends React.Component {
                         </Grid>
                     </Grid>
                 </div>
+
                 <h2>
                 <Grid container justify='center' alignItems='center' spacing={4} direction='column'>
                     <Grid item>
@@ -347,6 +352,7 @@ class schemeInterface extends React.Component {
                     </Grid>
                 </Grid>
                 </h2>
+                
                 <Link to="/">
                 <Button className={clsx(classes.colorButton, classes.hc)} type='Button'>
                     Return to dashboard
@@ -356,6 +362,9 @@ class schemeInterface extends React.Component {
         );
     }
 }
+
+//The two inputs and labels added when the "add" button is pressed
+//onChange is passed through as props to modify the schemeInterface class state
 
 class Category extends React.Component {
     render() {
@@ -375,6 +384,8 @@ class Category extends React.Component {
         );
     }
 }
+
+//Same as Category but for letter grades
 
 class LetterGrade extends React.Component {
     render() {
