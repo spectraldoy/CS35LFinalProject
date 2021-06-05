@@ -320,7 +320,7 @@ function Dashboard(props) {
     
     return (
         <div>
-			<Header searchBar={searchbar}/>
+			<Header searchBar={searchBar}/>
             <div className="App-bottom">
 				<SideMenu 
 					schemesLoaded={schemesLoaded}
