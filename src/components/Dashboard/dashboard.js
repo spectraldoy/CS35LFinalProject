@@ -134,9 +134,6 @@ function Dashboard(props) {
     /*
      * Header and side panel to display links to various pages / functionality
      * Such as Scheme Creator, My Schemes, Home, Search Schemes, etc.
-     * If a link is clicked in the side panel, the page / url will not change,
-     * it will just load that specific window into the Scheme viewer
-	 * TODO: reorganize files
      */
 
     if (!sessionStorage.getItem('user')) {
@@ -180,8 +177,8 @@ function Dashboard(props) {
     function updateSchemeViewer(header_, query_, prefix="grading_schemes") {
         return (e) => {
 			// % messes up the search
-			// console.log(query_.replace("%", ""))
-            query_ = decodeURIComponent(query_);
+            header_ = decodeURIComponent(header_.replace("%", ""))
+            query_ = decodeURIComponent(query_.replace("%", ""));
             let splitQuery = query_.split("=");
             if (splitQuery[0] === "") {
                 splitQuery = "";
@@ -194,7 +191,6 @@ function Dashboard(props) {
             }
             let query = splitQuery
 
-            header_ = decodeURIComponent(header_)
             if (header_ === header && query === searchQuery) {
                 return (e) => {};
             }
@@ -320,7 +316,7 @@ function Dashboard(props) {
     
     return (
         <div>
-			<Header searchBar={searchbar}/>
+			<Header searchBar={searchBar}/>
             <div className="App-bottom">
 				<SideMenu 
 					schemesLoaded={schemesLoaded}

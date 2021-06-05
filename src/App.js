@@ -9,31 +9,6 @@ import schemeInterface from './components/SchemeInterface/schemeInterface'
 import Login from './components/Login/login'
 import CreateAccount from './components/CreateAccount/CreateAccount'
 
-function HomePage() {
-  return (
-    <ul className="App-router">
-      <li>
-        <Link to="/">Home</Link>
-      </li>
-      <li>
-        <Link to="/">Dashboard</Link>
-      </li>
-      <li>
-        <Link to="/calculatorInterface">Calculator Interface</Link>
-      </li>
-      <li>
-        <Link to="/schemeInterface">Scheme Creator Interface</Link>
-      </li>
-      <li>
-        <Link to="/createAccount">Create Account</Link>
-      </li>
-      <li>
-        <Link to="/schemeInterface">Scheme Interface</Link>
-      </li>
-    </ul>
-  );
-}
-
 function App() {
   const [userInfo, setUserInfo] = UserState();
 
@@ -48,7 +23,6 @@ function App() {
             <Route exact path="/">
               <Redirect to={startPage}/>
             </Route>
-            <Route path="/homePage" component={HomePage} /> 
             <Route path="/login"><Login setUserInfo={setUserInfo} /></Route>
             <Route path="/dashboard"><Dashboard sess={userInfo} setUserInfo={setUserInfo} /></Route>
             <Route path="/calculatorInterface" component={calculatorInterface} />

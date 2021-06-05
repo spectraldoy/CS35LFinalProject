@@ -43,7 +43,7 @@ In the root directory, simply run:
 ```bash
 npm run dev
 ```
-The app should open in your browser (currently, the app has been tested on Chrome and Safari). Note that it may take some time for npm to start the server. If it does not, enter http://localhost:3000/ into your browser and you should be good to go. Once the app has opened, you may need to create a Foxtrot account. 
+which uses [concurrently](https://www.npmjs.com/package/concurrently) to start the client-side app as well as listen on the server. With this, the app should open in your browser (currently, the app has been tested on Chrome and Safari). Note that it may take some time for npm to start the server. If it does not, enter http://localhost:3000/ into your browser and you should be good to go. Once the app has opened, you may need to create a Foxtrot account. 
 
 ## Technology Stack and Acknowledgements
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app), using [Express](https://expressjs.com/) to route GET and POST requests to our [MongoDB](https://www.mongodb.com/) collections. 
